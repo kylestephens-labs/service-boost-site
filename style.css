@@ -3,6 +3,7 @@
 @media(max-width:680px){header{padding:22px}.brand{font-size:1rem}.intro{grid-template-columns:1fr;padding:22px 22px 40px;gap:28px}.pitch{padding-top:0}h1{font-size:clamp(2rem,12.8cqw,4.6rem)}.lead{font-size:1rem}.how{margin-top:26px}.how li{padding:13px 0}.intake{padding:24px 20px}footer{width:calc(100% - 44px);padding:22px 0;gap:18px;font-size:.9375rem}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 h1 span{color:#254edb}.header-link{color:#254edb}
+.contact-headline{font-size:clamp(2rem,8cqw,2.75rem);line-height:1.15;text-wrap:balance}
 .offer-summary{margin-top:30px;border:1px solid #dfe6f2;border-radius:12px;background:#fff;overflow:hidden}
 .service-labels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 20px;list-style:none;padding:24px;margin:0}
 .service-labels li{display:flex;align-items:flex-start;gap:10px;color:#354459;font-size:1rem;line-height:1.5;min-width:0}
