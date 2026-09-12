@@ -39,6 +39,11 @@ class IntakeTests(unittest.TestCase):
         self.assertEqual(self.request(self.data)[0], '429 Too Many Requests')
         self.assertEqual(send.call_count, 5)
 
+    @patch('backend.app.send_quote')
+    def test_invalid_unicode_is_rejected(self, send):
+        self.assertEqual(self.request({**self.data, 'problem': 'invalid text \ud800'})[0], '400 Bad Request')
+        send.assert_not_called()
+
     @patch('backend.app.send_quote', side_effect=OSError('secret provider detail'))
     def test_failure_not_success_and_no_secret_leak(self, send):
         status, body = self.request(self.data)

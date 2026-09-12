@@ -44,6 +44,7 @@ def validate(data):
         value = data.get(key, '')
         if not isinstance(value, str) or len(value) > maximum:
             raise ValueError('Please check the form fields.')
+        value.encode('utf-8')
         fields[key] = value.strip()
     if fields['company']:
         raise ValueError('Unable to accept this request.')
