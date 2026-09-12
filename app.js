@@ -3,6 +3,40 @@ const website = document.querySelector('#website');
 const problem = document.querySelector('#problem');
 const status = document.querySelector('#form-status');
 const websiteError = document.querySelector('#website-error');
+const carousel = document.querySelector('.testimonials');
+if (carousel) {
+  const slides = [...carousel.querySelectorAll('.quote-slide')];
+  const controls = carousel.querySelector('.quote-controls');
+  const pauseButton = carousel.querySelector('[data-quote-pause]');
+  const stage = carousel.querySelector('.quote-stage');
+  const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let current = 0;
+  let paused = motion.matches;
+  let timer;
+  function showSlide(index) {
+    current = (index + slides.length) % slides.length;
+    slides.forEach((slide, i) => { slide.hidden = i !== current; });
+    carousel.querySelector('[data-quote-count]').textContent = `${current + 1} / ${slides.length}`;
+  }
+  function updateRotation() {
+    clearInterval(timer);
+    pauseButton.textContent = paused ? 'Start rotation' : 'Pause rotation';
+    const stopped = paused || document.hidden || carousel.matches(':hover') || carousel.contains(document.activeElement);
+    stage.setAttribute('aria-live', stopped ? 'polite' : 'off');
+    if (!stopped) timer = setInterval(() => showSlide(current + 1), 7000);
+  }
+  controls.hidden = false;
+  carousel.querySelector('[data-quote-prev]').addEventListener('click', () => { showSlide(current - 1); updateRotation(); });
+  carousel.querySelector('[data-quote-next]').addEventListener('click', () => { showSlide(current + 1); updateRotation(); });
+  pauseButton.addEventListener('click', () => { paused = !paused; updateRotation(); });
+  carousel.addEventListener('mouseenter', updateRotation);
+  carousel.addEventListener('mouseleave', updateRotation);
+  carousel.addEventListener('focusin', () => { paused = true; updateRotation(); });
+  carousel.addEventListener('focusout', () => setTimeout(updateRotation, 0));
+  document.addEventListener('visibilitychange', updateRotation);
+  motion.addEventListener('change', () => { paused = motion.matches; updateRotation(); });
+  updateRotation();
+}
 function websiteUrl(value) {
   try {
     const url = new URL(/^[a-z][a-z\d+.-]*:/i.test(value) ? value : `https://${value}`);
