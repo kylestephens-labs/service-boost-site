@@ -23,6 +23,7 @@ document.querySelectorAll('[data-example]').forEach(link => {
 });
 form.addEventListener('submit', async event => {
   event.preventDefault();
+  form.querySelectorAll('.reassurance').forEach(text => { text.hidden = false; });
   status.hidden = true;
   if (!websiteUrl(website.value.trim())) {
     websiteError.textContent = 'Enter a website address, like yourbusiness.com.';
@@ -53,6 +54,7 @@ form.addEventListener('submit', async event => {
       return;
     }
     status.textContent = 'Your request has been sent. We’ll reply by email.';
+    form.querySelectorAll('.reassurance').forEach(text => { text.hidden = true; });
     form.reset();
   } catch {
     status.textContent = 'We could not confirm delivery. Your details are still here. Please try again or email notify@serviceboost.co.';
