@@ -23,6 +23,7 @@ if (carousel) {
     pauseButton.textContent = paused ? 'Start rotation' : 'Pause rotation';
     const stopped = paused || document.hidden || carousel.matches(':hover') || carousel.contains(document.activeElement);
     stage.setAttribute('aria-live', stopped ? 'polite' : 'off');
+    carousel.querySelector('[data-quote-count]').setAttribute('aria-live', stopped ? 'polite' : 'off');
     if (!stopped) timer = setInterval(() => showSlide(current + 1), 7000);
   }
   controls.hidden = false;
@@ -31,7 +32,10 @@ if (carousel) {
   pauseButton.addEventListener('click', () => { paused = !paused; updateRotation(); });
   carousel.addEventListener('mouseenter', updateRotation);
   carousel.addEventListener('mouseleave', updateRotation);
-  carousel.addEventListener('focusin', () => { paused = true; updateRotation(); });
+  carousel.addEventListener('focusin', event => {
+    if (event.target !== pauseButton) paused = true;
+    updateRotation();
+  });
   carousel.addEventListener('focusout', () => setTimeout(updateRotation, 0));
   document.addEventListener('visibilitychange', updateRotation);
   motion.addEventListener('change', () => { paused = motion.matches; updateRotation(); });
