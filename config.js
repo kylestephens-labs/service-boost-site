@@ -1,2 +1,2 @@
-// Set only after HTTPS, Google relay, and inbox delivery are verified.
-window.SERVICE_BOOST_QUOTE_ENDPOINT = '';
+// Public API URL. Credentials are never included in frontend assets.
+window.SERVICE_BOOST_QUOTE_ENDPOINT = 'https://quotes.serviceboost.co/quote';

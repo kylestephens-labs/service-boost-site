@@ -1,17 +1,17 @@
 # Service Boost launch
 
-The static frontend consists of index.html, style.css, app.js, and favicon.svg at the repository root. No build or dependencies are needed.
+The static frontend consists of index.html, style.css, app.js, config.js, and favicon.svg. `python3 build-site.py` copies only these public assets into public-site for Vercel deployment from this public GitHub repository. Backend and deployment files are never served as website assets.
 
 ## Preview
 
 Run `python3 -m http.server 8123` from this repository, then open http://localhost:8123.
 
-## GitHub Pages
+## Production
 
-After the frontend pull request is approved and merged, select Settings > Pages > Deploy from a branch > main > /(root). No custom domain is configured by this change. Configure a domain only after its ownership and DNS target are confirmed.
+Vercel serves serviceboost.co and www.serviceboost.co. The user approved replacing the older dental template. Configure both origins in the Hetzner backend's ALLOWED_ORIGINS before publication. GitHub remains the public source repository.
 
-## Quote delivery is not connected
+## Quote delivery
 
-The form currently validates input and displays an explicit preview-only message. It does not send, save, or email submissions. Intended recipient: notify@serviceboost.co.
+The form sends to https://quotes.serviceboost.co/quote. Hetzner processes submissions and Google Workspace delivers them to notify@serviceboost.co. No application database or submission-content logging is used.
 
-Connect a hosted form service or a separately deployed Hetzner endpoint. Keep provider credentials out of this public repository. The endpoint must validate input, limit abuse, and report failures without losing entered values. Remove the preview banner only after an end-to-end submission is received in the business inbox. Add accurate privacy information for the chosen processor before accepting customer submissions.
+API TLS, security headers, container restrictions, rejection controls, and Gmail inbox delivery were verified on 2026-09-12. Verify the browser form again after frontend deployment. Credentials stay outside Git and browser assets. Roll back the frontend deployment if submissions fail; do not change unrelated hosted applications.
