@@ -8,6 +8,7 @@ if (carousel) {
   const slides = [...carousel.querySelectorAll('.quote-slide')];
   const controls = carousel.querySelector('.quote-controls');
   const pauseButton = carousel.querySelector('[data-quote-pause]');
+  const dots = [...carousel.querySelectorAll('[data-quote-dot]')];
   const stage = carousel.querySelector('.quote-stage');
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let current = 0;
@@ -16,19 +17,21 @@ if (carousel) {
   function showSlide(index) {
     current = (index + slides.length) % slides.length;
     slides.forEach((slide, i) => { slide.hidden = i !== current; });
-    carousel.querySelector('[data-quote-count]').textContent = `${current + 1} / ${slides.length}`;
+    dots.forEach((dot, i) => {
+      if (i === current) dot.setAttribute('aria-current', 'true');
+      else dot.removeAttribute('aria-current');
+    });
   }
   function updateRotation() {
     clearInterval(timer);
-    pauseButton.textContent = paused ? 'Start rotation' : 'Pause rotation';
+    pauseButton.setAttribute('aria-label', paused ? 'Resume testimonial rotation' : 'Pause testimonial rotation');
+    pauseButton.firstElementChild.textContent = paused ? '▶' : 'Ⅱ';
     const stopped = paused || document.hidden || carousel.matches(':hover') || carousel.contains(document.activeElement);
     stage.setAttribute('aria-live', stopped ? 'polite' : 'off');
-    carousel.querySelector('[data-quote-count]').setAttribute('aria-live', stopped ? 'polite' : 'off');
     if (!stopped) timer = setInterval(() => showSlide(current + 1), 7000);
   }
   controls.hidden = false;
-  carousel.querySelector('[data-quote-prev]').addEventListener('click', () => { showSlide(current - 1); updateRotation(); });
-  carousel.querySelector('[data-quote-next]').addEventListener('click', () => { showSlide(current + 1); updateRotation(); });
+  dots.forEach((dot, i) => dot.addEventListener('click', () => { showSlide(i); updateRotation(); }));
   pauseButton.addEventListener('click', () => { paused = !paused; updateRotation(); });
   carousel.addEventListener('mouseenter', updateRotation);
   carousel.addEventListener('mouseleave', updateRotation);
