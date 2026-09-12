@@ -5,7 +5,7 @@
 <title>Service Boost — Website fixes</title>
 <meta name="description" content="Broken forms, mobile issues, and small website updates. Get a free, fixed-price quote from Service Boost.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="style.css?v=full-width-steps-3"><script src="app.js" defer></script>
+<link rel="stylesheet" href="style.css?v=full-width-steps-3"><script src="config.js" defer></script><script src="app.js" defer></script>
 </head>
 <body>
 <div class="preview-note">Preview · Requests aren’t sent yet.</div>
@@ -22,6 +22,7 @@
 <div class="intake" id="request">
 <h2>Get a free quote</h2>
 <form id="request-form">
+<div hidden aria-hidden="true"><label for="company">Leave blank</label><input id="company" name="company" tabindex="-1" autocomplete="off"></div>
 <label for="website">Your website</label>
 <input id="website" name="website" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com" required maxlength="500" aria-describedby="website-error">
 <span id="website-error" class="field-error"></span>
