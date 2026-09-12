@@ -1,5 +1,6 @@
 """Run from the repo root in the protected GitHub Actions environment."""
 import os
+from ipaddress import ip_address
 from pathlib import Path
 import re
 import subprocess
@@ -11,6 +12,9 @@ def main():
     host = os.environ['DEPLOY_HOST']
     user = os.environ['DEPLOY_USER']
     origins = os.environ['ALLOWED_ORIGINS']
+    exempt = os.environ.get('RATE_LIMIT_EXEMPT_IP', '').strip()
+    if exempt:
+        exempt = str(ip_address(exempt))
     if not re.fullmatch(r'[a-zA-Z0-9.-]+', host) or not re.fullmatch(r'[a-z_][a-z0-9_-]*', user):
         raise ValueError('Invalid deployment destination')
     if '\n' in origins or '\r' in origins or not origins.startswith('https://'):
@@ -23,7 +27,7 @@ def main():
         known = tmp / 'known_hosts'
         known.write_text(os.environ['DEPLOY_KNOWN_HOSTS'] + '\n')
         config = tmp / '.env'
-        config.write_text('ALLOWED_ORIGINS=' + origins + '\n')
+        config.write_text('ALLOWED_ORIGINS=' + origins + '\nRATE_LIMIT_EXEMPT_IP=' + exempt + '\n')
         config.chmod(0o600)
         archive = tmp / 'backend.tar.gz'
         with tarfile.open(archive, 'w:gz') as bundle:

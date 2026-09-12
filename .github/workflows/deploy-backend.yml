@@ -18,5 +18,6 @@ jobs:
           DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
           DEPLOY_USER: ${{ vars.DEPLOY_USER }}
           ALLOWED_ORIGINS: ${{ vars.ALLOWED_ORIGINS }}
+          RATE_LIMIT_EXEMPT_IP: ${{ secrets.RATE_LIMIT_EXEMPT_IP }}
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
