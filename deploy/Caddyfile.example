@@ -1,0 +1,10 @@
+# Replace this hostname with the approved API hostname. Merge into the existing
+# proxy configuration; never overwrite unrelated sites. No access log configured.
+quotes.serviceboost.co {
+    request_body {
+        max_size 16KB
+    }
+    reverse_proxy 127.0.0.1:8137 {
+        header_up X-Real-IP {remote_host}
+    }
+}

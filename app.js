@@ -21,7 +21,7 @@ document.querySelectorAll('[data-example]').forEach(link => {
     requestAnimationFrame(() => problem.focus({preventScroll: true}));
   });
 });
-form.addEventListener('submit', event => {
+form.addEventListener('submit', async event => {
   event.preventDefault();
   status.hidden = true;
   if (!websiteUrl(website.value.trim())) {
@@ -31,5 +31,33 @@ form.addEventListener('submit', event => {
     return;
   }
   status.hidden = false;
-  status.textContent = 'Preview only — your request has not been sent. Service Boost’s inbox is not connected yet.';
+  const endpoint = window.SERVICE_BOOST_QUOTE_ENDPOINT;
+  if (!endpoint || !endpoint.startsWith('https://')) {
+    status.textContent = 'Preview only — your request has not been sent. Service Boost’s inbox is not connected yet.';
+    return;
+  }
+  const button = form.querySelector('button[type="submit"]');
+  button.disabled = true;
+  button.textContent = 'Sending…';
+  status.textContent = '';
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'omit',
+      body: JSON.stringify({ website: website.value.trim(), problem: problem.value.trim(), email: form.elements.email.value.trim(), company: form.elements.company.value }),
+      signal: AbortSignal.timeout(45000),
+    });
+    if (!response.ok) {
+      status.textContent = response.status === 429 ? 'Too many requests. Please try again later.' : 'We could not confirm delivery. Your details are still here. Please try again or email notify@serviceboost.co.';
+      return;
+    }
+    status.textContent = 'Your request has been sent. We’ll reply by email.';
+    form.reset();
+  } catch {
+    status.textContent = 'We could not confirm delivery. Your details are still here. Please try again or email notify@serviceboost.co.';
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Get a free quote';
+  }
 });
