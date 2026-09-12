@@ -15,6 +15,15 @@ Source is prepared; deployment and inbox delivery are NOT_PROVEN. The frontend e
 
 ## Abuse controls and limitations
 
+Optional owner exemption: set RATE_LIMIT_EXEMPT_IP to one exact public IP in the
+server environment and the serviceboost-production GitHub environment secret.
+Blank disables it. CIDR ranges, wildcards, and invalid values never grant access.
+The owner skips both per-IP and global rate counters, including budget usage;
+all origin, method, size, field, honeypot, and delivery checks still apply.
+Only Caddy's overwritten X-Real-IP is trusted. Never publish the owner's IP in
+frontend assets or Git. A changed or reassigned public IP requires updating or
+removing the exemption. Recreate the quote container after changing its env.
+
 Fixed recipient; strict field/body limits; header-injection protection; honeypot; exact browser origin allowlist; 5 attempts/IP/hour and 50 attempts globally/hour. Origin checks are not authentication. Counters are bounded in memory, reset on process restart, and require exactly one worker. Distributed bots can exhaust the global budget; add a server-verified challenge if needed. No automatic SMTP retry, since ambiguous delivery can duplicate emails. SMTP acceptance does not guarantee inbox placement.
 
 ## Validation

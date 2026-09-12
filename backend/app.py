@@ -1,5 +1,6 @@
 """Quote intake. Run one Gunicorn worker; SMTP acceptance is not inbox proof."""
 import json
+from ipaddress import ip_address
 import os
 import re
 import smtplib
@@ -34,6 +35,15 @@ class Limiter:
 
 
 limiter = Limiter()
+
+
+def rate_limit_exempt(peer):
+    # Exact server-configured address only; never accept an exemption from form data.
+    configured = os.environ.get('RATE_LIMIT_EXEMPT_IP', '').strip()
+    try:
+        return bool(configured) and ip_address(peer) == ip_address(configured)
+    except ValueError:
+        return False
 
 
 def validate(data):
@@ -103,7 +113,7 @@ def application(env, start_response):
         return respond('405 Method Not Allowed', 'Use POST.')
     # Caddy must overwrite this header; backend port must remain loopback-only.
     peer = env.get('HTTP_X_REAL_IP', env.get('REMOTE_ADDR', 'unknown'))
-    if not limiter.allow(peer, time.monotonic()):
+    if not rate_limit_exempt(peer) and not limiter.allow(peer, time.monotonic()):
         headers.append(('Retry-After', '3600'))
         return respond('429 Too Many Requests', 'Too many requests. Please try again later.')
     if env.get('CONTENT_TYPE', '').split(';')[0] != 'application/json':
