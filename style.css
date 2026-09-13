@@ -4,6 +4,10 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 h1 span{color:#254edb}.header-link{color:#254edb}
 .contact-headline{font-size:clamp(2rem,8cqw,2.75rem);line-height:1.15;text-wrap:balance}
+.hero-price{margin-top:30px;border:1px solid #dfe6f2;border-radius:12px}
+.privacy-notice summary{cursor:pointer;text-decoration:underline;text-underline-offset:3px;font-size:.875rem}.privacy-notice summary:focus-visible{outline:2px solid #8da6f5;outline-offset:4px}.privacy-notice p{line-height:1.5;margin:12px 0 0}
+.service-details{margin:40px 36px;padding:28px;border:1px solid #dfe6f2;border-radius:12px;background:#fff}.service-details h2{margin-bottom:20px}.service-details .service-labels{padding:0}
+@media(max-width:680px){.service-details{margin:32px 22px;padding:24px 20px}}
 .offer-summary{margin-top:30px;border:1px solid #dfe6f2;border-radius:12px;background:#fff;overflow:hidden}
 .service-labels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 20px;list-style:none;padding:24px;margin:0}
 .service-labels li{display:flex;align-items:flex-start;gap:10px;color:#354459;font-size:1rem;line-height:1.5;min-width:0}

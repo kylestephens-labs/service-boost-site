@@ -12,27 +12,24 @@
 <main>
 <section class="intro" aria-labelledby="headline">
 <div class="pitch">
-<h1 id="headline" class="contact-headline">Make it easier for customers to <span>contact and book your business.</span></h1>
-<p class="lead">Website repairs and improvements that simplify the next step.</p>
-<div class="offer-summary">
-<ul class="service-labels" aria-label="Website repairs and improvements"><li>Fix contact forms</li><li>Simplify booking</li><li>Improve mobile layouts</li><li>Make contact buttons clearer</li><li>Speed up slow pages</li><li>Fix broken links &amp; buttons</li></ul>
-<div class="price-block"><p class="starting-price"><span>Small fixes from</span> <strong>$199</strong></p><p class="price-explanation">Larger repairs and improvements quoted individually.<br>Approve your quote before work begins.</p></div>
-</div>
+<h1 id="headline" class="contact-headline">Make <span>contacting and booking</span> easier for your customers.</h1>
+<p class="lead">We repair and improve website forms, booking flows, and mobile layouts.</p>
+<div class="price-block hero-price"><p class="starting-price"><span>Small fixes from</span> <strong>$199</strong></p><p class="price-explanation">Larger projects quoted individually.</p></div>
 </div>
 <div class="intake" id="request">
-<h2>Get a free quote</h2>
+<h2>Tell us what you need</h2>
 <form id="request-form">
 <div hidden aria-hidden="true"><label for="company">Leave blank</label><input id="company" name="company" tabindex="-1" autocomplete="off"></div>
-<label for="website">Your website</label>
+<label for="website">Website</label>
 <input id="website" name="website" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com" required maxlength="500" aria-describedby="website-error">
 <span id="website-error" class="field-error"></span>
-<label for="problem">What needs fixing?</label>
+<label for="problem">What would you like fixed or improved?</label>
 <textarea id="problem" name="problem" rows="3" placeholder="e.g. My booking button doesn’t work on phones." required minlength="10" maxlength="4000"></textarea>
-<label for="email">Your email</label>
+<label for="email">Email</label>
 <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required maxlength="254">
 <button class="submit" type="submit">Get a free quote</button>
 <p class="reassurance">No payment or call required.</p>
-<p class="reassurance">Your details are emailed to Service Boost through Google Workspace to respond to your request. Please don’t include passwords or sensitive information.</p>
+<details class="reassurance privacy-notice"><summary>Privacy notice</summary><p>Your details are emailed to Service Boost through Google Workspace to respond to your request. Please don’t include passwords or sensitive information.</p></details>
 <div id="form-status" role="status" aria-live="polite" hidden></div>
 </form>
 </div>
@@ -42,6 +39,10 @@
 <li><span class="step-label">Step 2</span><strong>Approve the quote.</strong></li>
 <li><span class="step-label">Step 3</span><strong>Get it fixed.</strong></li>
 </ol></section>
+<section class="service-details" aria-labelledby="services-heading">
+<h2 id="services-heading">What we can help with</h2>
+<ul class="service-labels" aria-label="Website repairs and improvements"><li>Fix contact forms</li><li>Simplify booking</li><li>Improve mobile layouts</li><li>Make contact buttons clearer</li><li>Speed up slow pages</li><li>Fix broken links &amp; buttons</li></ul>
+</section>
 <section class="testimonials" aria-label="Sample testimonials" aria-roledescription="carousel">
 <p class="section-eyebrow">Illustrative quotes</p>
 <div class="quote-stage" aria-live="off">
@@ -54,7 +55,7 @@
 <div class="quote-controls" hidden><div class="quote-dots" role="group" aria-label="Choose a sample testimonial"><button type="button" data-quote-dot aria-label="Show testimonial 1 of 5" aria-current="true"></button><button type="button" data-quote-dot aria-label="Show testimonial 2 of 5"></button><button type="button" data-quote-dot aria-label="Show testimonial 3 of 5"></button><button type="button" data-quote-dot aria-label="Show testimonial 4 of 5"></button><button type="button" data-quote-dot aria-label="Show testimonial 5 of 5"></button></div><button type="button" data-quote-pause aria-label="Pause testimonial rotation"><span aria-hidden="true">Ⅱ</span></button></div>
 </section>
 <section class="fix-example" aria-labelledby="example-heading">
-<div class="example-heading"><div><p class="section-eyebrow">Before &amp; after · Demo</p><h2 id="example-heading">A booking form that fits your phone.</h2></div></div>
+<div class="example-heading"><div><h2 id="example-heading">A booking form that fits your phone.</h2></div></div>
 <div class="comparison">
 <figure><figcaption><strong>Before</strong></figcaption><div class="phone-demo before-demo" role="img" aria-label="Before: a fictional salon booking form is too wide for the phone, cutting off its fields and booking button."><div class="phone-top">9:41 <span>● ● ▰</span></div><div class="demo-business">WILLOW SALON</div><div class="demo-page"><p class="demo-title">A little time for you.</p><p class="demo-subtitle">Book your next appointment.</p><div class="demo-fields"><div><span>Your name</span><div class="demo-input">Alex Taylor</div></div><div><span>Your email</span><div class="demo-input">alex@example.com</div></div></div><div class="demo-book">Book appointment →</div></div></div></figure>
 <figure><figcaption><strong>After</strong></figcaption><div class="phone-demo after-demo" role="img" aria-label="After: the same fictional salon booking form fits the phone, with stacked fields and a fully visible booking button."><div class="phone-top">9:41 <span>● ● ▰</span></div><div class="demo-business">WILLOW SALON</div><div class="demo-page"><p class="demo-title">A little time<br>for you.</p><p class="demo-subtitle">Book your next appointment.</p><div class="demo-fields"><div><span>Your name</span><div class="demo-input">Alex Taylor</div></div><div><span>Your email</span><div class="demo-input">alex@example.com</div></div></div><div class="demo-book">Book appointment →</div></div></div></figure>
