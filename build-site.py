@@ -9,3 +9,4 @@ if output.exists():
 output.mkdir()
 for name in ('index.html', 'style.css', 'app.js', 'config.js', 'favicon.svg'):
     shutil.copyfile(root / name, output / name)
+shutil.copytree(root / 'assets', output / 'assets')
