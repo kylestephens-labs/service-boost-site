@@ -6,7 +6,7 @@
   font-synthesis: none;
   --blue: #234bf1;
   --yellow: #faf6ac;
-  --page-max: 1440px;
+  --page-max: 1850px;
 }
 * { box-sizing: border-box; }
 body { max-width: var(--page-max); margin: 0 auto; }
@@ -28,12 +28,13 @@ nav { display: flex; align-items: center; gap: 36px; font-size: 17px; }
 .pitch { min-width: 0; background: var(--blue); color: #fff; padding: 140px 40px 92px min(5vw, 72px); }
 h1 { font-size: clamp(42px, 5.2vw, 80px); line-height: 1.08; letter-spacing: -.055em; color: #fff; margin: 0; font-weight: 800; }
 h1 span { color: var(--yellow); }
+h1, .lead, .hero-price { max-width: 720px; }
 .lead { margin: 36px 0 0; font-size: clamp(19px, 2.2vw, 30px); line-height: 1.4; color: #fff; }
 .hero-price { margin-top: 100px; padding-top: 36px; border-top: 1px solid #ffffff70; }
 .starting-price { margin: 0; font-size: 23px; letter-spacing: -.025em; }
 .starting-price strong { display: block; color: var(--yellow); font-size: 64px; line-height: 1.15; letter-spacing: -.05em; margin-top: 10px; }
 .price-explanation { margin: 12px 0 0; color: #fff; font-size: 17px; line-height: 1.5; }
-.intake { align-self: center; background: #fff; padding: 64px min(5vw, 72px) 64px 56px; scroll-margin-top: 24px; min-width: 0; }
+.intake { align-self: center; justify-self: center; width: 100%; max-width: 688px; background: #fff; padding: 64px min(5vw, 72px) 64px 56px; scroll-margin-top: 24px; min-width: 0; }
 label { display: block; font-size: 17px; font-weight: 700; margin: 26px 0 10px; }
 label[for="website"] { margin-top: 0; }
 input, textarea { display: block; width: 100%; background: white; border: 1px solid #c8ced9; border-radius: 5px; padding: 14px 15px; color: #14213c; line-height: 1.4; font-size: 17px; }
@@ -106,7 +107,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   .starting-price { font-size: 19px; }
   .starting-price strong { font-size: 52px; }
   .price-explanation { font-size: 16px; }
-  .intake { padding: 40px 24px; }
+  .intake { max-width: none; padding: 40px 24px; }
   .how ol { padding-block: 30px; padding-inline: 12px; }
   .how li { padding-inline: 8px; gap: 10px; }
   .step-number { font-size: clamp(52px, 13vw, 86px); -webkit-text-stroke-width: 1px; }
