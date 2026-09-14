@@ -26,7 +26,8 @@ nav { display: flex; align-items: center; gap: 36px; font-size: 17px; }
 .intro { display: grid; grid-template-columns: 1.2fr 1fr; align-items: start; gap: 48px; padding-top: 52px; padding-bottom: 62px; }
 .pitch { min-width: 0; padding-top: 22px; }
 h1 { font-size: clamp(42px, 4.5vw, 64px); line-height: 1.05; letter-spacing: -.055em; color: var(--blue); margin: 0; font-weight: 800; }
-.hero-price { margin-top: 60px; }
+.lead { margin: 24px 0 0; font-size: clamp(19px, 1.8vw, 24px); line-height: 1.4; color: #3f4c63; }
+.hero-price { margin-top: 40px; }
 .starting-price { margin: 0; font-size: 23px; letter-spacing: -.025em; }
 .starting-price strong { display: block; color: var(--blue); font-size: 152px; line-height: 1; letter-spacing: -.07em; }
 .price-explanation { margin: 12px 0 0; color: #3f4c63; font-size: 17px; line-height: 1.5; }
