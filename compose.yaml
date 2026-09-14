@@ -8,6 +8,8 @@ services:
       - "127.0.0.1:8137:8080"
     env_file: .env
     read_only: true
+    volumes:
+      - attribution:/data
     tmpfs:
       - /tmp:size=32m
     cap_drop: [ALL]
@@ -15,3 +17,5 @@ services:
     mem_limit: 128m
     cpus: 0.5
     pids_limit: 64
+volumes:
+  attribution:

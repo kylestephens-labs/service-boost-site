@@ -10,3 +10,7 @@ jobs:
       - run: python3 -m unittest discover -s backend -p 'test_*.py'
       - run: node --check app.js
       - run: node --check config.js
+      - run: node --test test-attribution.mjs
+      - run: python3 build-site.py
+      - run: docker build -f backend/Dockerfile -t serviceboost-attribution-test .
+      - run: python3 backend/container_smoke.py

@@ -8,3 +8,5 @@ __pycache__/
 *.key
 .venv/
 public-site/
+*.sqlite3*
+outreach-links*.csv
