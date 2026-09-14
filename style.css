@@ -9,7 +9,8 @@
 }
 * { box-sizing: border-box; }
 body { margin: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 144px; }
+.nav-shell { position: sticky; top: 0; z-index: 5; background: #fff; box-shadow: 0 1px 0 #e7eaf1; }
 a { color: inherit; }
 button, input, textarea { font: inherit; }
 .page-width { max-width: 1440px; margin-inline: auto; padding-inline: 72px; }
@@ -89,6 +90,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   .site-footer::before { left: 40px; right: 40px; }
 }
 @media (max-width: 760px) {
+  html { scroll-padding-top: 120px; }
   .page-width { padding-inline: 24px; }
   .site-header { padding-block: 22px; }
   .brand { font-size: 17px; gap: 10px; }
