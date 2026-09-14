@@ -3,6 +3,35 @@ const website = document.querySelector('#website');
 const problem = document.querySelector('#problem');
 const status = document.querySelector('#form-status');
 const websiteError = document.querySelector('#website-error');
+// Page-lifetime reference only: no cookies, fingerprinting or typed form values.
+const sourceRef = new URLSearchParams(location.search).get('ref');
+const validRef = /^[A-Za-z0-9_-]{32}$/.test(sourceRef || '') ? sourceRef : null;
+let quoteEventId = null;
+function sourceFields() {
+  return validRef && quoteEventId ? { ref: validRef, event_id: quoteEventId } : {};
+}
+function trackArrival() {
+  if (!validRef || document.visibilityState !== 'visible' || navigator.webdriver || !crypto.randomUUID) return;
+  const endpoint = window.SERVICE_BOOST_QUOTE_ENDPOINT;
+  if (!endpoint || !endpoint.startsWith('https://')) return;
+  const key = `sb-visit:${validRef}`;
+  let id = crypto.randomUUID();
+  try {
+    id = sessionStorage.getItem(key) || id;
+    sessionStorage.setItem(key, id);
+  } catch { /* Storage blocked: server still bounds and deduplicates events. */ }
+  fetch(new URL('/events', endpoint), {
+    method: 'POST', credentials: 'omit', keepalive: true,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ref: validRef, event_id: id, type: 'visit' }),
+  }).catch(() => {});
+}
+if (document.visibilityState === 'visible') trackArrival();
+else document.addEventListener('visibilitychange', function visible() {
+  if (document.visibilityState !== 'visible') return;
+  document.removeEventListener('visibilitychange', visible);
+  trackArrival();
+});
 function websiteUrl(value) {
   try {
     const url = new URL(/^[a-z][a-z\d+.-]*:/i.test(value) ? value : `https://${value}`);
@@ -32,6 +61,7 @@ form.addEventListener('submit', async event => {
     return;
   }
   const button = form.querySelector('button[type="submit"]');
+  if (!quoteEventId && crypto.randomUUID) quoteEventId = crypto.randomUUID();
   button.disabled = true;
   button.textContent = 'Sending…';
   status.textContent = '';
@@ -40,7 +70,7 @@ form.addEventListener('submit', async event => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'omit',
-      body: JSON.stringify({ website: website.value.trim(), problem: problem.value.trim(), email: form.elements.email.value.trim(), company: form.elements.company.value }),
+      body: JSON.stringify({ website: website.value.trim(), problem: problem.value.trim(), email: form.elements.email.value.trim(), company: form.elements.company.value, ...sourceFields() }),
       signal: AbortSignal.timeout(45000),
     });
     if (!response.ok) {
@@ -50,6 +80,7 @@ form.addEventListener('submit', async event => {
     status.textContent = 'Your request has been sent. We’ll reply by email.';
     form.querySelectorAll('.reassurance').forEach(text => { text.hidden = true; });
     form.reset();
+    quoteEventId = null;
   } catch {
     status.textContent = 'We could not confirm delivery. Your details are still here. Please try again or email notify@serviceboost.co.';
   } finally {

@@ -31,7 +31,7 @@ def main():
         config.chmod(0o600)
         archive = tmp / 'backend.tar.gz'
         with tarfile.open(archive, 'w:gz') as bundle:
-            for name in ['backend/app.py', 'backend/requirements.txt', 'backend/Dockerfile', 'compose.yaml']:
+            for name in ['backend/app.py', 'backend/attribution.py', 'backend/gunicorn.conf.py', 'backend/requirements.txt', 'backend/Dockerfile', 'compose.yaml']:
                 bundle.add(name, arcname=name)
             bundle.add(config, arcname='.env')
         options = ['-i', str(key), '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=yes', '-o', f'UserKnownHostsFile={known}']
