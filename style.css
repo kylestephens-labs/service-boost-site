@@ -23,15 +23,16 @@ nav { display: flex; align-items: center; gap: 36px; font-size: 17px; }
 .button, .submit { background: var(--blue); color: white; border: 0; font-weight: 700; cursor: pointer; transition: background .18s ease; }
 .button { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 15px 24px; border-radius: 40px; text-decoration: none; }
 .button:hover, .submit:hover { background: #153bc9; }
-.intro { display: grid; grid-template-columns: 1.2fr 1fr; align-items: start; gap: 48px; padding-top: 52px; padding-bottom: 62px; }
-.pitch { min-width: 0; padding-top: 22px; }
-h1 { font-size: clamp(42px, 4.5vw, 64px); line-height: 1.05; letter-spacing: -.055em; color: var(--blue); margin: 0; font-weight: 800; }
-.lead { margin: 24px 0 0; font-size: clamp(19px, 1.8vw, 24px); line-height: 1.4; color: #3f4c63; }
-.hero-price { margin-top: 40px; }
+.intro { display: grid; grid-template-columns: 57fr 43fr; }
+.pitch { min-width: 0; background: var(--blue); color: #fff; padding: 140px 40px 92px 5vw; }
+h1 { font-size: clamp(42px, 5.2vw, 80px); line-height: 1.08; letter-spacing: -.055em; color: #fff; margin: 0; font-weight: 800; }
+h1 span { color: var(--yellow); }
+.lead { margin: 36px 0 0; font-size: clamp(19px, 2.2vw, 30px); line-height: 1.4; color: #fff; }
+.hero-price { margin-top: 100px; padding-top: 36px; border-top: 1px solid #ffffff70; }
 .starting-price { margin: 0; font-size: 23px; letter-spacing: -.025em; }
-.starting-price strong { display: block; color: var(--blue); font-size: 152px; line-height: 1; letter-spacing: -.07em; }
-.price-explanation { margin: 12px 0 0; color: #3f4c63; font-size: 17px; line-height: 1.5; }
-.intake { background: #eef0f5; border-radius: 12px; padding: 38px 32px 28px; scroll-margin-top: 24px; }
+.starting-price strong { display: block; color: var(--yellow); font-size: 64px; line-height: 1.15; letter-spacing: -.05em; margin-top: 10px; }
+.price-explanation { margin: 12px 0 0; color: #fff; font-size: 17px; line-height: 1.5; }
+.intake { align-self: center; background: #fff; padding: 64px 5vw 64px 56px; scroll-margin-top: 24px; min-width: 0; }
 label { display: block; font-size: 17px; font-weight: 700; margin: 26px 0 10px; }
 label[for="website"] { margin-top: 0; }
 input, textarea { display: block; width: 100%; background: white; border: 1px solid #c8ced9; border-radius: 5px; padding: 14px 15px; color: #14213c; line-height: 1.4; font-size: 17px; }
@@ -78,11 +79,11 @@ input::placeholder, textarea::placeholder { color: #6c7280; }
 a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid #617ff8; outline-offset: 4px; }
 @media (max-width: 1100px) {
   .page-width { padding-inline: 40px; }
-  .intro { gap: 30px; padding-top: 36px; }
+  .pitch { padding: 72px 32px 56px 40px; }
   h1 { font-size: 4.8vw; }
-  .starting-price strong { font-size: 120px; }
-  .hero-price { margin-top: 40px; }
-  .intake { padding: 28px; }
+  .starting-price strong { font-size: 56px; }
+  .hero-price { margin-top: 64px; }
+  .intake { padding: 40px 32px; }
   .step-number { font-size: 110px; }
   .how strong { font-size: 24px; }
   .service-labels li { font-size: 20px; padding-inline: 10px; }
@@ -97,14 +98,14 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   nav { gap: 0; }
   .how-link { display: none; }
   .button { font-size: 14px; padding: 12px 16px; min-height: 44px; }
-  .intro { grid-template-columns: 1fr; gap: 30px; padding-top: 24px; padding-bottom: 36px; }
-  .pitch { padding-top: 0; }
+  .intro { grid-template-columns: 1fr; }
+  .pitch { padding: 44px 24px 36px; }
   h1 { font-size: clamp(38px, 8.5vw, 58px); }
-  .hero-price { margin-top: 30px; }
+  .hero-price { margin-top: 40px; padding-top: 24px; }
   .starting-price { font-size: 19px; }
-  .starting-price strong { font-size: 90px; }
+  .starting-price strong { font-size: 52px; }
   .price-explanation { font-size: 16px; }
-  .intake { padding: 26px 22px; }
+  .intake { padding: 40px 24px; }
   .how ol { padding-block: 30px; padding-inline: 12px; }
   .how li { padding-inline: 8px; gap: 10px; }
   .step-number { font-size: clamp(52px, 13vw, 86px); -webkit-text-stroke-width: 1px; }
