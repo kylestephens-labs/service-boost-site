@@ -9,7 +9,7 @@ function page({ ref = 'a'.repeat(32), visible = true, blocked = false, storage =
   const button = {}, status = {}, error = {};
   const website = { value: address, addEventListener() {}, setCustomValidity() {}, removeAttribute() {}, setAttribute() {}, focus() {} };
   const problem = { value: 'Please fix my booking form.' };
-  const form = { elements: { name: { value: 'Test Visitor' }, project_type: { value: project }, email: { value: 'private@example.com' }, company: { value: '' } }, addEventListener: (n, f) => handlers[n] = f, querySelector: () => button, querySelectorAll: () => [], reset() { this.resetCalled = true; this.elements.project_type.value = 'build'; } };
+  const form = { elements: { name: { value: 'Test Visitor' }, project_type: { value: project }, email: { value: 'private@example.com' }, company: { value: '' } }, addEventListener: (n, f) => handlers[n] = f, querySelector: () => button, querySelectorAll: () => [], reset() { this.resetCalled = true; this.elements.project_type.value = 'improve'; } };
   const nodes = { '#request-form': form, '#website': website, '#problem': problem, '#form-status': status, '#website-error': error, '#website-label': {} };
   const document = { visibilityState: visible ? 'visible' : 'hidden', querySelector: s => nodes[s], querySelectorAll: () => [], addEventListener: (n, f) => handlers[n] = f, removeEventListener: n => delete handlers[n] };
   vm.runInNewContext(source, {
@@ -58,6 +58,7 @@ test('new website request can omit its URL and sends name and selected scope', a
   assert.equal(p.calls[0].data.name, 'Test Visitor');
   assert.equal(p.calls[0].data.project_type, 'build');
   assert.equal(p.form.resetCalled, true);
+  assert.equal(p.website.required, true);
 });
 test('repairs require a URL; either project rejects a malformed supplied URL', async () => {
   for (const [project, address] of [['improve', ''], ['build', 'javascript:alert(1)'], ['build', 'bad site.com'], ['improve', 'https://user:pass@example.com']]) {

@@ -27,6 +27,7 @@ h1 { font-size: clamp(42px, 5.7vw, 88px); line-height: 1.07; letter-spacing: -.0
 h1 span { color: var(--yellow); }
 .lead { margin-top: 30px; max-width: 660px; font-size: clamp(20px, 1.7vw, 26px); }
 .direct { margin-top: 30px; font-size: 20px; }
+.project-promise { margin-top: 18px; max-width: 490px; font-size: 16px; color: var(--yellow); }
 .intake { background: #eef0f5; border-radius: 12px; padding: 30px; min-width: 0; scroll-margin-top: 20px; }
 .intake h2 { font-size: 25px; letter-spacing: -.03em; margin-bottom: 20px; }
 .project-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border: 0; padding: 0; margin: 0 0 20px; }
@@ -46,6 +47,8 @@ input::placeholder, textarea::placeholder { color: #626c7d; }
 .privacy-notice { font-size: 12px; margin-top: 8px; }
 .privacy-notice summary { cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .privacy-notice p { margin-top: 12px; }
+.email-alternative { margin-top: 20px; text-align: center; color: var(--muted); font-size: 14px; }
+.email-alternative a { display: inline-block; color: #153bc9; text-underline-offset: 3px; overflow-wrap: anywhere; }
 .field-error { display: block; color: #a32323; font-size: 14px; margin-top: 8px; line-height: 1.4; }
 .field-error:empty { display: none; }
 #form-status { margin-top: 18px; font-size: 16px; line-height: 1.5; color: #233f33; }
@@ -74,6 +77,13 @@ figcaption > p:last-child { color: var(--muted); max-width: 480px; font-size: 20
 .step-number { display: grid; place-items: center; flex: 0 0 56px; height: 56px; background: #edf2fd; color: var(--blue); border-radius: 50%; font-weight: 700; font-size: 21px; }
 .steps h3 { font-size: 18px; letter-spacing: -.02em; }
 .steps p { font-size: 16px; margin-top: 10px; color: var(--muted); }
+.faq { display: grid; grid-template-columns: 1fr 1.35fr; gap: 64px; background: #f5f7fb; }
+.faq-heading .eyebrow { margin-bottom: 18px; color: #153bc9; }
+.faq details { border-bottom: 1px solid #c8ced9; }
+.faq details:first-child { border-top: 1px solid #c8ced9; }
+.faq summary { padding: 22px 4px; cursor: pointer; font-size: 19px; font-weight: 700; line-height: 1.4; }
+.faq summary:hover { color: #153bc9; }
+.faq details p { padding: 0 4px 24px; color: var(--muted); font-size: 18px; }
 .closing { background: var(--blue); color: #fff; text-align: center; padding-block: 50px; }
 .closing h2 { font-size: clamp(28px, 2.7vw, 40px); }
 .closing .button { margin-top: 26px; background: var(--yellow); color: #14213c; padding-inline: 42px; }
@@ -98,6 +108,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   .steps li { gap: 14px; }
   .steps li + li { padding-left: 20px; }
   .step-number { flex-basis: 40px; height: 40px; font-size: 17px; }
+  .site-header nav { gap: 18px; }
 }
 @media (max-width: 800px) {
   html { scroll-padding-top: 100px; }
@@ -127,6 +138,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   .steps li + li { padding-left: 0; border-left: 0; }
   .step-number { flex-basis: 48px; height: 48px; }
   .steps p { margin-top: 6px; }
+  .faq { grid-template-columns: 1fr; gap: 28px; }
+  .faq-heading br { display: none; }
+  .faq summary { font-size: 18px; }
+  .faq details p { font-size: 17px; }
   .site-footer { align-items: flex-start; flex-direction: column; }
 }
 @media (max-width: 380px) {
