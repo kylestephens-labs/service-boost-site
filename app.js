@@ -3,6 +3,24 @@ const website = document.querySelector('#website');
 const problem = document.querySelector('#problem');
 const status = document.querySelector('#form-status');
 const websiteError = document.querySelector('#website-error');
+const websiteLabel = document.querySelector('#website-label');
+function clearWebsiteError() {
+  website.setCustomValidity('');
+  website.removeAttribute('aria-invalid');
+  websiteError.textContent = '';
+}
+function updateProjectType() {
+  const build = form.elements.project_type.value === 'build';
+  website.required = !build;
+  websiteLabel.textContent = build ? 'Website (optional)' : 'Website';
+  clearWebsiteError();
+}
+form.querySelectorAll('[name="project_type"]').forEach(input => input.addEventListener('change', updateProjectType));
+document.querySelectorAll('[data-project]').forEach(link => link.addEventListener('click', () => {
+  form.elements.project_type.value = link.dataset.project;
+  updateProjectType();
+}));
+updateProjectType();
 // Page-lifetime reference only: no cookies, fingerprinting or typed form values.
 const sourceRef = new URLSearchParams(location.search).get('ref');
 const validRef = /^[A-Za-z0-9_-]{32}$/.test(sourceRef || '') ? sourceRef : null;
@@ -39,16 +57,13 @@ function websiteUrl(value) {
     return url.href;
   } catch { return null; }
 }
-website.addEventListener('input', () => {
-  website.setCustomValidity('');
-  website.removeAttribute('aria-invalid');
-  websiteError.textContent = '';
-});
+website.addEventListener('input', clearWebsiteError);
 form.addEventListener('submit', async event => {
   event.preventDefault();
   form.querySelectorAll('.reassurance').forEach(text => { text.hidden = false; });
   status.hidden = true;
-  if (!websiteUrl(website.value.trim())) {
+  const address = website.value.trim();
+  if ((address || website.required) && (!websiteUrl(address) || /\s/.test(address))) {
     websiteError.textContent = 'Enter a website address, like yourbusiness.com.';
     website.setAttribute('aria-invalid', 'true');
     website.focus();
@@ -70,7 +85,7 @@ form.addEventListener('submit', async event => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'omit',
-      body: JSON.stringify({ website: website.value.trim(), problem: problem.value.trim(), email: form.elements.email.value.trim(), company: form.elements.company.value, ...sourceFields() }),
+      body: JSON.stringify({ website: address, name: form.elements.name.value.trim(), project_type: form.elements.project_type.value, problem: problem.value.trim(), email: form.elements.email.value.trim(), company: form.elements.company.value, ...sourceFields() }),
       signal: AbortSignal.timeout(45000),
     });
     if (!response.ok) {
@@ -80,6 +95,7 @@ form.addEventListener('submit', async event => {
     status.textContent = 'Your request has been sent. We’ll reply by email.';
     form.querySelectorAll('.reassurance').forEach(text => { text.hidden = true; });
     form.reset();
+    updateProjectType();
     quoteEventId = null;
   } catch {
     status.textContent = 'We could not confirm delivery. Your details are still here. Please try again or email notify@serviceboost.co.';

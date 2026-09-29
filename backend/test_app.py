@@ -37,6 +37,31 @@ class IntakeTests(unittest.TestCase):
         send.assert_not_called()
 
     @patch('backend.app.send_quote')
+    def test_build_can_omit_website_and_preserves_name_and_scope(self, send):
+        self.assertEqual(self.request({**self.data, 'website': '', 'project_type': 'build', 'name': '  Kyle  '})[0], '200 OK')
+        self.assertEqual(send.call_args.args[0]['website'], '')
+        self.assertEqual(send.call_args.args[0]['name'], 'Kyle')
+        self.assertEqual(send.call_args.args[0]['project_type'], 'build')
+
+    def test_project_validation_keeps_legacy_and_url_guards(self):
+        self.assertEqual(app.validate(self.data)['project_type'], 'improve')
+        for changes in [dict(website=''), dict(project_type='other'), dict(project_type=[]), dict(project_type='build', website='javascript:alert(1)'), dict(name='x'*121), dict(name='Hi\nInjected'), dict(name=[])]:
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                app.validate({**self.data, **changes})
+
+    @patch('backend.app.smtplib.SMTP')
+    def test_notification_includes_new_project_fields_without_changing_recipient(self, smtp):
+        smtp.return_value.__enter__.return_value.send_message.return_value = {}
+        fields = app.validate({**self.data, 'website': '', 'project_type': 'build', 'name': 'Test Visitor'})
+        app.send_quote(fields)
+        message = smtp.return_value.__enter__.return_value.send_message.call_args.args[0]
+        self.assertEqual(message['To'], app.RECIPIENT)
+        self.assertEqual(message['Reply-To'], self.data['email'])
+        self.assertIn('Project: New website', message.get_content())
+        self.assertIn('Name: Test Visitor', message.get_content())
+        self.assertIn('Website: Not provided', message.get_content())
+
+    @patch('backend.app.send_quote')
     def test_rate_limit(self, send):
         for _ in range(5):
             self.assertEqual(self.request(self.data)[0], '200 OK')

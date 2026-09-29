@@ -4,22 +4,22 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 const source = readFileSync(new URL('./app.js', import.meta.url), 'utf8');
 
-function page({ ref = 'a'.repeat(32), visible = true, blocked = false, storage = new Map(), fetchFail = false } = {}) {
+function page({ ref = 'a'.repeat(32), visible = true, blocked = false, storage = new Map(), fetchFail = false, address = 'example.com', project = 'improve', quoteStatus = 200, quoteThrows = false } = {}) {
   const handlers = {}, calls = [];
   const button = {}, status = {}, error = {};
-  const website = { value: 'example.com', addEventListener() {}, setCustomValidity() {}, removeAttribute() {}, setAttribute() {}, focus() {} };
+  const website = { value: address, addEventListener() {}, setCustomValidity() {}, removeAttribute() {}, setAttribute() {}, focus() {} };
   const problem = { value: 'Please fix my booking form.' };
-  const form = { elements: { email: { value: 'private@example.com' }, company: { value: '' } }, addEventListener: (n, f) => handlers[n] = f, querySelector: () => button, querySelectorAll: () => [], reset() { this.resetCalled = true; } };
-  const nodes = { '#request-form': form, '#website': website, '#problem': problem, '#form-status': status, '#website-error': error };
-  const document = { visibilityState: visible ? 'visible' : 'hidden', querySelector: s => nodes[s], addEventListener: (n, f) => handlers[n] = f, removeEventListener: n => delete handlers[n] };
+  const form = { elements: { name: { value: 'Test Visitor' }, project_type: { value: project }, email: { value: 'private@example.com' }, company: { value: '' } }, addEventListener: (n, f) => handlers[n] = f, querySelector: () => button, querySelectorAll: () => [], reset() { this.resetCalled = true; this.elements.project_type.value = 'build'; } };
+  const nodes = { '#request-form': form, '#website': website, '#problem': problem, '#form-status': status, '#website-error': error, '#website-label': {} };
+  const document = { visibilityState: visible ? 'visible' : 'hidden', querySelector: s => nodes[s], querySelectorAll: () => [], addEventListener: (n, f) => handlers[n] = f, removeEventListener: n => delete handlers[n] };
   vm.runInNewContext(source, {
     document, location: { search: '?ref=' + ref }, navigator: {},
     window: { SERVICE_BOOST_QUOTE_ENDPOINT: 'https://quotes.serviceboost.co/quote' },
     URL, URLSearchParams, AbortSignal, crypto: { randomUUID: () => '12345678-1234-1234-1234-123456789abc' },
     sessionStorage: { getItem(k) { if (blocked) throw Error(); return storage.get(k); }, setItem(k,v) { storage.set(k,v); } },
-    fetch: async (url, options) => { calls.push({ url: String(url), data: JSON.parse(options.body) }); if (fetchFail && String(url).endsWith('/events')) throw Error(); return { ok: true }; },
+    fetch: async (url, options) => { calls.push({ url: String(url), data: JSON.parse(options.body) }); if (String(url).endsWith('/events')) { if (fetchFail) throw Error(); return { ok: true }; } if (quoteThrows) throw Error(); return { ok: quoteStatus === 200, status: quoteStatus }; },
   });
-  return { calls, handlers, form, status, document };
+  return { calls, handlers, form, status, document, website, error, button };
 }
 
 test('tagged arrival records only allowlisted metadata; reload reuses ID', () => {
@@ -49,4 +49,32 @@ test('ordinary quote remains backward compatible', async () => {
   assert.equal(p.calls.length, 1);
   assert.equal(p.calls[0].data.ref, undefined);
   assert.equal(p.form.resetCalled, true);
+});
+test('new website request can omit its URL and sends name and selected scope', async () => {
+  const p = page({ ref: '', project: 'build', address: '' });
+  await p.handlers.submit({ preventDefault() {} });
+  assert.equal(p.calls.length, 1);
+  assert.equal(p.calls[0].data.website, '');
+  assert.equal(p.calls[0].data.name, 'Test Visitor');
+  assert.equal(p.calls[0].data.project_type, 'build');
+  assert.equal(p.form.resetCalled, true);
+});
+test('repairs require a URL; either project rejects a malformed supplied URL', async () => {
+  for (const [project, address] of [['improve', ''], ['build', 'javascript:alert(1)'], ['build', 'bad site.com'], ['improve', 'https://user:pass@example.com']]) {
+    const p = page({ ref: '', project, address });
+    await p.handlers.submit({ preventDefault() {} });
+    assert.equal(p.calls.length, 0);
+    assert.match(p.error.textContent, /Enter a website/);
+    assert.equal(p.form.resetCalled, undefined);
+  }
+});
+test('failed delivery preserves input, restores button and does not claim success', async () => {
+  for (const options of [{ quoteStatus: 429 }, { quoteStatus: 502 }, { quoteThrows: true }]) {
+    const p = page({ ref: '', project: 'build', address: '', ...options });
+    await p.handlers.submit({ preventDefault() {} });
+    assert.equal(p.form.resetCalled, undefined);
+    assert.equal(p.form.elements.name.value, 'Test Visitor');
+    assert.equal(p.button.disabled, false);
+    assert.match(p.status.textContent, /Too many requests|could not confirm delivery/);
+  }
 });

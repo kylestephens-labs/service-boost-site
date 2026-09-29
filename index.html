@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="no-referrer">
-  <title>Service Boost — Website repairs &amp; improvements</title>
-  <meta name="description" content="Website repairs and improvements for smoother contact and booking. Small fixes from $199. Get a free quote before work begins.">
+  <title>Service Boost | Websites, repairs and practical support</title>
+  <meta name="description" content="New websites and practical website repairs for small businesses. Work directly with Kyle Stephens. Small fixes from $199. Get a free quote.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=clear-path-1">
+  <link rel="stylesheet" href="style.css?v=builds-and-proof-1">
   <script src="config.js" defer></script>
   <script src="app.js" defer></script>
 </head>
@@ -16,27 +16,35 @@
   <div class="nav-shell">
   <header class="site-header page-width">
     <a class="brand" href="#" aria-label="Service Boost home"><span class="brand-mark" aria-hidden="true">sb.</span><span>Service Boost</span></a>
-    <nav aria-label="Main navigation"><a class="how-link" href="#how">How it works</a><a class="button" href="#request">Get a free quote</a></nav>
+    <nav aria-label="Main navigation"><a class="nav-link" href="#work">Work</a><a class="nav-link" href="#services">Services</a><a class="nav-link" href="#about">About Kyle</a><a class="button" href="#request">Get a free quote</a></nav>
   </header>
   </div>
   <main id="main">
-    <section class="intro" aria-labelledby="headline">
+    <section class="intro page-width" aria-labelledby="headline">
       <div class="pitch">
-        <h1 id="headline">Make it easier for website visitors to <span>contact you or book.</span></h1>
-        <p class="lead">We fix and improve your website’s contact and booking experience.</p>
-        <div class="hero-price"><p class="starting-price">Small fixes from <strong>$199</strong></p><p class="price-explanation">Larger projects quoted individually.</p></div>
+        <p class="eyebrow">Websites for small businesses</p>
+        <h1 id="headline">A new website.<br>A better website.<br><span>One person to help.</span></h1>
+        <p class="lead">I build websites and fix the ones you already have, so customers can learn about your business and take the next step.</p>
+        <p class="direct">Work directly with Kyle Stephens.</p>
       </div>
       <div class="intake" id="request">
-        <h2 class="visually-hidden">Get a free quote</h2>
+        <h2>What do you need help with?</h2>
         <form id="request-form">
           <div hidden aria-hidden="true"><label for="company">Leave blank</label><input id="company" name="company" tabindex="-1" autocomplete="off"></div>
-          <label for="website">Website</label>
-          <input id="website" name="website" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com" required maxlength="500" aria-describedby="website-error">
-          <span id="website-error" class="field-error"></span>
-          <label for="problem">What would you like fixed or improved?</label>
-          <textarea id="problem" name="problem" rows="3" placeholder="e.g. My booking button doesn’t work on phones." required minlength="10" maxlength="4000"></textarea>
+          <fieldset class="project-choice">
+            <legend class="visually-hidden">Project type</legend>
+            <label><input type="radio" name="project_type" value="build" checked><span>Build a website</span></label>
+            <label><input type="radio" name="project_type" value="improve"><span>Improve my website</span></label>
+          </fieldset>
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" autocomplete="name" placeholder="Your name" required maxlength="120">
           <label for="email">Email</label>
           <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required maxlength="254">
+          <label for="website" id="website-label">Website <span>(optional)</span></label>
+          <input id="website" name="website" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com" maxlength="500" aria-describedby="website-error">
+          <span id="website-error" class="field-error"></span>
+          <label for="problem">Tell me about your project</label>
+          <textarea id="problem" name="problem" rows="3" placeholder="What would you like to build or improve?" required minlength="10" maxlength="4000"></textarea>
           <button class="submit" type="submit">Get a free quote</button>
           <p class="reassurance">No payment or call required.</p>
           <details class="reassurance privacy-notice"><summary>Privacy notice</summary><p>Your details are emailed to Service Boost through Google Workspace to respond to your request. Please don’t include passwords or sensitive information.</p><p>If you arrive through an outreach link, we record its reference, visit time, and accepted quote requests to understand which outreach is useful. The reference is privately associated with the prospect and campaign. We use temporary browser storage to avoid counting repeat visits in the same tab. Attribution records expire 90 days after the link is created and are removed within the next day. We do not record what you type for analytics. You can remove the ref parameter from the URL before using the site to avoid this tracking.</p></details>
@@ -44,32 +52,45 @@
         </form>
       </div>
     </section>
-    <section class="how" id="how" aria-label="How it works">
-      <ol class="page-width">
-        <li><span class="step-number" aria-hidden="true">01</span><span class="visually-hidden">Step 1:</span><strong>Send the problem.</strong></li>
-        <li><span class="step-number" aria-hidden="true">02</span><span class="visually-hidden">Step 2:</span><strong>Approve the quote.</strong></li>
-        <li><span class="step-number" aria-hidden="true">03</span><span class="visually-hidden">Step 3:</span><strong>Get it fixed.</strong></li>
-      </ol>
+    <section class="services page-width section-space" id="services" aria-labelledby="services-heading">
+      <h2 id="services-heading">Build something new. Improve what you have.</h2>
+      <div class="service-grid">
+        <article class="service">
+          <span class="service-icon"><img src="assets/icons/device-mobile.svg" width="40" height="40" alt=""></span>
+          <div><h3>Complete websites</h3><p>A clear, mobile friendly website with your services, essential pages and an easy way to contact you.</p><a href="#request" data-project="build">Quoted to fit your project.</a></div>
+        </article>
+        <article class="service">
+          <span class="service-icon"><img src="assets/icons/gauge.svg" width="40" height="40" alt=""></span>
+          <div><h3>Website repairs and updates</h3><p>Forms, booking, mobile layouts, content updates and broken buttons.</p><a href="#request" data-project="improve">Small fixes from $199.</a></div>
+        </article>
+      </div>
     </section>
-    <section class="fix-example" aria-labelledby="example-heading">
-      <div class="example-layout page-width">
-        <h2 id="example-heading">Small changes.<br>A clearer next step.</h2>
-        <figure class="comparison">
-          <img src="assets/booking-comparison-v2.png" width="1536" height="1024" loading="lazy" decoding="async" alt="Illustrative example. Before: misaligned fields overflow the phone and the booking button is mostly cut off, with a dashed line marking the clipped edge. After: the same form is evenly spaced and fully visible.">
+    <section class="work page-width section-space" id="work" aria-labelledby="work-heading">
+      <h2 id="work-heading">See how I approach the work.</h2>
+      <div class="work-grid">
+        <figure>
+          <a class="work-image" href="assets/serviceboost-project.png" aria-label="View full Service Boost website example"><img src="assets/serviceboost-project.png" width="1440" height="1000" loading="lazy" decoding="async" alt="Service Boost’s original website, showing its service description, pricing and quote request form."></a>
+          <figcaption><p class="eyebrow">Own business website</p><h3>Service Boost</h3><p>A clear service page with pricing and a simple quote request form.</p></figcaption>
+        </figure>
+        <figure>
+          <a class="work-image" href="assets/booking-comparison-v2.png" aria-label="View full illustrative booking comparison"><img src="assets/booking-comparison-v2.png" width="1536" height="1024" loading="lazy" decoding="async" alt="Illustrative example. Before: misaligned fields overflow the phone and the booking button is mostly cut off. After: the same form is evenly spaced and fully visible."></a>
+          <figcaption><p class="eyebrow">Illustrative demonstration</p><h3>A clearer booking experience</h3><p>An example of fixing spacing, alignment and a cut off booking button.</p></figcaption>
         </figure>
       </div>
     </section>
-    <section class="service-details page-width" aria-labelledby="services-heading">
-      <h2 id="services-heading">What we can help with</h2>
-      <ul class="service-labels">
-        <li><span class="service-icon"><img src="assets/icons/file-text.svg" width="40" height="40" alt=""></span><span>Fix contact<br>forms</span></li>
-        <li><span class="service-icon"><img src="assets/icons/calendar.svg" width="40" height="40" alt=""></span><span>Simplify<br>booking</span></li>
-        <li><span class="service-icon"><img src="assets/icons/device-mobile.svg" width="40" height="40" alt=""></span><span>Improve<br>mobile layouts</span></li>
-        <li><span class="service-icon"><img src="assets/icons/link.svg" width="40" height="40" alt=""></span><span>Fix broken<br>links &amp; buttons</span></li>
-        <li><span class="service-icon"><img src="assets/icons/gauge.svg" width="40" height="40" alt=""></span><span>Speed up<br>slow pages</span></li>
-      </ul>
+    <section class="about page-width section-space" id="about" aria-labelledby="about-heading">
+      <div class="about-copy"><h2 id="about-heading">Hi, I’m Kyle. You’ll work<br class="desktop-break"> directly with me.</h2><p>I run Service Boost in Walnut Creek, California. I enjoy solving technical problems and making websites easier to use. Tell me what you need, and I’ll help you define a practical next step.</p></div>
+      <ol class="steps" id="how" aria-label="How it works">
+        <li><span class="step-number" aria-hidden="true">01</span><div><h3>Tell me what you need</h3><p>Share a few details about your business and your goals.</p></div></li>
+        <li><span class="step-number" aria-hidden="true">02</span><div><h3>Review the scope and quote</h3><p>I’ll suggest a practical approach and provide a clear quote.</p></div></li>
+        <li><span class="step-number" aria-hidden="true">03</span><div><h3>Build, check and launch</h3><p>I’ll make the updates, then test everything before launch.</p></div></li>
+      </ol>
+    </section>
+    <section class="closing page-width" aria-labelledby="closing-heading">
+      <h2 id="closing-heading">Let’s make your website work for you.</h2>
+      <a class="button" href="#request">Tell me about your project</a>
     </section>
   </main>
-  <footer class="site-footer page-width"><div><a class="brand" href="#" aria-label="Service Boost home"><span class="brand-mark" aria-hidden="true">sb.</span><span>Service Boost</span></a><span class="owner">Run by Kyle Stephens.</span></div><p>Small fixes.<br>Big momentum.</p></footer>
+  <footer class="site-footer page-width"><div><a class="brand" href="#" aria-label="Service Boost home"><span class="brand-mark" aria-hidden="true">sb.</span><span>Service Boost</span></a><p>Websites, repairs and practical support.</p></div><nav aria-label="Footer navigation"><a href="#work">Work</a><a href="#services">Services</a><a href="#about">About Kyle</a></nav></footer>
 </body>
 </html>
