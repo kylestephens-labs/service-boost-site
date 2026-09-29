@@ -57,7 +57,7 @@ def validate(data):
     if not isinstance(data, dict):
         raise ValueError('Invalid request.')
     fields = {}
-    for key, maximum in [('website', 500), ('problem', 4000), ('email', 254), ('company', 200)]:
+    for key, maximum in [('website', 500), ('problem', 4000), ('email', 254), ('company', 200), ('name', 120)]:
         value = data.get(key, '')
         if not isinstance(value, str) or len(value) > maximum:
             raise ValueError('Please check the form fields.')
@@ -67,12 +67,21 @@ def validate(data):
         raise ValueError('Unable to accept this request.')
     if not EMAIL.fullmatch(fields['email']):
         raise ValueError('Enter a valid email address.')
+    # Missing type remains a repair request for older frontend clients.
+    fields['project_type'] = data.get('project_type', 'improve')
+    if fields['project_type'] not in ('build', 'improve'):
+        raise ValueError('Choose a project type.')
+    if any(ord(c) < 32 for c in fields['name']):
+        raise ValueError('Enter a valid name.')
     address = fields['website']
-    if '://' not in address:
-        address = 'https://' + address
-    url = urlsplit(address)
-    if url.scheme not in ('http', 'https') or not url.hostname or '.' not in url.hostname or url.username or url.password or any(c.isspace() for c in address):
+    if not address and fields['project_type'] != 'build':
         raise ValueError('Enter a website address, like yourbusiness.com.')
+    if address:
+        if '://' not in address:
+            address = 'https://' + address
+        url = urlsplit(address)
+        if url.scheme not in ('http', 'https') or not url.hostname or '.' not in url.hostname or url.username or url.password or any(c.isspace() for c in address):
+            raise ValueError('Enter a website address, like yourbusiness.com.')
     if len(fields['problem']) < 10 or '\x00' in fields['problem']:
         raise ValueError('Describe the problem in at least 10 characters.')
     fields['website'] = address
@@ -86,7 +95,8 @@ def send_quote(fields):
     message['Reply-To'] = fields['email']
     message['Subject'] = 'Service Boost — new quote request'
     source = f"\nOutreach reference: {fields['ref']}\n" if fields.get('ref') else ''
-    message.set_content(f"Website: {fields['website']}\nCustomer email: {fields['email']}\n\n{fields['problem']}\n{source}")
+    project = 'New website' if fields['project_type'] == 'build' else 'Website improvements'
+    message.set_content(f"Project: {project}\nName: {fields['name'] or 'Not provided'}\nWebsite: {fields['website'] or 'Not provided'}\nCustomer email: {fields['email']}\n\n{fields['problem']}\n{source}")
     # STARTTLS is mandatory. Never log SMTP traffic or message contents.
     with smtplib.SMTP('smtp-relay.gmail.com', 587, timeout=15) as smtp:
         smtp.ehlo()
