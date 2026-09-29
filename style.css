@@ -64,6 +64,8 @@ input::placeholder, textarea::placeholder { color: #626c7d; }
 figcaption { margin-top: 24px; }
 figcaption h3 { margin: 8px 0; }
 figcaption > p:last-child { color: var(--muted); max-width: 480px; font-size: 20px; }
+.about-intro { display: grid; grid-template-columns: minmax(180px, 280px) minmax(0, 1fr); align-items: center; gap: 48px; }
+.about-portrait { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; object-position: center 51%; border-radius: 50%; background: var(--yellow); }
 .about-copy { max-width: 840px; }
 .about-copy > p { margin-top: 24px; color: var(--muted); font-size: 21px; max-width: 750px; }
 .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; list-style: none; padding: 0; margin: 56px 0 0; }
@@ -117,6 +119,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   h3 { font-size: 24px; }
   .work-image { padding: 12px; }
   figcaption { margin-top: 20px; }
+  .about-intro { grid-template-columns: 1fr; gap: 28px; }
+  .about-portrait { width: 200px; }
   .about-copy > p { font-size: 19px; }
   .desktop-break { display: none; }
   .steps { grid-template-columns: 1fr; gap: 26px; margin-top: 36px; }
