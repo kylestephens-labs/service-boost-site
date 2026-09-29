@@ -50,7 +50,10 @@ Required fidelity surfaces:
 
 Acceptable differences: the real screenshot and existing booking illustration
 retain their original landscape proportions instead of the mock's approximate
-square images. About is text only while an approved portrait is unavailable.
+square images. About now uses Kyle’s supplied portrait, preserved as an original
+asset and framed with CSS. The frame is 280px on desktop and 200px on mobile.
+Browser checks confirmed no horizontal overflow; the desktop evidence is
+`../builds-proof-qa/portrait-desktop.png`.
 Privacy disclosure, visible input labels and working states are retained.
 
 ## Interaction and functional checks

@@ -7,7 +7,7 @@ and attribution remain in the existing backend; see BACKEND.md and ATTRIBUTION.m
 
 The project examples are an actual screenshot of Service Boost's original site
 and an explicitly illustrative booking comparison. No client results are claimed.
-The About section is text only until Kyle provides an approved portrait.
+The About section uses Kyle’s supplied portrait in a responsive circular frame.
 
 ## Build and repair intake release
 
