@@ -59,6 +59,16 @@ class SiteContracts(unittest.TestCase):
                 if tag == 'img':
                     self.assertIn('alt', attrs)
 
+    def test_portfolio_links_keep_attribution_hooks_and_logos_use_fragments(self):
+        for filename in ['index.html', 'landscape.html', 'salon.html']:
+            for tag, attrs in Page(filename).nodes:
+                if tag != 'a':
+                    continue
+                if 'brand' in attrs.get('class', '').split():
+                    self.assertEqual(attrs['href'], '#home')
+                if attrs.get('href') in ['/', '/landscape', '/salon']:
+                    self.assertIn('data-preserve-ref', attrs)
+
 
 if __name__ == '__main__':
     unittest.main()

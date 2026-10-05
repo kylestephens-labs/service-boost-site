@@ -49,7 +49,7 @@ retained without substitutes; approved headlines, FAQ and About text retained.
 
 ## Checks and review boundary
 
-17 backend unit tests, 7 quote/attribution tests and 3 static integration tests
+17 backend unit tests, 9 quote/attribution tests and 4 static integration tests
 pass. The static build and JS syntax checks pass. GitHub Validate also runs Docker
 build and the container smoke test on the exact PR head. Exact-head CI and an
 independent review are required before merging; this file does not certify them.
@@ -57,5 +57,11 @@ independent review are required before merging; this file does not certify them.
 All changed paths concern the approved frontend, its static packaging, tests or
 documentation. Shared dialog wiring replaces prototype React state; no frontend
 runtime dependency was added. Rollback is a revert of the frontend commit.
+
+Independent review identified dropped outreach references during portfolio round
+trips. Navigation now carries only a validated 32-character ref through concept
+links and return links. Brand links use same-page fragments. Regression tests
+cover both round trips and the resulting quote payload, malformed refs, unrelated
+query data and explicit opt-out by removing ref. No storage-based restoration.
 
 final result: passed

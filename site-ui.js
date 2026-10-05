@@ -1,4 +1,17 @@
 // Presentation only. Production quote validation/delivery stays in app.js.
+// Carry only the validated outreach reference through portfolio round trips.
+// Removing ref from the current URL remains an opt-out; never recover it from storage.
+const navigationRef = new URLSearchParams(location.search).get('ref');
+if (/^[A-Za-z0-9_-]{32}$/.test(navigationRef || '')) {
+  document.querySelectorAll('[data-preserve-ref]').forEach(link => {
+    const target = new URL(link.getAttribute('href'), location.href);
+    if (target.origin !== location.origin) return;
+    target.search = '';
+    target.searchParams.set('ref', navigationRef);
+    link.href = target.pathname + target.search + target.hash;
+  });
+}
+
 const quoteDialog = document.querySelector('#request');
 const openQuote = () => {
   if (quoteDialog && !quoteDialog.open) quoteDialog.showModal();

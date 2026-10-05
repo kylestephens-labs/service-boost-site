@@ -3,6 +3,21 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 const source = readFileSync(new URL('./app.js', import.meta.url), 'utf8');
+const navigationSource = readFileSync(new URL('./site-ui.js', import.meta.url), 'utf8');
+
+function portfolioLink(currentUrl, destination) {
+  const location = new URL(currentUrl);
+  const link = { href: destination, getAttribute: () => destination };
+  vm.runInNewContext(navigationSource, {
+    URL, URLSearchParams, location,
+    window: { addEventListener() {} },
+    document: {
+      querySelector: () => null,
+      querySelectorAll: selector => selector === '[data-preserve-ref]' ? [link] : [],
+    },
+  });
+  return new URL(link.href, currentUrl);
+}
 
 function page({ ref = 'a'.repeat(32), visible = true, blocked = false, storage = new Map(), fetchFail = false, address = 'example.com', project = 'improve', quoteStatus = 200, quoteThrows = false } = {}) {
   const handlers = {}, calls = [];
@@ -78,4 +93,33 @@ test('failed delivery preserves input, restores button and does not claim succes
     assert.equal(p.button.disabled, false);
     assert.match(p.status.textContent, /Too many requests|could not confirm delivery/);
   }
+});
+
+test('portfolio round trips preserve only a validated ref in the subsequent quote', async () => {
+  const ref = 'a'.repeat(32);
+  for (const route of ['/landscape', '/salon']) {
+    const concept = portfolioLink(`https://www.serviceboost.co/?ref=${ref}&unrelated=private`, route);
+    const home = portfolioLink(concept.href, '/');
+    assert.equal(concept.search, `?ref=${ref}`);
+    assert.equal(home.search, `?ref=${ref}`);
+    const p = page({ ref: home.searchParams.get('ref') });
+    await p.handlers.submit({ preventDefault() {} });
+    assert.equal(p.calls.at(-1).data.ref, ref);
+    assert.equal(p.calls.at(-1).data.event_id, '12345678-1234-1234-1234-123456789abc');
+  }
+});
+
+test('portfolio navigation preserves explicit opt-out and rejects malformed refs', async () => {
+  for (const suffix of ['', '?ref=email%40example.com', '?ref=' + 'a'.repeat(33)]) {
+    const concept = portfolioLink('https://www.serviceboost.co/' + suffix, '/salon');
+    const home = portfolioLink(concept.href, '/');
+    assert.equal(home.search, '');
+    const p = page({ ref: home.searchParams.get('ref') || '' });
+    await p.handlers.submit({ preventDefault() {} });
+    assert.equal(p.calls.length, 1);
+    assert.equal(p.calls[0].data.ref, undefined);
+  }
+  const removed = portfolioLink('https://www.serviceboost.co/salon', '/');
+  assert.equal(removed.search, '');
+  assert.equal(portfolioLink('https://www.serviceboost.co/?ref=' + 'a'.repeat(32), 'https://example.com/').search, '');
 });
