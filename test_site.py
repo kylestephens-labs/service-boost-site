@@ -54,6 +54,8 @@ class SiteContracts(unittest.TestCase):
                 if src and not src.startswith('https://'):
                     self.assertTrue((ROOT / src.lstrip('/')).is_file(), src)
                 href = attrs.get('href', '')
+                if tag == 'link' and attrs.get('rel') == 'stylesheet':
+                    self.assertTrue((ROOT / href.split('?')[0].lstrip('/')).is_file(), href)
                 if href.startswith('#'):
                     self.assertIn(href[1:], ids, f'{filename}: {href}')
                 if tag == 'img':

@@ -5,8 +5,10 @@ with small fixes starting at $199.
 Build the public-only static output with `python3 build-site.py`. Quote delivery
 and attribution remain in the existing backend; see BACKEND.md and ATTRIBUTION.md.
 
-The single-page homepage includes two explicitly fictional portfolio concepts,
-Kyle's supplied headshot, an About section and FAQ. Navigation remains visible
+The single-page homepage includes Kyle's supplied headshot and introduction in
+the hero, a three-step process, two explicitly fictional portfolio concepts, and
+FAQ. Homepage typography and responsive layouts live in homepage.css; style.css
+owns shared foundations and the concept pages. Navigation remains visible
 while scrolling. The only conversion CTA is "Get a free quote", which opens the
 existing production intake in a native dialog. Direct `#request` links still work.
 

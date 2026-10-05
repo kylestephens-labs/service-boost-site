@@ -16,27 +16,6 @@ html{scroll-padding-top:115px}
 @media(max-width:720px){html{scroll-padding-top:135px}
 }
 
-.about-kyle{display:grid;grid-template-columns:260px 1fr;align-items:center;gap:60px;padding:80px 0 65px}
-.about-kyle>img{width:260px;height:330px;object-fit:cover;object-position:center 27%;border-radius:8px}
-.about-kyle h2,.faq-section h2{font-size:38px;margin-bottom:22px}
-.about-kyle p:not(.eyebrow){max-width:590px;font-size:18px;color:#455779}
-.about-kyle .eyebrow,.faq-section .eyebrow{color:#3045ff}
-.faq-section{display:grid;grid-template-columns:1fr 1.7fr;gap:55px;padding:55px 0;border-top:1px solid #dce0e8}
-.faq-section details{border-bottom:1px solid #dce0e8;padding:21px 0}
-.faq-section details:first-child{padding-top:0}
-.faq-section summary{cursor:pointer;font-weight:600;font-size:17px;line-height:1.5;padding-right:12px}
-.faq-section summary:focus-visible{outline:3px solid #3045ff;outline-offset:6px}
-.faq-section details p{color:#455779;line-height:1.65;margin:15px 0 0;font-size:16px}
-@media(max-width:720px){.about-kyle{grid-template-columns:1fr;gap:30px;padding:55px 0 40px}
-.about-kyle>img{width:100%;max-width:320px;height:340px}
-.about-kyle h2,.faq-section h2{font-size:32px}
-.faq-section{grid-template-columns:1fr;gap:15px;padding:40px 0}
-.service header nav{gap:18px}
-}
-
-.service .work-row img{object-fit:contain;aspect-ratio:auto;height:320px}
-.service .work-row{align-items:center}
-.service .work-row>a{background:#fff}
 .land-photo .overlay{background:#f9f8f2e8;padding:6px 10px}
 
 :root{font-family:'DM Sans',sans-serif;color:#111a35;font-synthesis:none}
@@ -59,27 +38,7 @@ nav a:hover{text-decoration:underline}
 .brand{text-decoration:none;font:34px 'Libre Caslon Display',Georgia,serif;white-space:nowrap}
 .sb{display:flex;align-items:center;gap:9px;font:700 18px 'DM Sans',sans-serif}
 .sb img{width:49px;height:49px}
-.service header>button{border-radius:32px}
 .eyebrow{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase}
-.service-hero{padding:65px 6% 60px}
-.service-hero .eyebrow{color:#3045ff;margin-bottom:35px}
-.service-hero h1{font-size:clamp(44px,5.1vw,82px);margin-bottom:28px}
-.service-hero em{font-style:normal;color:#3045ff}
-.service-hero p:not(.eyebrow){color:#455779;font-size:20px;font-weight:500;margin-bottom:35px}
-.examples{padding:40px 6% 50px;background:#f6f7f9}
-.work-heading{display:flex;align-items:center;justify-content:space-between;gap:25px;margin-bottom:25px}
-.work-heading h2{font-size:36px;margin:0}
-.work-heading p{font-size:13px;color:#455779;margin:0}
-.work-row{display:grid;grid-template-columns:1.05fr 1fr;gap:0;background:#fff;border-radius:6px;overflow:hidden;margin:20px 0}
-.work-row>a{display:block;background:#343b28}
-.work-row img{width:100%;height:100%;object-fit:cover;aspect-ratio:1.72}
-.work-row>div{padding:25px}
-.work-row h3{font-size:16px;letter-spacing:-.02em;margin-bottom:12px}
-.work-row p{font-size:15px;color:#455779;margin:0}
-.quote-band{display:flex;align-items:center;justify-content:space-between;gap:25px;background:#edf0f4;padding:28px;border-radius:10px;margin-top:35px}
-.quote-band h2{font-size:23px;margin-bottom:8px}
-.quote-band p{font-size:13px;color:#455779;margin:0}
-.quote-band button{white-space:nowrap}
 footer{padding:32px 6%;font-size:12px;display:flex;justify-content:space-between;gap:25px}
 footer p{margin:0}
 .landscape{background:#f9f8f2;color:#323b29}
@@ -124,24 +83,12 @@ form>.close{width:auto}
 .skip{position:fixed;top:-100px;background:white;z-index:30;padding:12px}
 .skip:focus{top:0}
 
-@media(min-width:1500px){.service{max-width:1500px;margin:auto}
-}
 @media(max-width:720px){header{flex-wrap:wrap;gap:16px;padding:16px 5%}
 header nav{order:3;width:100%;justify-content:center;gap:25px}
 .brand{font-size:26px}
 .sb{font-size:15px}
 .sb img{width:35px;height:35px}
 header button{font-size:11px;padding:12px}
-.service-hero{padding:45px 6%}
-.service-hero h1{font-size:44px}
-.service-hero h1 br{display:none}
-.service-hero p:not(.eyebrow){font-size:17px}
-.work-heading{display:block}
-.work-heading h2{font-size:30px;margin-bottom:15px}
-.work-row{grid-template-columns:1fr}
-.work-row>div{padding:24px}
-.quote-band{display:block;padding:24px}
-.quote-band button{margin-top:22px}
 .land-photo{height:370px}
 .land-intro{grid-template-columns:1fr;padding:35px 6%}
 .land-intro h1{font-size:65px}
