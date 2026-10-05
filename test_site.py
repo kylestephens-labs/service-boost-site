@@ -41,6 +41,8 @@ class SiteContracts(unittest.TestCase):
             self.assertEqual(scripts, ['/site-ui.js'])
             self.assertNotIn('request-form', [a.get('id') for _, a in page.nodes])
             self.assertIn('demo-form', [a.get('id') for _, a in page.nodes])
+            demo = next(a for tag, a in page.nodes if a.get('id') == 'demo-form')
+            self.assertEqual(demo.get('method'), 'dialog', 'No navigation or transmission if JavaScript is unavailable')
             self.assertIn('Nothing will be sent, saved or booked.', (ROOT / filename).read_text())
 
     def test_local_assets_and_section_links_resolve(self):
