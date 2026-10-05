@@ -5,9 +5,17 @@ with small fixes starting at $199.
 Build the public-only static output with `python3 build-site.py`. Quote delivery
 and attribution remain in the existing backend; see BACKEND.md and ATTRIBUTION.md.
 
-The project examples are an actual screenshot of Service Boost's original site
-and an explicitly illustrative booking comparison. No client results are claimed.
-The About section uses Kyle’s supplied portrait in a responsive circular frame.
+The single-page homepage includes two explicitly fictional portfolio concepts,
+Kyle's supplied headshot, an About section and FAQ. Navigation remains visible
+while scrolling. The only conversion CTA is "Get a free quote", which opens the
+existing production intake in a native dialog. Direct `#request` links still work.
+
+`/landscape` and `/salon` are static concept demonstrations. Their forms never
+load the production quote script or send data. Vercel's clean URLs resolve these
+paths to their corresponding HTML files. No client work or results are claimed.
+
+Run `python3 -m unittest test_site.py`, `node --check site-ui.js`, and the existing
+validation workflow when changing the presentation or intake integration.
 
 ## Build and repair intake release
 

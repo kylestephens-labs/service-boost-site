@@ -1,5 +1,6 @@
 {
   "framework": null,
+  "cleanUrls": true,
   "buildCommand": "python3 build-site.py",
   "outputDirectory": "public-site",
   "headers": [{
