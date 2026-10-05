@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Morrow Studio · Concept</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="/favicon.svg">
+</head>
+<body>
+<div class="salon">
+<a class="skip" href="#home">Skip to content</a>
+<header>
+<a class="brand " href="/salon">Morrow Studio</a>
+<nav aria-label="Main navigation">
+<a href="#home">Home</a>
+<a href="#services">Services</a>
+<a href="#about">About</a>
+<a href="#contact">Contact</a>
+</nav>
+<button type="button" data-open-demo>Book a visit</button>
+</header>
+<main id="home">
+<section class="salon-hero">
+<img src="/assets/salon-portrait.png" alt="Editorial portrait of a layered brunette haircut"/>
+<div>
+<p class="eyebrow">Concept website</p>
+<h1>A cut<br/>above<br/>ordinary.</h1>
+<p>Modern hair.<br/>A more you.</p>
+<button type="button" data-open-demo>Book a visit</button>
+</div>
+</section>
+<section class="salon-services" id="services">
+<img src="/assets/salon-interior.png" alt="Warm salon interior with an arched mirror and burgundy chair"/>
+<div>
+<p class="eyebrow">Sample services</p>
+<div class="price">
+<span>Haircut</span>
+<span>$85</span>
+</div>
+<div class="price">
+<span>Color</span>
+<span>$150</span>
+</div>
+<div class="price">
+<span>Highlights</span>
+<span>$180+</span>
+</div>
+<div class="price">
+<span>Treatment</span>
+<span>$60</span>
+</div>
+<div class="price">
+<span>Style</span>
+<span>$75</span>
+</div>
+<div id="about">
+<h2>Modern techniques.<br/>Timeless style.</h2>
+<p>A relaxed, refined salon experience in the heart of Walnut Creek.</p>
+</div>
+<button type="button" data-open-demo>Book a visit</button>
+</div>
+</section>
+</main>
+<footer id="contact">Morrow Studio · Fictional business<p>Booking demonstration by <a href="/">Service Boost</a>. No appointment is made.</p>
+</footer>
+</div>
+<dialog id="demo-dialog" aria-labelledby="demo-heading">
+<form method="dialog">
+<button class="close">Close</button>
+</form>
+<p class="eyebrow">Interactive demonstration</p>
+<h2 id="demo-heading">Plan your visit.</h2>
+<p>Demo only. Please use sample information. Nothing will be sent, saved or booked.</p>
+<form id="demo-form">
+<label>Service<select name="service" required>
+<option value="">Select a service</option>
+<option>Haircut · $85</option>
+<option>Color · $150</option>
+<option>Highlights · $180+</option>
+<option>Treatment · $60</option>
+<option>Style · $75</option>
+</select>
+</label>
+<label>Sample appointment<select name="appointment" required>
+<option value="">Select a demo time</option>
+<option>Tuesday · 10 AM</option>
+<option>Wednesday · 2 PM</option>
+</select>
+</label>
+<label>Name<input name="demo_name" autocomplete="off" required>
+</label>
+<label>Email<input name="demo_email" type="email" autocomplete="off" required>
+</label>
+<button type="submit">Preview confirmation</button>
+</form>
+<p id="demo-status" role="status" hidden>
+</p>
+</dialog>
+<script src="/site-ui.js">
+</script>
+</body>
+</html>

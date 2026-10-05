@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Field &amp; Form · Concept</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="/favicon.svg">
+</head>
+<body>
+<div class="landscape">
+<a class="skip" href="#home">Skip to content</a>
+<header>
+<a class="brand " href="/landscape">Field &amp; Form</a>
+<nav aria-label="Main navigation">
+<a href="#home">Home</a>
+<a href="#services">Services</a>
+<a href="#projects">Projects</a>
+<a href="#contact">Contact</a>
+</nav>
+<button type="button" data-open-demo>Request an estimate</button>
+</header>
+<main id="home">
+<div class="land-photo">
+<img src="/assets/landscape.png" alt="California garden with native planting, olive trees and stone terraces"/>
+<p class="eyebrow overlay">Concept website</p>
+</div>
+<section class="land-intro" id="services">
+<h1>Make room<br/>for outside.</h1>
+<div>
+<p>Thoughtful landscapes <br/>for a more livable, more <br/>beautiful everyday.</p>
+<button type="button" data-open-demo>Request an estimate</button>
+</div>
+</section>
+<section class="feature" id="projects">
+<div>
+<p class="eyebrow">Featured concept project</p>
+<h2>Hillside Retreat</h2>
+<p>A modern California garden with native plantings, layered spaces and views for days.</p>
+<button class="text-link" type="button" data-open-project>View project</button>
+</div>
+<img src="/assets/landscape-project.png" alt="Hillside Retreat garden concept"/>
+</section>
+<dialog id="project-details">
+<form method="dialog">
+<button class="close">Close</button>
+</form>
+<h2>Hillside Retreat</h2>
+<img src="/assets/landscape-project.png" alt="Terraces and native plants in a California hillside garden"/>
+<p>A fictional concept combining drought tolerant planting, stone paths and outdoor gathering spaces.</p>
+<p>Design study only. No client commission or completed construction is represented.</p>
+</dialog>
+</main>
+<footer id="contact">Native plants · Thoughtful spaces · A more livable tomorrow<p>Fictional business · Design demonstration by <a href="/">Service Boost</a>
+</p>
+</footer>
+</div>
+<dialog id="demo-dialog" aria-labelledby="demo-heading">
+<form method="dialog">
+<button class="close">Close</button>
+</form>
+<p class="eyebrow">Interactive demonstration</p>
+<h2 id="demo-heading">Tell us about your space.</h2>
+<p>Demo only. Please use sample information. Nothing will be sent, saved or booked.</p>
+<form id="demo-form">
+<label>Name<input name="demo_name" autocomplete="off" required>
+</label>
+<label>Email<input name="demo_email" type="email" autocomplete="off" required>
+</label>
+<label>Project details<textarea name="demo_details" rows="3" required>
+</textarea>
+</label>
+<button type="submit">Preview confirmation</button>
+</form>
+<p id="demo-status" role="status" hidden>
+</p>
+</dialog>
+<script src="/site-ui.js">
+</script>
+</body>
+</html>
