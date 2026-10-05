@@ -44,34 +44,35 @@ footer p{margin:0}
 .landscape{background:#f9f8f2;color:#323b29}
 .landscape header,.land-intro{background:#353d29;color:#faf9f1}
 .landscape button{background:#c3cb9d;color:#303725;border-radius:0}
-.land-photo{position:relative;height:54vw;max-height:800px}
+.land-photo{position:relative;height:34vw;max-height:480px}
 .land-photo img{height:100%;width:100%;object-fit:cover}
 .overlay{position:absolute;top:25px;left:5%;color:#26312a}
 .land-intro{display:grid;grid-template-columns:1.8fr 1fr;align-items:center;gap:35px;padding:45px 5%}
-.land-intro h1{font-size:clamp(65px,8vw,130px);margin:0;line-height:1.02}
+.land-intro h1{font-size:clamp(64px,6vw,96px);margin:0;line-height:1.02}
 .land-intro p{font:26px/1.35 'Libre Caslon Display',Georgia,serif;margin-bottom:30px}
-.feature{display:grid;grid-template-columns:1fr 1.7fr;gap:45px;padding:35px 5% 45px;align-items:center}
-.feature h2{font:36px 'Libre Caslon Display',Georgia,serif}
-.feature p:not(.eyebrow){font-size:16px;max-width:300px}
+.feature{display:grid;grid-template-columns:1fr 1.25fr;gap:56px;padding:64px 5%;align-items:center}
+.feature h2{font:44px 'Libre Caslon Display',Georgia,serif}
+.feature p:not(.eyebrow){font-size:18px;line-height:1.6;max-width:38ch}
 .feature>img{height:500px;object-fit:cover;width:100%;object-position:right}
-.landscape .text-link{background:transparent;padding:0;text-decoration:underline;text-underline-offset:5px;color:#303725}
-.landscape footer{border-top:1px solid #ced0c4;margin:0 5%;padding:20px 0;text-transform:uppercase;letter-spacing:.13em;font-size:10px;display:block;text-align:center}
-.landscape footer p{margin-top:12px;font-size:10px;text-transform:none;letter-spacing:0}
+.landscape .text-link{background:transparent;padding:12px 0;text-decoration:underline;text-underline-offset:5px;color:#303725}
+.landscape footer{border-top:1px solid #ced0c4;margin:0 5%;padding:28px 0;text-transform:uppercase;letter-spacing:.08em;font-size:14px;line-height:1.6;display:block;text-align:center}
+.landscape footer p{margin-top:12px;font-size:14px;text-transform:none;letter-spacing:0}
 .salon{background:#f4efe5;color:#292523}
 .salon header{background:#1b1b19;color:#f7f0e8}
 .salon button{background:#70172a;color:#fff;border-radius:0;font-family:'Libre Caslon Display',Georgia,serif;font-size:20px;font-weight:400}
-.salon-hero{position:relative;height:75vw;max-height:1060px;background:#1b1b19;color:#fcf9ef}
+.salon-hero{position:relative;height:62vw;min-height:680px;max-height:880px;background:#1b1b19;color:#fcf9ef}
 .salon-hero>img{width:100%;height:100%;object-fit:cover;object-position:center 35%}
 .salon-hero>div{position:absolute;inset:0;padding:30px 5%}
-.salon-hero h1{font:clamp(90px,12vw,175px)/.94 'Libre Caslon Display',Georgia,serif;letter-spacing:-.025em;margin:55px 0 50px}
+.salon-hero h1{font:clamp(90px,9vw,136px)/.98 'Libre Caslon Display',Georgia,serif;letter-spacing:-.025em;margin:36px 0}
 .salon-hero p:not(.eyebrow){font:30px/1.1 'Libre Caslon Display',Georgia,serif;margin-bottom:35px}
 .salon-services{display:grid;grid-template-columns:1.05fr 1fr;gap:55px;padding:40px 5%;align-items:center}
-.salon-services>img{height:730px;width:100%;object-fit:cover}
+.salon-services>img{grid-column:1;grid-row:1;height:640px;width:100%;object-fit:cover}
+.salon-services>div{grid-column:2;grid-row:1}
 .price{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid #d6cfc2;padding:12px 0;font:32px 'Libre Caslon Display',Georgia,serif}
-.price span:last-child{font-size:18px}
+.price span:last-child{font-size:22px}
 .salon-services h2{font:36px/1.05 'Libre Caslon Display',Georgia,serif;margin:40px 0 20px}
 .salon-services p:not(.eyebrow){font:22px/1.4 'Libre Caslon Display',Georgia,serif}
-.salon footer{font-size:11px}
+.salon footer{font-size:14px;line-height:1.6}
 dialog{width:min(530px,92vw);max-height:90vh;border:0;border-radius:5px;padding:35px;color:#111a35}
 dialog::backdrop{background:#111a35b0}
 dialog h2{font-size:34px;margin-top:35px}
@@ -83,27 +84,60 @@ form>.close{width:auto}
 .skip{position:fixed;top:-100px;background:white;z-index:30;padding:12px}
 .skip:focus{top:0}
 
+/* Concept-only readability and dialog themes; production intake keeps its styles. */
+.landscape-theme{--concept-paper:#f9f8f2;--concept-ink:#323b29;--concept-action:#c3cb9d;--concept-action-ink:#303725;--concept-focus:#64703d}
+.salon-theme{--concept-paper:#f4efe5;--concept-ink:#292523;--concept-action:#70172a;--concept-action-ink:#fff;--concept-focus:#70172a}
+.concept-return{display:block;padding:14px 5%;background:var(--concept-paper);color:var(--concept-ink);font-size:16px;font-weight:600}
+.concept-page header nav{font-size:16px;gap:24px}
+.concept-page nav a{padding:10px 0}
+.concept-page button{font-size:16px;min-height:44px}
+.concept-page .salon button{font-size:20px}
+.concept-page .eyebrow{font-size:14px;letter-spacing:.12em}
+.concept-page dialog{background:var(--concept-paper);color:var(--concept-ink);font-size:18px;padding:32px}
+.concept-page dialog h2{font-family:'Libre Caslon Display',Georgia,serif;font-size:40px;font-weight:400}
+.concept-page dialog button{background:var(--concept-action);color:var(--concept-action-ink);border-radius:0}
+.concept-page dialog .close{color:var(--concept-ink)!important;font-size:16px!important;min-width:44px}
+.concept-page dialog label{font-size:16px}
+.concept-page dialog :is(input,select,textarea){font-size:16px;color:var(--concept-ink)}
+.concept-page dialog :focus-visible{outline:3px solid var(--concept-focus);outline-offset:3px}
+.concept-page dialog .eyebrow{clear:both;padding-top:12px}
+@media(max-width:960px){.concept-page header{flex-wrap:wrap}
+.concept-page header nav{order:3;width:100%;justify-content:center}
+html:has(.concept-page){scroll-padding-top:160px}
+}
+
 @media(max-width:720px){header{flex-wrap:wrap;gap:16px;padding:16px 5%}
 header nav{order:3;width:100%;justify-content:center;gap:25px}
 .brand{font-size:26px}
 .sb{font-size:15px}
 .sb img{width:35px;height:35px}
 header button{font-size:11px;padding:12px}
-.land-photo{height:370px}
+.land-photo{height:260px}
 .land-intro{grid-template-columns:1fr;padding:35px 6%}
-.land-intro h1{font-size:65px}
+.land-intro h1{font-size:clamp(48px,14vw,65px)}
 .land-intro p br{display:none}
 .land-intro p{font-size:25px}
 .feature{grid-template-columns:1fr;gap:25px;padding:35px 6%}
 .feature>img{height:330px}
 .salon header button{font-size:17px}
-.salon-hero{height:680px;max-height:none}
-.salon-hero>img{object-position:60% center}
-.salon-hero h1{font-size:91px;margin:45px 0}
+.salon-hero{height:620px;min-height:0;max-height:none}
+.salon-hero>img{object-position:72% center}
+.salon-hero>div{background:linear-gradient(90deg,#1b1b19c9,transparent 95%)}
+.salon-hero h1{font-size:clamp(64px,19vw,90px);margin:36px 0}
 .salon-hero p:not(.eyebrow){font-size:26px}
 .salon-services{grid-template-columns:1fr;gap:30px;padding:30px 6%}
-.salon-services>img{height:450px}
+.salon-services>img{grid-column:auto;grid-row:auto;height:300px}
+.salon-services>div{grid-column:auto;grid-row:auto}
 .salon-services h2{font-size:34px}
 footer{display:block;line-height:1.6}
 footer p{margin-top:12px}
+.concept-page header{gap:12px}
+.concept-page header nav{gap:20px}
+.concept-page header button{padding:12px;font-size:16px}
+.concept-page .brand{font-size:25px}
+.concept-page dialog{padding:24px}
+}
+@media(max-width:440px){.concept-page header>button{width:100%}
+.concept-page header nav{gap:18px}
+html:has(.concept-page){scroll-padding-top:205px}
 }
