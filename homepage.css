@@ -1,7 +1,6 @@
 /* Service Boost homepage. Concept pages retain their separate visual identities. */
 .service {
   --brand-blue: #4438f5;
-  --ink: #111a35;
   --muted: #455779;
   --hero-surface: #f0f3ff;
   --example-surface: #f2f6fa;
@@ -15,14 +14,13 @@
 .service nav a { display: inline-flex; align-items: center; min-height: 44px; }
 .service button, #request button:not(.close) { background: #4438f5; font-size: 16px; }
 .service header > button { border-radius: 6px; white-space: nowrap; padding: 15px 24px; }
-.service h2 { font-size: 40px; line-height: 1.15; margin: 0 0 28px; }
+.service h2 { font-size: 48px; line-height: 1.15; margin: 0 0 28px; }
 .service h3 { font-size: 24px; letter-spacing: -.035em; margin: 0 0 8px; }
 .service p { color: var(--muted); line-height: 1.5; }
-.service-hero { display: grid; grid-template-columns: 1.8fr 1fr; align-items: center; gap: 64px; padding: 52px 6% 38px; background: var(--hero-surface); }
-.service-hero h1 { font-size: clamp(44px, 5vw, 72px); margin: 0 0 30px; letter-spacing: -.055em; line-height: 1.06; }
+.service-hero { display: grid; grid-template-columns: minmax(0, 1fr) 30%; align-items: center; gap: 64px; padding: 52px 6% 38px; background: var(--hero-surface); }
+.service-hero h1 { font-size: clamp(44px, 5.9vw, 86px); margin: 0 0 30px; letter-spacing: -.055em; line-height: 1.06; }
 .service-hero em { color: var(--brand-blue); font-style: normal; }
 .service-hero .hero-copy > p { font-size: 22px; font-weight: 400; margin: 0 0 28px; }
-.hero-profile { scroll-margin-top: 110px; }
 .hero-profile img { width: 100%; height: auto; aspect-ratio: 380 / 410; object-fit: cover; object-position: center 27%; border-radius: 6px; }
 .service .hero-profile h2 { font-size: 25px; line-height: 1.15; margin: 14px 0 8px; letter-spacing: -.035em; }
 .service .hero-profile p { font-size: 18px; font-weight: 400; margin: 0; }
@@ -40,7 +38,7 @@
 .examples-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
 .work-row { margin: 0; }
 .work-row > a { display: block; border-radius: 5px; overflow: hidden; }
-.work-row img { width: 100%; height: auto; aspect-ratio: 1.45; object-fit: cover; object-position: top; }
+.work-row img { width: 100%; height: auto; aspect-ratio: 1.15; object-fit: contain; object-position: top; }
 .work-row > div { padding: 16px 0 0; }
 .work-row p { font-size: 18px; margin: 0 0 12px; }
 .explore-link { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; font-size: 18px; font-weight: 600; color: var(--brand-blue); text-decoration: none; }
@@ -50,6 +48,7 @@
 .faq-section details { border-bottom: 1px solid var(--divider); }
 .faq-section details:first-child { border-top: 1px solid var(--divider); }
 .faq-section summary { cursor: pointer; font-size: 18px; line-height: 1.5; padding: 20px 0; }
+.faq-section summary:focus-visible { outline: 3px solid var(--brand-blue); outline-offset: 4px; }
 .faq-section details p { font-size: 18px; max-width: 70ch; margin: 0 0 22px; line-height: 1.65; }
 .contact-section { padding: 32px 6% 0; }
 .quote-band { display: flex; justify-content: space-between; align-items: center; gap: 28px; background: var(--hero-surface); padding: 30px; border-radius: 6px; }
@@ -69,6 +68,7 @@
 #request .reassurance, #request .email-alternative, #request .field-error { font-size: 14px; }
 #request .privacy-notice summary { padding: 12px 0; }
 @media (max-width: 1050px) {
+  html:has(.service) { scroll-padding-top: 160px; }
   .service header { flex-wrap: wrap; gap: 8px 20px; }
   .service header nav { order: 3; width: 100%; justify-content: center; flex-wrap: wrap; gap: 0 24px; }
   .service-hero { gap: 36px; }
@@ -106,4 +106,11 @@
   #request { width: calc(100vw - 24px); padding: 16px 20px 24px; }
   #request h2 { font-size: 28px; }
   #request .project-choice { flex-direction: column; }
+}
+@media (max-width: 360px) {
+  html:has(.service) { scroll-padding-top: 195px; }
+  .service header { gap: 8px; }
+  .service .sb { font-size: 15px; gap: 6px; }
+  .service .sb img { width: 28px; height: 28px; }
+  .service header > button { font-size: 13px; padding: 13px 10px; }
 }
