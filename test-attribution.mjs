@@ -97,7 +97,7 @@ test('failed delivery preserves input, restores button and does not claim succes
 
 test('portfolio round trips preserve only a validated ref in the subsequent quote', async () => {
   const ref = 'a'.repeat(32);
-  for (const route of ['/landscape', '/salon']) {
+  for (const route of ['/landscape', '/salon', '/auto-repair', '/auto-repair/services', '/auto-repair/about', '/auto-repair/contact']) {
     const concept = portfolioLink(`https://www.serviceboost.co/?ref=${ref}&unrelated=private`, route);
     const home = portfolioLink(concept.href, '/');
     assert.equal(concept.search, `?ref=${ref}`);
@@ -107,6 +107,17 @@ test('portfolio round trips preserve only a validated ref in the subsequent quot
     assert.equal(p.calls.at(-1).data.ref, ref);
     assert.equal(p.calls.at(-1).data.event_id, '12345678-1234-1234-1234-123456789abc');
   }
+});
+
+test('auto service enquiry retains the selected service and only allowlisted query values', () => {
+  const ref = 'a'.repeat(32);
+  const selected = portfolioLink(`https://www.serviceboost.co/auto-repair/services?ref=${ref}`, '/auto-repair/contact?service=diagnostics&unrelated=private');
+  assert.equal(selected.searchParams.get('service'), 'diagnostics');
+  assert.equal(selected.searchParams.get('ref'), ref);
+  assert.equal(selected.searchParams.has('unrelated'), false);
+  const back = portfolioLink(selected.href, '/#examples');
+  assert.equal(back.search, `?ref=${ref}`);
+  assert.equal(back.hash, '#examples');
 });
 
 test('portfolio navigation preserves explicit opt-out and rejects malformed refs', async () => {

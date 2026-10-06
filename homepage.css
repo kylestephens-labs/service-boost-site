@@ -40,6 +40,9 @@
 .work-row > a { display: block; border-radius: 5px; overflow: hidden; }
 .work-row img { width: 100%; height: auto; aspect-ratio: 1.15; object-fit: contain; object-position: top; }
 .work-row > div { padding: 16px 0 0; }
+.auto-work-row { grid-column: 1 / -1; display: grid; grid-template-columns: 1.2fr 1fr; gap: 36px; align-items: center; padding-top: 14px; }
+.auto-work-row img { aspect-ratio: 1.44; object-fit: cover; }
+.auto-work-row > div { padding: 0; }
 .work-row p { font-size: 18px; margin: 0 0 12px; }
 .explore-link { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; font-size: 18px; font-weight: 600; color: var(--brand-blue); text-decoration: none; }
 .explore-link:hover { text-decoration: underline; }
@@ -98,6 +101,8 @@
   .service .work-heading h2 { margin-bottom: 14px; }
   .work-heading p { font-size: 14px; }
   .examples-grid { gap: 32px; }
+  .auto-work-row { display: block; padding: 0; }
+  .auto-work-row > div { padding-top: 16px; }
   .service h3 { font-size: 23px; }
   .quote-band { display: block; padding: 24px; }
   .service .quote-band h2 { font-size: 26px; }
