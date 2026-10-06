@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex">
 <title>Field &amp; Form · Concept</title>
 <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/concepts.css">
 <link rel="icon" href="/favicon.svg">
 </head>
 <body class="concept-page landscape-theme">
@@ -27,12 +28,16 @@
 <img src="/assets/landscape.png" alt="California garden with native planting, olive trees and stone terraces"/>
 <p class="eyebrow overlay">Concept website</p>
 </div>
-<section class="land-intro" id="services">
+<section class="land-intro">
 <h1>Make room<br/>for outside.</h1>
 <div>
 <p>Thoughtful landscapes <br/>for a more livable, more <br/>beautiful everyday.</p>
 <button type="button" data-open-demo>Request an estimate</button>
 </div>
+</section>
+<section class="concept-services" id="services" aria-labelledby="land-services-heading">
+<div><p class="eyebrow">Sample services</p><h2 id="land-services-heading">A garden, considered.</h2><p>From the first idea to the details that make a space feel like yours.</p></div>
+<div class="service-list"><article><span>01</span><div><h3>Landscape design</h3><p>A plan for planting, paths and the way you want to spend time outside.</p></div></article><article><span>02</span><div><h3>Planting &amp; renewal</h3><p>Layered planting and thoughtful updates to an existing garden.</p></div></article><article><span>03</span><div><h3>Outdoor living</h3><p>Places to gather, unwind and enjoy the everyday.</p></div></article></div>
 </section>
 <section class="feature" id="projects">
 <div>
@@ -43,17 +48,19 @@
 </div>
 <img src="/assets/landscape-project.png" alt="Hillside Retreat garden concept"/>
 </section>
-<dialog id="project-details">
+<dialog id="project-details" aria-labelledby="project-heading">
 <form method="dialog">
 <button class="close">Close</button>
 </form>
-<h2>Hillside Retreat</h2>
+<h2 id="project-heading">Hillside Retreat</h2>
 <img src="/assets/landscape-project.png" alt="Terraces and native plants in a California hillside garden"/>
 <p>A fictional concept combining drought tolerant planting, stone paths and outdoor gathering spaces.</p>
 <p>Design study only. No client commission or completed construction is represented.</p>
+<dl class="project-facts"><div><dt>Palette</dt><dd>Olive, sage and warm stone</dd></div><div><dt>Design idea</dt><dd>Connected terraces for gathering and quiet moments</dd></div></dl>
 </dialog>
+<section class="concept-contact" id="contact"><div><p class="eyebrow">Your next chapter, outside</p><h2>What do you have<br>in mind?</h2></div><div><p>Explore an estimate inquiry for your garden, planting or outdoor living project.</p><button type="button" data-open-demo>Try the estimate inquiry</button><p class="demo-note">Fictional business. This form is a demonstration only.</p></div></section>
 </main>
-<footer id="contact">Native plants · Thoughtful spaces · A more livable tomorrow<p>Fictional business · Design demonstration by <a href="/" data-preserve-ref>Service Boost</a>
+<footer>Native plants · Thoughtful spaces · A more livable tomorrow<p>Fictional business · Design demonstration by <a href="/" data-preserve-ref>Service Boost</a>
 </p>
 </footer>
 </div>
@@ -65,6 +72,8 @@
 <h2 id="demo-heading">Tell us about your space.</h2>
 <p>Demo only. Please use sample information. Nothing will be sent, saved or booked.</p>
 <form id="demo-form" method="dialog">
+<label>Project type<select name="project_type" required><option value="">Choose a project</option><option>Landscape design</option><option>Planting &amp; renewal</option><option>Outdoor living</option><option>Not sure yet</option></select></label>
+<label>City or ZIP code<input name="project_city" placeholder="e.g. Walnut Creek" maxlength="120" autocomplete="off" required></label>
 <label>Name<input name="demo_name" autocomplete="off" required>
 </label>
 <label>Email<input name="demo_email" type="email" autocomplete="off" required>
@@ -74,8 +83,9 @@
 </label>
 <button type="submit">Preview confirmation</button>
 </form>
-<p id="demo-status" role="status" hidden>
+<p id="demo-status" role="status" tabindex="-1" hidden>
 </p>
+<div class="demo-actions" hidden><button type="button" data-edit-demo>Back to form</button><button type="button" data-reset-demo>Start again</button></div>
 </dialog>
 <script src="/site-ui.js">
 </script>

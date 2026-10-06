@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex">
 <title>Morrow Studio · Concept</title>
 <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/concepts.css">
 <link rel="icon" href="/favicon.svg">
 </head>
 <body class="concept-page salon-theme">
@@ -20,7 +21,7 @@
 <a href="#about">About</a>
 <a href="#contact">Contact</a>
 </nav>
-<button type="button" data-open-demo>Book a visit</button>
+<button type="button" data-open-demo>Try booking demo</button>
 </header>
 <main id="home">
 <section class="salon-hero">
@@ -29,12 +30,13 @@
 <p class="eyebrow">Concept website</p>
 <h1>A cut<br/>above<br/>ordinary.</h1>
 <p>Modern hair.<br/>A more you.</p>
-<button type="button" data-open-demo>Book a visit</button>
+<button type="button" data-open-demo>Try booking demo</button>
 </div>
 </section>
 <section class="salon-services" id="services">
 <div>
 <p class="eyebrow">Sample services</p>
+<h2 class="menu-heading">Find your next look.</h2>
 <div class="price">
 <span>Haircut</span>
 <span>$85</span>
@@ -55,16 +57,15 @@
 <span>Style</span>
 <span>$75</span>
 </div>
-<div id="about">
-<h2>Modern techniques.<br/>Timeless style.</h2>
-<p>A relaxed, refined salon experience in the heart of Walnut Creek.</p>
-</div>
-<button type="button" data-open-demo>Book a visit</button>
+<p class="demo-note">Illustrative prices only. No services are available to purchase.</p>
+<button type="button" data-open-demo>Try booking demo</button>
 </div>
 <img src="/assets/salon-interior.png" alt="Warm salon interior with an arched mirror and burgundy chair"/>
 </section>
+<section class="salon-about" id="about"><p class="eyebrow">The studio concept</p><h2>Modern techniques.<br>Timeless style.</h2><p>A quiet moment. A fresh perspective. Morrow imagines a relaxed studio where a conversation about your hair comes first.</p></section>
+<section class="concept-contact" id="contact"><div><p class="eyebrow">Make a little time for you</p><h2>A new look<br>starts here.</h2></div><div><p>Explore the sample booking flow, from choosing a service to previewing a confirmation.</p><button type="button" data-open-demo>Try booking demo</button><p class="demo-note">No appointment is made. A live site could link to your existing scheduler; custom booking functionality is a separate scope.</p></div></section>
 </main>
-<footer id="contact">Morrow Studio · Fictional business<p>Booking demonstration by <a href="/" data-preserve-ref>Service Boost</a>. No appointment is made.</p>
+<footer>Morrow Studio · Fictional business<p>Booking demonstration by <a href="/" data-preserve-ref>Service Boost</a>. No appointment is made.</p>
 </footer>
 </div>
 <dialog id="demo-dialog" aria-labelledby="demo-heading">
@@ -96,8 +97,9 @@
 </label>
 <button type="submit">Preview confirmation</button>
 </form>
-<p id="demo-status" role="status" hidden>
+<p id="demo-status" role="status" tabindex="-1" hidden>
 </p>
+<div class="demo-actions" hidden><button type="button" data-edit-demo>Back to form</button><button type="button" data-reset-demo>Start again</button></div>
 </dialog>
 <script src="/site-ui.js">
 </script>

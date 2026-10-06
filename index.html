@@ -23,7 +23,7 @@
   <meta name="twitter:image:alt" content="Service Boost homepage: A better website. A clear next step. Website builds, repairs and practical support for small businesses, with Kyle Stephens.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css?v=portfolio-2">
-  <link rel="stylesheet" href="homepage.css?v=1">
+<link rel="stylesheet" href="homepage.css?v=2">
 </head>
 <body>
 <div class="service">
@@ -64,25 +64,37 @@
 <section class="examples" id="examples" aria-labelledby="examples-heading">
 <div class="work-heading">
 <h2 id="examples-heading">Selected examples</h2>
+<p>Fictional businesses · Design demonstrations</p>
 </div>
-<div class="examples-grid">
-<article class="work-row">
+<div class="portfolio-controls" hidden>
+<button type="button" data-portfolio-prev aria-label="Previous example" aria-controls="portfolio-track">←</button>
+<span data-portfolio-count aria-live="polite" aria-atomic="true">1 / 3</span>
+<button type="button" data-portfolio-next aria-label="Next example" aria-controls="portfolio-track">→</button>
+</div>
+<div class="examples-grid" id="portfolio-track" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Selected portfolio examples">
+<article class="work-row" role="group" aria-roledescription="slide" aria-label="1 of 3: Landscape design concept">
 <a href="/landscape" data-preserve-ref aria-label="Explore Landscape design concept">
 <img src="/assets/landscape-preview.jpg" alt="Landscape design website preview" width="600" height="420" loading="lazy"/>
 </a>
 <div>
 <h3>Landscape design concept</h3>
+<p>From project inspiration to a useful estimate request.</p>
 <a class="explore-link" href="/landscape" data-preserve-ref aria-label="Explore landscape design concept">Explore concept <span aria-hidden="true">→</span></a>
 </div>
 </article>
-<article class="work-row">
+<article class="work-row" role="group" aria-roledescription="slide" aria-label="2 of 3: Hair studio concept">
 <a href="/salon" data-preserve-ref aria-label="Explore Hair studio concept">
 <img src="/assets/salon-preview.jpg" alt="Hair studio website preview" width="600" height="420" loading="lazy"/>
 </a>
 <div>
 <h3>Hair studio concept</h3>
+<p>From choosing a service to a clear booking handoff.</p>
 <a class="explore-link" href="/salon" data-preserve-ref aria-label="Explore hair studio concept">Explore concept <span aria-hidden="true">→</span></a>
 </div>
+</article>
+<article class="work-row" role="group" aria-roledescription="slide" aria-label="3 of 3: Juniper Motor Works">
+<a href="/auto-repair" data-preserve-ref aria-label="Explore Auto repair multi-page concept"><img src="/assets/auto-preview.jpg" alt="Juniper Motor Works auto repair website preview" width="1440" height="1000" loading="lazy"></a>
+<div><p class="eyebrow">Multi-page concept</p><h3>Juniper Motor Works</h3><p>From car trouble to an organized service inquiry.</p><a class="explore-link" href="/auto-repair" data-preserve-ref>Explore auto repair concept <span aria-hidden="true">→</span></a></div>
 </article>
 </div>
 </section>
