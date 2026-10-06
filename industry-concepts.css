@@ -1,0 +1,104 @@
+/* Four concept identities share layout and isolated demo controls. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Libre+Caslon+Display&display=swap');
+:root{font-family:'DM Sans',Arial,sans-serif;font-synthesis:none;scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);--paper:#f5efe4;--ink:#332a24;--accent:#752d24;--hero-ink:#fff6e8;--hero-shade:linear-gradient(90deg,#160c08b8,transparent 85%)}
+a{color:inherit;text-decoration:none}
+button,select{font:inherit}
+button{cursor:pointer;border:1px solid transparent;border-radius:0;background:var(--accent);color:#fff;padding:17px 24px;min-height:48px;font-size:15px;transition:background .2s,transform .2s}
+button:hover{transform:translateY(-2px);filter:brightness(1.12)}
+button span{margin-left:22px}
+a:focus-visible,button:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:3px solid currentColor;outline-offset:5px}
+a:hover{text-decoration:underline;text-underline-offset:5px}
+[hidden]{display:none!important}
+.skip{position:absolute;top:-100px;left:16px;padding:16px;background:var(--paper);z-index:10}
+.skip:focus{top:10px}
+.concept-bar{display:flex;justify-content:space-between;gap:16px;padding:12px 5%;font-size:11px;letter-spacing:.03em;border-bottom:1px solid #80726338}
+.concept-bar a{min-height:24px;display:flex;align-items:center}
+.concept-bar span{align-self:center}
+.industry-header{padding:24px 5%;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.wordmark{font-family:'Libre Caslon Display',Georgia,serif;font-size:48px;line-height:.95;letter-spacing:-.04em}
+.wordmark span{display:block;font-family:'DM Sans',Arial,sans-serif;font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-top:10px}
+.industry-header nav{display:flex;gap:36px;font-size:14px}
+.industry-header nav a{display:flex;align-items:center;gap:28px;min-height:44px}
+.industry-hero{position:relative;isolation:isolate;min-height:600px;height:calc(100svh - 165px);max-height:860px;display:flex;align-items:center;color:var(--hero-ink);overflow:hidden}
+.industry-hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:-2;animation:image-arrive 1.2s ease-out both}
+.industry-hero::after{content:'';position:absolute;inset:0;background:var(--hero-shade);z-index:-1}
+.hero-copy{padding:50px 5% 90px;max-width:850px;animation:copy-arrive .8s ease-out both}
+.eyebrow{text-transform:uppercase;font-size:11px;letter-spacing:.17em;line-height:1.6;margin:0 0 24px}
+h1,h2{font-family:'Libre Caslon Display',Georgia,serif;font-weight:400;letter-spacing:-.035em;line-height:1.02;margin:0}
+h1{font-size:clamp(62px,6.6vw,106px)}
+.hero-copy>p:not(.eyebrow){font-size:17px;line-height:1.6;margin:26px 0 30px;max-width:340px}
+.hero-copy button{background:var(--paper);color:var(--ink)}
+.hero-scroll{position:absolute;bottom:30px;left:5%;display:flex;align-items:center;gap:50px;font-size:12px;min-height:32px}
+.industry-details{padding:110px 7%;display:grid;grid-template-columns:1fr 1.15fr;gap:10%}
+h2{font-size:clamp(48px,5vw,76px)}
+.intro{font-size:17px;line-height:1.6;max-width:320px;margin-top:28px}
+.detail-list{align-self:center}
+.detail-list ul{list-style:none;margin:0;padding:0}
+.detail-list li{padding:24px 0;border-top:1px solid #80726355;display:grid;grid-template-columns:1fr auto;gap:8px 24px;font-size:14px;line-height:1.5}
+.detail-lead{font-family:'Libre Caslon Display',Georgia,serif;font-size:32px;grid-column:1}
+.detail-list li>span:nth-child(2){grid-column:1;color:var(--ink)}
+.detail-tail{grid-column:2;grid-row:1 / span 2;align-self:center;max-width:180px}
+.fine-print{font-size:12px;line-height:1.6;margin:22px 0 0}
+.industry-contact{background:var(--accent);color:#fff8ed;text-align:center;padding:95px 24px}
+.industry-contact h2{margin-bottom:32px}
+.industry-contact button{background:var(--paper);color:var(--ink)}
+footer{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:40px 5%}
+.footer-wordmark{font-family:'Libre Caslon Display',Georgia,serif;font-size:36px}
+footer p{font-size:12px;line-height:1.7}
+footer p a{text-decoration:underline}
+dialog{width:min(520px,calc(100% - 32px));max-height:90svh;border:0;background:var(--paper);color:var(--ink);padding:32px}
+dialog::backdrop{background:#161c19aa;backdrop-filter:blur(5px)}
+dialog .close{display:block;margin-left:auto;padding:8px 0;background:transparent;color:var(--ink);min-height:44px}
+dialog h2{font-size:42px;text-transform:capitalize}
+dialog>p:not(.eyebrow){line-height:1.6}
+dialog .eyebrow{margin-top:16px;margin-bottom:12px}
+dialog label{display:grid;gap:10px;font-size:14px;margin:24px 0}
+dialog select{width:100%;min-width:0;padding:14px 10px;border:1px solid #80726388;border-radius:0;color:var(--ink);background:var(--paper);font-size:16px}
+#demo-form>button{width:100%}
+#demo-status{white-space:pre-line}
+.demo-actions{display:flex;gap:12px;flex-wrap:wrap}
+.dental-theme{--paper:#f3f3e9;--ink:#243b32;--accent:#304f41;--hero-ink:#20352c;--hero-shade:linear-gradient(90deg,#f2f0e7f5 0%,#f2f0e7cf 30%,transparent 78%)}
+.dental-theme .industry-hero>img{object-position:65% center}
+.dental-theme .hero-copy button{background:var(--accent);color:#fff}
+.dental-theme .detail-list li,.contractor-theme .detail-list li{grid-template-columns:48px 1fr}
+.dental-theme .detail-lead,.contractor-theme .detail-lead{grid-column:1;grid-row:1 / span 2;font-size:20px}
+.dental-theme .detail-list li>span:nth-child(2),.contractor-theme .detail-list li>span:nth-child(2){grid-column:2;font-size:22px}
+.dental-theme .detail-tail,.contractor-theme .detail-tail{grid-column:2;grid-row:2;max-width:none}
+.contractor-theme{--paper:#ede9df;--ink:#292d25;--accent:#3b4434;--hero-shade:linear-gradient(90deg,#14180dc9,transparent 90%)}
+.contractor-theme .wordmark{font-size:43px}
+.real-estate-theme{--paper:#f8f4ee;--ink:#302c28;--accent:#514a3e;--hero-shade:linear-gradient(90deg,#171812cf,transparent 95%)}
+.real-estate-theme .detail-list li{display:block}
+.real-estate-theme .detail-list li span{display:block}
+.real-estate-theme .detail-list li>span:nth-child(2){margin:8px 0}
+.real-estate-theme .detail-tail{max-width:none;font-size:13px}
+@keyframes copy-arrive{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes image-arrive{from{transform:scale(1.045)}to{transform:scale(1)}}
+@media(min-width:900px) and (prefers-reduced-motion:no-preference){.industry-details>div:first-child{position:sticky;top:40px;align-self:start}}
+@media(max-width:700px){
+ .concept-bar{padding:10px 5%;font-size:10px;gap:10px}
+ .concept-bar span{max-width:155px;text-align:right}
+ .industry-header{padding:22px 5%;gap:16px}
+ .wordmark,.contractor-theme .wordmark{font-size:34px}
+ .wordmark span{font-size:8px;letter-spacing:.1em}
+ .industry-header nav{gap:10px;font-size:12px}
+ .industry-header nav a{gap:6px}
+ .industry-header nav a:first-child{display:none}
+ .industry-hero{height:calc(100svh - 145px);min-height:540px;max-height:760px;align-items:flex-end}
+ .industry-hero>img{object-position:62% center}
+ .industry-hero::after{background:linear-gradient(0deg,#16140ee8 0%,#17140e66 65%,#17140e11)}
+ .hero-copy{padding:50px 6% 88px;max-width:100%}
+ h1{font-size:clamp(51px,10.9vw,74px)}
+ .hero-copy>.eyebrow{font-size:9px;margin-bottom:20px}
+ .hero-copy>p:not(.eyebrow){font-size:16px;max-width:280px;margin:20px 0 26px}
+ .hero-scroll{left:6%;bottom:22px}
+ .industry-details{padding:70px 6%;grid-template-columns:1fr;gap:28px}
+ .detail-list li{gap:8px 16px}
+ .dental-theme .industry-hero::after{background:linear-gradient(0deg,#f2f0e7fa 0%,#f2f0e7d9 45%,#f2f0e722 100%)}
+ .industry-contact{padding:70px 6%}
+ footer{padding:32px 6%;align-items:flex-start;flex-direction:column;gap:12px}
+ footer p{margin:0}
+ dialog{padding:24px}
+}
+@media(prefers-reduced-motion:reduce){:root{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}

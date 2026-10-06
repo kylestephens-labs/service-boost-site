@@ -97,7 +97,7 @@ test('failed delivery preserves input, restores button and does not claim succes
 
 test('portfolio round trips preserve only a validated ref in the subsequent quote', async () => {
   const ref = 'a'.repeat(32);
-  for (const route of ['/landscape', '/salon', '/auto-repair', '/auto-repair/services', '/auto-repair/about', '/auto-repair/contact']) {
+  for (const route of ['/landscape', '/salon', '/auto-repair', '/auto-repair/services', '/auto-repair/about', '/auto-repair/contact', '/restaurant', '/dental', '/contractor', '/real-estate']) {
     const concept = portfolioLink(`https://www.serviceboost.co/?ref=${ref}&unrelated=private`, route);
     const home = portfolioLink(concept.href, '/');
     assert.equal(concept.search, `?ref=${ref}`);
