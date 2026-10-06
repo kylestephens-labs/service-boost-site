@@ -134,7 +134,9 @@ if (demoForm) demoForm.addEventListener('submit', event => {
     return field?.selectedOptions?.[0]?.textContent || value(name);
   };
   let summary;
-  if (demoForm.elements.namedItem('vehicle')) {
+  if (demoForm.hasAttribute('data-industry-demo')) {
+    summary = 'Your sample request\n\n' + selected('selection') + '\n' + selected('preference');
+  } else if (demoForm.elements.namedItem('vehicle')) {
     summary = selected('service') + ' · ' + value('vehicle')
       + (value('demo_details') ? '\n' + value('demo_details') : '');
   } else if (demoForm.elements.namedItem('appointment')) {

@@ -6,8 +6,10 @@ import sys
 import unittest
 
 ROOT = Path(__file__).resolve().parent
-CONCEPTS = ['landscape.html', 'salon.html', 'auto-repair.html',
-            'auto-repair/services.html', 'auto-repair/about.html', 'auto-repair/contact.html']
+AUTO_CONCEPTS = ['auto-repair.html', 'auto-repair/services.html',
+                 'auto-repair/about.html', 'auto-repair/contact.html']
+INDUSTRY_CONCEPTS = ['restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html']
+CONCEPTS = ['landscape.html', 'salon.html'] + AUTO_CONCEPTS + INDUSTRY_CONCEPTS
 
 
 class Page(HTMLParser):
@@ -21,9 +23,24 @@ class Page(HTMLParser):
 
 
 class SiteContracts(unittest.TestCase):
+    def test_new_industries_are_published_and_reachable_from_carousel(self):
+        subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
+        home = Page('public-site/index.html')
+        slides = [a for _, a in home.nodes if a.get('aria-roledescription') == 'slide']
+        self.assertEqual(len(slides), 7)
+        links = {a.get('href') for t, a in home.nodes if t == 'a'}
+        for filename in INDUSTRY_CONCEPTS:
+            self.assertIn('/' + filename.removesuffix('.html'), links)
+            page = Page('public-site/' + filename)
+            self.assertEqual(sum(t == 'h1' for t, _ in page.nodes), 1)
+            # Demos intentionally collect selections, never contact or health data.
+            self.assertFalse(any(t in ('input', 'textarea') for t, _ in page.nodes))
+            self.assertEqual(sum(t == 'select' for t, _ in page.nodes), 2)
+            self.assertTrue(any('data-industry-demo' in a for _, a in page.nodes))
+
     def test_build_includes_one_isolated_request_dialog_on_every_auto_page(self):
         subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
-        for filename in CONCEPTS[2:]:
+        for filename in AUTO_CONCEPTS:
             page = Page('public-site/' + filename)
             ids = [attrs['id'] for _, attrs in page.nodes if 'id' in attrs]
             self.assertEqual(len(ids), len(set(ids)), filename)
@@ -101,7 +118,7 @@ class SiteContracts(unittest.TestCase):
                     self.assertIn('data-preserve-ref', attrs)
 
     def test_auto_pages_have_one_current_page_and_coherent_navigation(self):
-        for filename in CONCEPTS[2:]:
+        for filename in AUTO_CONCEPTS:
             page = Page(filename)
             self.assertEqual(sum(tag == 'h1' for tag, _ in page.nodes), 1)
             current = [a for _, a in page.nodes if a.get('aria-current') == 'page']
