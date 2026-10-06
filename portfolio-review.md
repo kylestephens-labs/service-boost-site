@@ -1,8 +1,9 @@
 # Portfolio review — 6 October 2026
 
-Local review branch: `codex/portfolio-auto-repair`, based on `origin/main` at
-`3988e15`. Original checkout was clean and remains untouched. No push, PR,
-merge, deployment, pricing change, or production/backend change is included.
+Original local review branch: `codex/portfolio-auto-repair`, based on `origin/main`
+at `3988e15`. The following records the initial mockup review. The user later
+authorized release through PR #26; see refinement-qa.md for the final modal and
+carousel changes. No pricing or production/backend behavior changes are included.
 
 ## Design and audit
 

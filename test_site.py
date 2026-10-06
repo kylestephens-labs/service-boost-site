@@ -1,6 +1,8 @@
 """Static integration contracts for the production site and isolated demos."""
 from html.parser import HTMLParser
 from pathlib import Path
+import subprocess
+import sys
 import unittest
 
 ROOT = Path(__file__).resolve().parent
@@ -19,6 +21,19 @@ class Page(HTMLParser):
 
 
 class SiteContracts(unittest.TestCase):
+    def test_build_includes_one_isolated_request_dialog_on_every_auto_page(self):
+        subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
+        for filename in CONCEPTS[2:]:
+            page = Page('public-site/' + filename)
+            ids = [attrs['id'] for _, attrs in page.nodes if 'id' in attrs]
+            self.assertEqual(len(ids), len(set(ids)), filename)
+            self.assertEqual(ids.count('demo-dialog'), 1, filename)
+            self.assertEqual(ids.count('demo-form'), 1, filename)
+            self.assertNotIn('request-form', ids)
+            self.assertEqual([a['src'] for t, a in page.nodes if t == 'script'], ['/site-ui.js'])
+            self.assertTrue(all(a.get('method') == 'dialog' and not a.get('action')
+                                for t, a in page.nodes if t == 'form'))
+
     def test_main_has_one_production_form_and_one_script_instance(self):
         page = Page('index.html')
         ids = [attrs['id'] for _, attrs in page.nodes if 'id' in attrs]

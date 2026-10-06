@@ -5,9 +5,19 @@
 <a href="/auto-repair/services" data-preserve-ref>Services</a>
 <a href="/auto-repair/about" data-preserve-ref>About</a>
 <a href="/auto-repair/contact" data-preserve-ref aria-current="page">Contact</a></nav></header>
-<main id="home"><section class="auto-page-intro auto-section"><p class="auto-kicker">03 / Contact · Interactive demonstration</p><h1>Let’s talk <br>about your car.</h1><p>A little context makes a good starting point.</p></section>
-<section class="auto-section auto-contact"><aside><h2>Start here.</h2><p>Tell us about the vehicle and what you’re noticing.</p><div class="auto-disclosure"><h3>This is a demo.</h3><p>Juniper is a fictional business. Please use sample information. Nothing will be sent, saved or booked.</p><p>No real workshop, phone number or opening hours are represented.</p></div><a href="/auto-repair/services" data-preserve-ref>← Back to services</a></aside>
-<div><button type="button" class="auto-button" data-open-demo>Try the enquiry form <span aria-hidden="true">↗</span></button><p class="auto-note">Preview the form and confirmation. No appointment is made.</p><div class="auto-contact-detail"><h3>A helpful first enquiry includes</h3><ul><li>Your vehicle’s year, make and model</li><li>The service or symptom you have in mind</li><li>When you first noticed the issue</li></ul></div></div></section>
-<dialog id="demo-dialog" aria-labelledby="demo-heading"><form method="dialog"><button class="close">Close</button></form><p class="auto-kicker">Demo enquiry</p><h2 id="demo-heading">What brings you in?</h2><p>Use sample information. Nothing will be sent, saved or booked.</p>
-<form id="demo-form" method="dialog"><label>Service<select name="service" required><option value="">Select a service</option><option value="maintenance">Maintenance</option><option value="diagnostics">Diagnostics</option><option value="repair">Repair &amp; replacement</option><option value="unsure">Not sure yet</option></select></label><label>Vehicle<input name="vehicle" placeholder="e.g. 2018 hatchback" maxlength="120" required autocomplete="off"></label><label>Name<input name="demo_name" autocomplete="off" maxlength="120" required></label><label>Email<input name="demo_email" type="email" autocomplete="off" maxlength="254" required></label><label>What are you noticing?<textarea name="demo_details" rows="3" maxlength="2000" required></textarea></label><button type="submit">Preview enquiry</button></form><p id="demo-status" role="status" tabindex="-1" hidden></p><div class="demo-actions" hidden><button type="button" data-edit-demo>Back to form</button><button type="button" data-reset-demo>Start again</button></div></dialog></main>
+<main id="home">
+<section class="auto-section auto-page-intro"><h1>Let’s talk about your car.</h1><button class="auto-button" type="button" data-open-demo>Request service ↗</button></section></main>
+<!-- auto-request-start -->
+<dialog id="demo-dialog" class="auto-request-dialog" aria-labelledby="demo-heading" aria-describedby="auto-demo-note">
+<form method="dialog"><button class="auto-modal-close" aria-label="Close service request">×</button></form>
+<h2 id="demo-heading">Request service</h2><p id="auto-demo-note" class="auto-note">Demo only. Nothing will be sent, saved or booked.</p>
+<form id="demo-form" method="dialog">
+<label>Service<select name="service" required autofocus><option value="unsure">Not sure yet</option><option value="maintenance">Maintenance</option><option value="diagnostics">Diagnostics</option><option value="repair">Repair &amp; replacement</option></select></label>
+<label>Vehicle<input name="vehicle" placeholder="e.g. 2018 Honda Civic" maxlength="120" required autocomplete="off"></label>
+<label>What’s happening? <span class="auto-optional">(optional)</span><textarea name="demo_details" placeholder="Tell us briefly…" rows="2" maxlength="2000"></textarea></label>
+<button class="auto-button" type="submit">Preview request <span aria-hidden="true">↗</span></button>
+</form>
+<p id="demo-status" role="status" tabindex="-1" hidden></p><div class="demo-actions" hidden><button type="button" data-edit-demo>Edit request</button><button type="button" data-reset-demo>Start again</button></div>
+</dialog>
+<!-- auto-request-end -->
 <footer class="auto-footer"><a class="auto-brand" href="/auto-repair" data-preserve-ref>JUNIPER<span>MOTOR WORKS</span></a><p>A fictional business and design demonstration.<br>No real services, appointments or client results.</p><a href="/#examples" data-preserve-ref>Explore Service Boost ↗</a></footer><script src="/site-ui.js"></script></body></html>

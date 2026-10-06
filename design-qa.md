@@ -1,5 +1,10 @@
 # Readable homepage release QA
 
+Latest portfolio refinement (October 6, 2026): see [refinement-qa.md](refinement-qa.md)
+for Juniper, landscape and salon changes, carousel checks and visual evidence.
+PR #26 records final release validation and publication status.
+The release QA below records the earlier homepage work.
+
 Date: October 5, 2026 (Pacific).
 Source: user-approved combined mockup with the top eyebrow and services section removed.
 Visual target: /Users/kylestephens/.codex/generated_images/01a093d4-f7dc-7413-8dc8-fe858777f181/exec-400bb42a-4345-4352-965b-b2a1cba7d065.png
