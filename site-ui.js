@@ -45,14 +45,14 @@ if (portfolioTrack) {
     Math.abs(position(slide)) < Math.abs(position(slides[best])) ? index : best, 0);
   const update = () => {
     const index = current();
-    previous.disabled = index === 0;
-    next.disabled = index === slides.length - 1;
+    previous.disabled = portfolioTrack.scrollLeft <= 1;
+    next.disabled = portfolioTrack.scrollLeft >= portfolioTrack.scrollWidth - portfolioTrack.clientWidth - 1;
     const label = `${index + 1} / ${slides.length}`;
     if (count.textContent !== label) count.textContent = label;
   };
   const move = direction => {
-    const index = Math.max(0, Math.min(slides.length - 1, current() + direction));
-    portfolioTrack.scrollBy({left: position(slides[index]) - 6, behavior: 'instant'});
+    const step = position(slides[1]) - position(slides[0]);
+    portfolioTrack.scrollBy({left: direction * step, behavior: 'instant'});
   };
   previous.addEventListener('click', () => move(-1));
   next.addEventListener('click', () => move(1));
