@@ -44,13 +44,12 @@
 .portfolio-controls [data-portfolio-next] { right: 20px; }
 .portfolio-controls button:disabled { visibility: hidden; }
 .work-row { margin: 0; flex: 0 0 40%; min-width: 0; scroll-snap-align: start; }
-.work-row > a { display: flex; flex-direction: column; align-items: center; aspect-ratio: 1; padding: 16px 20px 12px; border-radius: 14px; overflow: hidden; background: #f4f1ff; color: #111a35; text-decoration: none; }
-.portfolio-brand { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; }
-.portfolio-brand img { width: 22px; height: 22px; }
+.work-row > a:not(.explore-link) { display: flex; flex-direction: column; align-items: center; aspect-ratio: 1; padding: 16px 20px 20px; border-radius: 14px; overflow: hidden; background: #f4f1ff; color: #111a35; text-decoration: none; }
 .service .work-row h3 { font: clamp(22px,2.6vw,38px)/1.1 'Libre Caslon Display',Georgia,serif; letter-spacing: -.035em; text-align: center; margin: 10px 0 16px; }
 .work-row > a > img { width: 100%; flex: 1; min-height: 0; object-fit: cover; object-position: top; border: 1px solid #d9d6e8; border-radius: 5px; box-shadow: 0 3px 6px #18203a20; }
-.portfolio-caption { margin-top: 10px; font: 13px/1.2 'Libre Caslon Display',Georgia,serif; text-align: center; }
-.work-row > a:hover { background: #ede9fb; }
+.work-row > a:not(.explore-link):hover { background: #ede9fb; }
+.explore-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 10px; color: var(--brand-blue); font-size: 18px; font-weight: 600; text-decoration: none; }
+.explore-link:hover { text-decoration: underline; }
 .faq-section { padding: 52px 6%; background: var(--hero-surface); }
 .service .eyebrow { font-size: 14px; font-weight: 600; letter-spacing: .13em; color: var(--brand-blue); margin-bottom: 14px; }
 .faq-section details { border-bottom: 1px solid var(--divider); }
@@ -106,7 +105,7 @@
   .service .work-heading h2 { margin-bottom: 14px; }
   .work-heading p { font-size: 14px; }
   .work-row { flex-basis: 85%; }
-  .work-row > a { padding: 12px 14px 10px; }
+  .work-row > a:not(.explore-link) { padding: 12px 14px 14px; }
   .service .work-row h3 { font-size: 26px; margin: 8px 0 12px; }
   .service .portfolio-controls button { width: 48px; height: 48px; font-size: 34px; }
   .portfolio-controls [data-portfolio-prev] { left: 8px; }
