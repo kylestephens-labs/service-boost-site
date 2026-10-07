@@ -59,14 +59,32 @@ class SiteContracts(unittest.TestCase):
                          'website-error', 'problem', 'form-status', 'about', 'faq']:
             self.assertIn(required, ids)
         names = {attrs.get('name') for _, attrs in page.nodes}
-        self.assertTrue({'name', 'email', 'website', 'problem', 'project_type',
+        self.assertTrue({'name', 'email', 'website', 'problem',
                          'company'} <= names)
+        self.assertNotIn('project_type', names)
+        website = next(a for _, a in page.nodes if a.get('id') == 'website')
+        self.assertIn('required', website)
+        self.assertFalse(any(a.get('type') == 'radio' for _, a in page.nodes))
         scripts = [attrs['src'] for tag, attrs in page.nodes if tag == 'script']
         self.assertEqual(scripts, ['config.js', 'app.js', 'site-ui.js'])
         text = (ROOT / 'index.html').read_text()
         self.assertIn('Privacy notice', text)
         self.assertNotIn('Form does not submit', text)
-        self.assertEqual(text.count('data-open-quote'), 3)
+        self.assertEqual(text.count('data-open-quote'), 4)
+
+    def test_redesign_offer_order_and_unpublished_testimonials(self):
+        page = Page('index.html')
+        sections = [a.get('id') for t, a in page.nodes if t == 'section']
+        self.assertEqual([s for s in sections if s],
+                         ['package', 'examples', 'about', 'process', 'faq', 'contact'])
+        testimonials = next(a for _, a in page.nodes
+                            if a.get('class') == 'testimonials-section')
+        self.assertIn('hidden', testimonials)
+        text = (ROOT / 'index.html').read_text()
+        self.assertIn("No payment due today. I'll review your site and reply within 24 hours with next steps.", text)
+        self.assertNotIn('Get a free quote', text)
+        self.assertNotIn('A few questions', text)
+        self.assertNotIn('Small fixes', text)
 
     def test_demo_pages_cannot_load_production_quote_delivery(self):
         for filename in CONCEPTS:

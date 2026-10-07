@@ -1,17 +1,19 @@
 # service-boost-site
-Service Boost website frontend. Complete websites and practical improvements,
-with small fixes starting at $199.
+Service Boost website frontend. The homepage offers a $1,500 redesign of up to
+four existing pages, working directly with Kyle Stephens.
 
 Build the public-only static output with `python3 build-site.py`. Quote delivery
 and attribution remain in the existing backend; see BACKEND.md and ATTRIBUTION.md.
 
-The single-page homepage includes Kyle's supplied headshot and introduction in
-the hero, a three-step process, three explicitly fictional portfolio concepts in a manual carousel, and
-FAQ. Homepage typography and responsive layouts live in homepage.css; style.css
+The single-page homepage orders its outcome, package, seven fictional portfolio
+concepts, founder introduction, three-step process, and FAQ. The manual carousel
+supports arrows, pagination, swiping and keyboard navigation. The testimonial
+slot stays hidden until real client feedback is approved.
+Homepage typography and responsive layouts live in homepage.css; style.css
 owns shared foundations. concepts.css adds landscape/salon sections; auto-repair.css
 owns the Juniper identity. Navigation remains visible
-while scrolling. The only conversion CTA is "Get a free quote", which opens the
-existing production intake in a native dialog. Direct `#request` links still work.
+while scrolling. "Start your redesign" opens the production redesign intake in
+a native dialog. Direct `#request` links still work.
 
 `/landscape` and `/salon` are static concept demonstrations. Their forms never
 load the production quote script or send data. Vercel's clean URLs resolve these
@@ -35,16 +37,16 @@ See portfolio-review.md for the portfolio acceptance evidence and asset provenan
 Run `python3 -m unittest test_site.py`, `node --check site-ui.js`, and the existing
 validation workflow when changing the presentation or intake integration.
 
-## Build and repair intake release
+## Redesign intake release
 
-The new form submits `name` and `project_type` (`build` or `improve`). A website
-is optional for builds, required for improvements, and validated whenever supplied.
-The backend accepts legacy requests without these fields as improvements.
+The homepage requires name, email, website and improvement details. There is no
+build/improve selector. Redesign requests use the existing `project_type: improve`
+backend contract, so this frontend release requires no backend deployment.
+Website validation, delivery errors, honeypot and attribution remain in app.js.
+The backend continues to accept its existing legacy/build clients unchanged.
 
-Deployment requires separate authorization. Before merging, account for any
-automatic frontend publication: hold frontend promotion until the matching
-backend has been deployed and verified. The old backend rejects blank URLs.
-Deploy the new backend first, then publish the frontend and confirm both a build
-without a URL and a repair request arrive in the inbox. A merge or green CI is
-not evidence that these production checks passed. Roll back the frontend before
-rolling back the backend. No database migration is needed.
+Deployment requires authorization; main publishes automatically through Vercel.
+Check exact-head CI and independently review the complete change before merge.
+Verify the live page and modal after promotion. Synthetic delivery tests prove
+the payload and UI paths, not fresh inbox receipt. No payment is taken in the form,
+and no database migration is needed. Revert the frontend release for rollback.
