@@ -19,12 +19,12 @@ function portfolioLink(currentUrl, destination) {
   return new URL(link.href, currentUrl);
 }
 
-function page({ ref = 'a'.repeat(32), visible = true, blocked = false, storage = new Map(), fetchFail = false, address = 'example.com', project = 'improve', quoteStatus = 200, quoteThrows = false } = {}) {
+function page({ ref = 'a'.repeat(32), visible = true, blocked = false, storage = new Map(), fetchFail = false, address = 'example.com', quoteStatus = 200, quoteThrows = false } = {}) {
   const handlers = {}, calls = [];
   const button = {}, status = {}, error = {};
-  const website = { value: address, addEventListener() {}, setCustomValidity() {}, removeAttribute() {}, setAttribute() {}, focus() {} };
+  const website = { value: address, required: true, addEventListener() {}, setCustomValidity() {}, removeAttribute() {}, setAttribute() {}, focus() {} };
   const problem = { value: 'Please fix my booking form.' };
-  const form = { elements: { name: { value: 'Test Visitor' }, project_type: { value: project }, email: { value: 'private@example.com' }, company: { value: '' } }, addEventListener: (n, f) => handlers[n] = f, querySelector: () => button, querySelectorAll: () => [], reset() { this.resetCalled = true; this.elements.project_type.value = 'improve'; } };
+  const form = { elements: { name: { value: 'Test Visitor' }, email: { value: 'private@example.com' }, company: { value: '' } }, addEventListener: (n, f) => handlers[n] = f, querySelector: () => button, querySelectorAll: () => [], reset() { this.resetCalled = true; } };
   const nodes = { '#request-form': form, '#website': website, '#problem': problem, '#form-status': status, '#website-error': error, '#website-label': {} };
   const document = { visibilityState: visible ? 'visible' : 'hidden', querySelector: s => nodes[s], querySelectorAll: () => [], addEventListener: (n, f) => handlers[n] = f, removeEventListener: n => delete handlers[n] };
   vm.runInNewContext(source, {
@@ -65,19 +65,21 @@ test('ordinary quote remains backward compatible', async () => {
   assert.equal(p.calls[0].data.ref, undefined);
   assert.equal(p.form.resetCalled, true);
 });
-test('new website request can omit its URL and sends name and selected scope', async () => {
-  const p = page({ ref: '', project: 'build', address: '' });
+test('redesign without project controls sends existing improvement contract', async () => {
+  const p = page({ ref: '', address: 'example.com' });
   await p.handlers.submit({ preventDefault() {} });
   assert.equal(p.calls.length, 1);
-  assert.equal(p.calls[0].data.website, '');
+  assert.equal(p.calls[0].data.website, 'example.com');
   assert.equal(p.calls[0].data.name, 'Test Visitor');
-  assert.equal(p.calls[0].data.project_type, 'build');
+  assert.equal(p.calls[0].data.project_type, 'improve');
   assert.equal(p.form.resetCalled, true);
   assert.equal(p.website.required, true);
+  assert.equal(p.button.textContent, 'Start my redesign');
+  assert.match(p.status.textContent, /redesign request has been sent/);
 });
-test('repairs require a URL; either project rejects a malformed supplied URL', async () => {
-  for (const [project, address] of [['improve', ''], ['build', 'javascript:alert(1)'], ['build', 'bad site.com'], ['improve', 'https://user:pass@example.com']]) {
-    const p = page({ ref: '', project, address });
+test('redesign requires a website and rejects unsafe or malformed addresses', async () => {
+  for (const address of ['', '   ', 'javascript:alert(1)', 'bad site.com', 'https://user:pass@example.com']) {
+    const p = page({ ref: '', address });
     await p.handlers.submit({ preventDefault() {} });
     assert.equal(p.calls.length, 0);
     assert.match(p.error.textContent, /Enter a website/);
@@ -86,12 +88,13 @@ test('repairs require a URL; either project rejects a malformed supplied URL', a
 });
 test('failed delivery preserves input, restores button and does not claim success', async () => {
   for (const options of [{ quoteStatus: 429 }, { quoteStatus: 502 }, { quoteThrows: true }]) {
-    const p = page({ ref: '', project: 'build', address: '', ...options });
+    const p = page({ ref: '', ...options });
     await p.handlers.submit({ preventDefault() {} });
     assert.equal(p.form.resetCalled, undefined);
     assert.equal(p.form.elements.name.value, 'Test Visitor');
     assert.equal(p.button.disabled, false);
-    assert.match(p.status.textContent, /Too many requests|could not confirm delivery/);
+    assert.match(p.status.textContent, /Too many requests|Delivery could not be confirmed/);
+    assert.equal(p.button.textContent, 'Start my redesign');
   }
 });
 

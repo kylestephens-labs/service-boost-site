@@ -40,7 +40,22 @@ if (portfolioTrack) {
   const previous = document.querySelector('[data-portfolio-prev]');
   const next = document.querySelector('[data-portfolio-next]');
   const count = document.querySelector('[data-portfolio-count]');
+  const pagination = document.querySelector('.portfolio-pagination');
+  const dotGroup = document.querySelector('.portfolio-dots');
   const position = slide => slide.getBoundingClientRect().left - portfolioTrack.getBoundingClientRect().left;
+  const goTo = index => {
+    portfolioTrack.scrollBy({left: position(slides[index]), behavior: 'instant'});
+  };
+  const dots = slides.map((slide, index) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'portfolio-dot';
+    dot.setAttribute('aria-label', `Show ${slide.dataset.slideLabel} concept`);
+    dot.setAttribute('aria-controls', 'portfolio-track');
+    dot.addEventListener('click', () => goTo(index));
+    dotGroup.append(dot);
+    return dot;
+  });
   const current = () => slides.reduce((best, slide, index) =>
     Math.abs(position(slide)) < Math.abs(position(slides[best])) ? index : best, 0);
   const update = () => {
@@ -49,10 +64,10 @@ if (portfolioTrack) {
     next.disabled = portfolioTrack.scrollLeft >= portfolioTrack.scrollWidth - portfolioTrack.clientWidth - 1;
     const label = `${index + 1} / ${slides.length}`;
     if (count.textContent !== label) count.textContent = label;
+    dots.forEach((dot, item) => dot.setAttribute('aria-current', String(item === index)));
   };
   const move = direction => {
-    const step = position(slides[1]) - position(slides[0]);
-    portfolioTrack.scrollBy({left: direction * step, behavior: 'instant'});
+    goTo(Math.max(0, Math.min(slides.length - 1, current() + direction)));
   };
   previous.addEventListener('click', () => move(-1));
   next.addEventListener('click', () => move(1));
@@ -64,6 +79,7 @@ if (portfolioTrack) {
   portfolioTrack.addEventListener('scroll', update, {passive: true});
   window.addEventListener('resize', update);
   document.querySelector('.portfolio-controls').hidden = false;
+  pagination.hidden = false;
   update();
 }
 

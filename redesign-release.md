@@ -30,5 +30,9 @@ and modal separately. Roll back through a reviewed revert if publication fails.
 
 ## Remaining proof
 
-Implementation, CI, review, merge and live verification pending. Actual sales
-uplift remains unproven; no change here establishes that outcome.
+Implementation and local checks completed: 17 backend, 10 intake/attribution,
+8 site tests; JavaScript syntax and static build passed. Desktop, 390px and
+320px browser checks passed; see design-qa.md. Local Docker is unavailable;
+the exact-head GitHub Validate gate must supply container build/smoke proof.
+Independent review, merge and live verification remain separate gates recorded
+on PR #29. Fresh inbox receipt and actual sales uplift remain unproven.
