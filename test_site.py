@@ -23,6 +23,33 @@ class Page(HTMLParser):
 
 
 class SiteContracts(unittest.TestCase):
+    def test_inline_requests_keep_one_inert_form_and_no_modal_close_control(self):
+        subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
+        for filename in ['restaurant.html', 'auto-repair/contact.html']:
+            page = Page('public-site/' + filename)
+            containers = [(t, a) for t, a in page.nodes if a.get('id') == 'demo-dialog']
+            self.assertEqual([t for t, _ in containers], ['section'])
+            forms = [a for t, a in page.nodes if a.get('id') == 'demo-form']
+            self.assertEqual(len(forms), 1)
+            self.assertEqual(forms[0]['method'], 'dialog')
+            self.assertNotIn('action', forms[0])
+            self.assertFalse(any('autofocus' in a for _, a in page.nodes))
+            self.assertNotIn('auto-modal-close', (ROOT / 'public-site' / filename).read_text())
+        for filename in AUTO_CONCEPTS[:-1]:
+            page = Page('public-site/' + filename)
+            self.assertEqual([t for t, a in page.nodes if a.get('id') == 'demo-dialog'], ['dialog'])
+
+    def test_editorial_controls_reference_unique_panels_and_initial_state(self):
+        for filename in CONCEPTS:
+            page = Page(filename)
+            panes = {a['id']: a for _, a in page.nodes if 'data-pane' in a}
+            controls = [a for _, a in page.nodes if 'data-show-pane' in a]
+            self.assertEqual(len(controls), len(panes), filename)
+            for control in controls:
+                target = control['data-show-pane']
+                self.assertIn(target, panes, filename)
+                self.assertEqual(control['aria-controls'], target)
+                self.assertEqual(control['aria-pressed'] == 'true', 'hidden' not in panes[target])
     def test_new_industries_are_published_and_reachable_from_carousel(self):
         subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
         home = Page('public-site/index.html')

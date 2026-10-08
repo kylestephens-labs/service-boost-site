@@ -10,7 +10,7 @@ if output.exists():
 output.mkdir()
 for name in ('index.html', 'landscape.html', 'salon.html', 'auto-repair.html',
              'restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html',
-             'style.css', 'homepage.css', 'concepts.css', 'auto-repair.css', 'industry-concepts.css', 'portfolio.css',
+             'style.css', 'homepage.css', 'concepts.css', 'auto-repair.css', 'industry-concepts.css', 'portfolio.css', 'industry-experiences.css',
              'app.js', 'site-ui.js', 'config.js', 'favicon.svg'):
     shutil.copyfile(root / name, output / name)
 shutil.copytree(root / 'assets', output / 'assets')
@@ -22,6 +22,13 @@ dialog = contact.split('<!-- auto-request-start -->', 1)[1].split('<!-- auto-req
 for name in ('auto-repair.html', 'auto-repair/services.html', 'auto-repair/about.html'):
     page = output / name
     page.write_text(page.read_text().replace('<script src="/site-ui.js">', dialog + '<script src="/site-ui.js">'))
+
+# Contact shows that same request in context; other routes retain a native dialog.
+page = output / 'auto-repair/contact.html'
+inline_request = dialog.replace('<dialog ', '<section ').replace('</dialog>', '</section>')
+inline_request = inline_request.replace('<form method="dialog"><button class="auto-modal-close" aria-label="Close service request">×</button></form>', '')
+inline_request = inline_request.replace(' required autofocus', ' required')
+page.write_text(page.read_text().replace(dialog, '').replace('<!-- inline-auto-request -->', inline_request))
 
 # One quiet portfolio frame; explanations stay behind an explicit action.
 concepts = {
@@ -51,6 +58,7 @@ for name in ('landscape.html', 'salon.html', 'auto-repair.html',
 <a class="context-cta" href="{destination}" data-preserve-ref>Start your redesign ↗</a></dialog>'''
     page = output / name
     source = page.read_text()
+    source = source.replace('<link rel="stylesheet" href="/portfolio.css">', '<link rel="stylesheet" href="/portfolio.css">\n<link rel="stylesheet" href="/industry-experiences.css">')
     assert source.count('<!-- portfolio-bar -->') == 1, name
     assert source.count('<!-- portfolio-context -->') == 1, name
     source = source.replace('<!-- portfolio-bar -->', bar).replace('<!-- portfolio-context -->', context)

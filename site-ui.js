@@ -138,15 +138,19 @@ const resetDemo = () => {
 };
 const openDemo = (name, value) => {
   if (!demoDialog || demoDialog.open) return;
-  resetDemo();
+  if (demoDialog.tagName === 'DIALOG' || demoForm.hidden) resetDemo();
   if (hasOption(field(name), value)) field(name).value = value;
   syncDemo();
-  demoDialog.showModal();
+  if (demoDialog.tagName === 'DIALOG') demoDialog.showModal();
+  else {
+    demoDialog.scrollIntoView({behavior: 'instant', block: 'center'});
+    demoForm.querySelector('input,select,textarea')?.focus();
+  }
 };
 document.querySelectorAll('[data-open-demo]').forEach(button => {
   button.addEventListener('click', () => openDemo(button.dataset.demoField, button.dataset.demoValue));
 });
-if (demoDialog) demoDialog.addEventListener('close', resetDemo);
+if (demoDialog?.tagName === 'DIALOG') demoDialog.addEventListener('close', resetDemo);
 // Navigation still reaches the useful Contact page; service/CTA links open the shared form.
 if (demoDialog && document.querySelector('.auto-request-dialog')) {
   document.querySelectorAll('a[href]').forEach(link => {
@@ -174,7 +178,21 @@ document.querySelector('[data-use-sample]')?.addEventListener('click', () => {
   syncDemo();
   demoForm.querySelector('input,select,textarea')?.focus();
 });
+
+// Each editorial module owns its controls and panels. Native buttons support
+// keyboard activation without claiming the more complex ARIA tab pattern.
+document.querySelectorAll('[data-switcher]').forEach(group => {
+  const buttons = [...group.querySelectorAll('[data-show-pane]')];
+  const panes = [...group.querySelectorAll('[data-pane]')];
+  buttons.forEach(button => button.addEventListener('click', () => {
+    const selected = panes.find(pane => pane.id === button.dataset.showPane);
+    if (!selected) return;
+    panes.forEach(pane => { pane.hidden = pane !== selected; });
+    buttons.forEach(control => control.setAttribute('aria-pressed', String(control === button)));
+  }));
+});
 demoForm?.addEventListener('change', syncDemo);
+if (demoDialog && demoDialog.tagName !== 'DIALOG') resetDemo();
 document.querySelector('[data-edit-demo]')?.addEventListener('click', () => {
   demoForm.hidden = false;
   demoStatus.hidden = true;

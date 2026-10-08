@@ -17,25 +17,19 @@
 <nav aria-label="Main navigation"><a href="#details">Menu</a><button type="button" data-open-panel="visit-details">Plan your visit</button></nav>
 </header>
 <main id="home">
-<section class="industry-hero" aria-labelledby="hero-heading">
+<section class="sera-intro" aria-labelledby="hero-heading">
+<div class="sera-title"><p class="eyebrow">Walnut Creek · Neighborhood Italian</p><h1 id="hero-heading">Good food.<br>Unhurried<br><em>evenings.</em></h1><p>Handmade pasta, a second glass,<br>and a little more time at the table.</p><button type="button" data-open-demo>Find a table ↗</button><span class="sera-hours">Dinner · Tuesday–Sunday · 5–10 PM<br>Illustrative hours</span></div>
 <img src="/assets/restaurant-hero.jpg" alt="Handmade pasta on a ceramic plate in a warmly lit Italian dining room" width="1536" height="1024" fetchpriority="high">
-<div class="hero-copy"><p class="eyebrow">Sera · Neighborhood Italian</p><h1 id="hero-heading">Stay a little<br>longer.</h1><p>Neighborhood Italian in Walnut Creek.<br>Handmade pasta. An evening to linger.</p><button type="button" data-open-demo>Find a table <span aria-hidden="true">↗</span></button></div>
-<a class="hero-scroll" href="#details">Discover more <span aria-hidden="true">↓</span></a>
 </section>
-<section class="industry-details" id="details">
-<div><p class="eyebrow">At the table</p><h2>A taste of Sera.</h2><p class="intro">Seasonal ingredients. Made with care.</p></div>
-<div class="detail-list"><ul><li><span class="detail-lead">Burrata</span><span>Heirloom tomato, basil, grilled sourdough</span><span class="detail-tail">18</span></li>
-<li><span class="detail-lead">Pappardelle</span><span>Slow-braised mushroom, pecorino, thyme</span><span class="detail-tail">28</span></li>
-<li><span class="detail-lead">Olive oil cake</span><span>Citrus, mascarpone</span><span class="detail-tail">12</span></li></ul><button class="quiet-link" type="button" data-open-panel="menu-details">Explore the sample menu ↗</button><p class="fine-print">Illustrative menu · Not available to order</p></div>
+<section class="sera-menu" id="details" data-switcher>
+<div><p class="eyebrow">From the kitchen</p><h2>A taste of Sera.</h2><p>Seasonal ingredients. Familiar pleasures.</p><div class="experience-switches" aria-label="Sample menu courses"><button type="button" data-show-pane="menu-start" aria-controls="menu-start" aria-pressed="true">To begin</button><button type="button" data-show-pane="menu-pasta" aria-controls="menu-pasta" aria-pressed="false">Pasta</button><button type="button" data-show-pane="menu-sweet" aria-controls="menu-sweet" aria-pressed="false">Something sweet</button></div></div>
+<div class="menu-sheet"><div data-pane id="menu-start"><p class="eyebrow">01 / To begin</p><dl><div><dt>Burrata <span>18</span></dt><dd>Heirloom tomato, basil, grilled sourdough</dd></div><div><dt>Garden salad <span>14</span></dt><dd>Seasonal leaves, lemon, fresh herbs</dd></div></dl></div><div data-pane id="menu-pasta" hidden><p class="eyebrow">02 / Pasta</p><dl><div><dt>Pappardelle <span>28</span></dt><dd>Slow-braised mushroom, pecorino, thyme</dd></div><div><dt>Rigatoni <span>24</span></dt><dd>Tomato, basil, parmesan</dd></div></dl></div><div data-pane id="menu-sweet" hidden><p class="eyebrow">03 / Something sweet</p><dl><div><dt>Olive oil cake <span>12</span></dt><dd>Citrus, mascarpone</dd></div><div><dt>Affogato <span>10</span></dt><dd>Espresso, vanilla</dd></div></dl></div><p class="fine-print">Illustrative menu · USD · Not available to order</p><button class="quiet-link" type="button" data-open-panel="menu-details">All dishes &amp; dietary information ↗</button></div>
 </section>
-<section class="industry-contact" id="contact"><p class="eyebrow">Sera</p><h2>There’s a place<br>for you.</h2><button type="button" data-open-demo>Find a table <span aria-hidden="true">↗</span></button><button class="quiet-link" type="button" data-open-panel="visit-details">Hours &amp; location ↗</button></section>
-</main>
-<footer><a class="footer-wordmark" href="#home">Sera</a><p>Fictional business. AI-generated imagery.<br>Demo by <a href="/" data-preserve-ref>Service Boost</a>.</p></footer>
+<section class="sera-room" id="contact"><img src="/assets/restaurant-room.jpg" alt="An intimate imagined Sera dining room with linen tables, candlelight and warm terracotta walls" width="1536" height="1024" loading="lazy"><div><p class="eyebrow">The room</p><h2>Come for dinner.<br>Stay for the evening.</h2><p>A neighborhood table in Walnut Creek.<br>Tuesday–Sunday · 5–10 PM (sample).</p><button class="quiet-link" type="button" data-open-panel="visit-details">Plan your visit ↗</button></div></section>
 <dialog id="visit-details" class="context-dialog" aria-labelledby="visit-heading"><form method="dialog"><button class="close">Close</button></form><p class="eyebrow">Illustrative visit information</p><h2 id="visit-heading">Make an evening of it.</h2><dl><div><dt>Hours</dt><dd>Tuesday–Sunday · 5–10 PM. Closed Monday.</dd></div><div><dt>Location &amp; arrival</dt><dd>Walnut Creek, California. A live site would show a verified address, directions and access information.</dd></div><div><dt>Before you visit</dt><dd>Ask the restaurant about dietary needs, accessibility and larger groups before booking. This demo cannot confirm suitability or availability.</dd></div></dl></dialog>
 <dialog id="menu-details" class="context-dialog" aria-labelledby="menu-heading"><form method="dialog"><button class="close">Close</button></form><p class="eyebrow">Illustrative menu · Prices in USD</p><h2 id="menu-heading">At the table.</h2><dl><div><dt>To begin</dt><dd>Burrata · tomato, basil, sourdough — 18<br>Garden salad · leaves, lemon, herbs — 14</dd></div><div><dt>Pasta</dt><dd>Pappardelle · mushroom, pecorino, thyme — 28<br>Rigatoni · tomato, basil, parmesan — 24</dd></div><div><dt>Something sweet</dt><dd>Olive oil cake · citrus, mascarpone — 12<br>Affogato · espresso, vanilla — 10</dd></div></dl><p class="fine-print">Sample dishes only. Ask the restaurant about ingredients and dietary requirements; no dietary or allergen suitability is claimed.</p></dialog>
-<dialog id="demo-dialog" aria-labelledby="demo-heading">
-<form method="dialog"><button class="close" aria-label="Close demo">Close ×</button></form>
-<p class="eyebrow">Interactive demonstration</p><h2 id="demo-heading">reservation preview</h2>
+<section id="demo-dialog" class="inline-reservation" aria-labelledby="demo-heading">
+<p class="eyebrow">A table for your evening · Interactive demonstration</p><h2 id="demo-heading">Make a little time.</h2>
 <p>Nothing will be sent, saved or booked.</p>
 <form id="demo-form" method="dialog" data-industry-demo>
 <label>Party size<select name="selection" required><option value="">Choose an option</option><option>1 guest</option><option>2 guests</option><option>3 guests</option><option>4 guests</option><option>5 guests</option><option>6 guests</option></select></label>
@@ -47,8 +41,10 @@
 <p id="demo-next-step" class="fine-print">A live reservation service would check availability before confirming a table.</p>
 <p id="demo-status" role="status" tabindex="-1" hidden></p>
 <div class="demo-actions" hidden><button type="button" data-edit-demo>Back to form</button><button type="button" data-reset-demo>Start again</button></div>
-</dialog>
+</section>
 <!-- portfolio-context -->
+</main>
+<footer><a class="footer-wordmark" href="#home">Sera</a><p>Fictional business. AI-generated imagery.<br>Demo by <a href="/" data-preserve-ref>Service Boost</a>.</p></footer>
 <script src="/site-ui.js"></script>
 </body>
 </html>

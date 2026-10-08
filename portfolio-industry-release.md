@@ -19,4 +19,14 @@ Production redesign intake, offer, backend, attribution and current routes remai
 ## Validation / release
 Run repository checks and desktop/mobile interaction QA, inspect complete diff, then obtain independent exact-head review. This request authorizes implementation and a draft PR. Merge and deployment require separate authorization for this change.
 
-Status: implementation in progress. Runtime validation, independent review and exact-head CI pending. Conversion impact and production acceptance NOT_PROVEN.
+Status: implementation complete; exact-head CI and independent review pending.
+
+## Implemented and checked
+- Seven differentiated landing compositions; Juniper services/about retained and checked, contact now renders its authoritative sample form inline.
+- Six new locally served fictional AI images: two salon looks, dental welcome, restaurant room, and two Olive House interiors. Existing landscape and contractor imagery retained.
+- Native-button editorial switches expose pressed state and control only their own panels. Restaurant and Juniper contact reuse the existing local-only preview/edit/reset flow inline.
+- Desktop 1440 × 1000 and phone 390 × 844 checks on all ten routes found no horizontal overflow or broken loaded images. Visual evidence is in the task's `output/portfolio-industry-2026-10-08` folder.
+- Browser checks: unavailable restaurant time blocks preview; an available alternative produces the sample summary; salon consultation preselection; landscape, dental and seller preselection; keyboard chapter switching; property kitchen gallery; Juniper URL service preselection and edit preservation.
+- Backend unit checks (17), attribution tests (11), site contracts (13), and JavaScript syntax checks pass locally. CI also owns the Docker build/container smoke gate.
+
+Conversion impact, live bookings, real industry services, merge, deployment and production acceptance remain NOT_PROVEN.
