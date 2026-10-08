@@ -1,13 +1,71 @@
 {
   "generator": "OpenAI built-in image generation",
-  "date": "2026-10-08",
-  "purpose": "Fictional portfolio concept imagery; no real client or property representation",
+  "date": "2026-10-06",
+  "usage": "Fictional business portfolio concepts; AI imagery disclosed in every footer",
   "assets": [
-    {"path": "assets/salon-copper-look.jpg", "reference": "assets/salon-portrait.png", "direction": "Editorial copper wavy bob, burgundy wardrobe, warm neutral studio"},
-    {"path": "assets/salon-cropped-look.jpg", "reference": "assets/salon-portrait.png", "direction": "Editorial dark pixie haircut, charcoal wardrobe, warm neutral studio"},
-    {"path": "assets/dental-welcome.jpg", "reference": "assets/dental-hero.jpg", "direction": "Fictional front-desk welcome, oak and sage, daylight; not a clinical encounter"},
-    {"path": "assets/restaurant-room.jpg", "reference": "assets/restaurant-hero.jpg", "direction": "Intimate Italian dining room, linen, terracotta, wood and candlelight"},
-    {"path": "assets/olive-living.jpg", "reference": "assets/real-estate-hero.jpg", "direction": "Olive House living space, oak, limestone, dark glazing and olive trees"},
-    {"path": "assets/olive-kitchen.jpg", "reference": "assets/real-estate-hero.jpg and assets/olive-living.jpg", "direction": "Coherent oak kitchen, limestone island, dark glazing and afternoon light"}
+    {
+      "path": "assets/restaurant-hero.jpg",
+      "prompt": "Use case: photorealistic-natural. Asset type: full-width website hero, 1536x1024 landscape. Create an editorial food photograph for a fictional premium neighborhood restaurant concept. A low ceramic plate of handmade ribbon pasta with roasted tomatoes and fresh basil on a warm walnut table, linen napkin, subtle glassware at far right, richly textured rustic plaster background. Food composition on right two thirds; left side dark warm quiet negative space for cream website headline added separately. Late-afternoon side light, deep oxblood and amber tones, believable food texture, intimate independent restaurant atmosphere. No people, text, logos, watermark, UI or collage.",
+      "processing": "Original 1536x1024 PNG converted to JPEG quality 82; original preserved",
+      "preview": "assets/restaurant-preview.jpg",
+      "previewSource": "1440x1000 in-app browser capture of the local rendered page, JPEG quality 84"
+    },
+    {
+      "path": "assets/dental-hero.jpg",
+      "prompt": "Use case: photorealistic-natural. Asset type: full-width website hero, 1536x1024 landscape. Premium architectural editorial photograph of a fictional contemporary dental practice reception: soft ivory plaster, pale oak reception desk, sculptural cream seating, a large window with leafy garden, subtle muted sage upholstery, warm daylight and gentle shadows. Calm human-scale hospitality, airy and reassuring, not a laboratory. Strong composition with architectural interest mainly right two thirds and quiet pale wall on left for dark website typography added separately. No people, medical procedures, branding, signage, text, watermarks, UI or collage.",
+      "processing": "Original 1536x1024 PNG converted to JPEG quality 82; original preserved",
+      "preview": "assets/dental-preview.jpg",
+      "previewSource": "1440x1000 in-app browser capture of the local rendered page, JPEG quality 84"
+    },
+    {
+      "path": "assets/contractor-hero.jpg",
+      "prompt": "Use case: photorealistic-natural. Asset type: full-width website hero, 1536x1024 landscape. High-end architectural editorial photograph of a fictional residential renovation: carefully crafted oak kitchen cabinetry, honed pale stone island, bronze hardware, limewash walls and large window looking into a small garden. Close attention to material detail, grounded warm atmosphere, lived-in but uncluttered. Wide composition, main kitchen and sunlight right two thirds, left third quiet darker warm wall with space for cream typography added separately. No people, logos, text, watermark, UI or collage.",
+      "processing": "Original 1536x1024 PNG converted to JPEG quality 82; original preserved",
+      "preview": "assets/contractor-preview.jpg",
+      "previewSource": "1440x1000 in-app browser capture of the local rendered page, JPEG quality 84"
+    },
+    {
+      "path": "assets/real-estate-hero.jpg",
+      "prompt": "Use case: photorealistic-natural. Asset type: full-width website hero, 1536x1024 landscape. Premium real estate editorial photograph of a fictional California modern home at golden hour: low sculptural white stucco volumes, warm timber entry, large glass opening, mature olive tree, gravel and native planting, softly lit interior. Architectural elegance without ostentatious mansion scale. Wide composition with the house on right two thirds, shadowed foliage and quiet darker space on left for white website headline added separately. No people, street numbers, logos, text, watermark, UI or collage.",
+      "processing": "Original 1536x1024 PNG converted to JPEG quality 82; original preserved",
+      "preview": "assets/real-estate-preview.jpg",
+      "previewSource": "1440x1000 in-app browser capture of the local rendered page, JPEG quality 84"
+    },
+    {
+      "path": "assets/salon-copper-look.jpg",
+      "reference": "assets/salon-portrait.png",
+      "direction": "Editorial copper wavy bob, burgundy wardrobe, warm neutral studio",
+      "date": "2026-10-08"
+    },
+    {
+      "path": "assets/salon-cropped-look.jpg",
+      "reference": "assets/salon-portrait.png",
+      "direction": "Editorial dark pixie haircut, charcoal wardrobe, warm neutral studio",
+      "date": "2026-10-08"
+    },
+    {
+      "path": "assets/dental-welcome.jpg",
+      "reference": "assets/dental-hero.jpg",
+      "direction": "Fictional front-desk welcome, oak and sage, daylight; not a clinical encounter",
+      "date": "2026-10-08"
+    },
+    {
+      "path": "assets/restaurant-room.jpg",
+      "reference": "assets/restaurant-hero.jpg",
+      "direction": "Intimate Italian dining room, linen, terracotta, wood and candlelight",
+      "date": "2026-10-08"
+    },
+    {
+      "path": "assets/olive-living.jpg",
+      "reference": "assets/real-estate-hero.jpg",
+      "direction": "Olive House living space, oak, limestone, dark glazing and olive trees",
+      "date": "2026-10-08"
+    },
+    {
+      "path": "assets/olive-kitchen.jpg",
+      "reference": "assets/real-estate-hero.jpg and assets/olive-living.jpg",
+      "direction": "Coherent oak kitchen, limestone island, dark glazing and afternoon light",
+      "date": "2026-10-08"
+    }
   ]
 }
