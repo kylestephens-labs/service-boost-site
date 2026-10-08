@@ -1,3 +1,73 @@
+# Restrained portfolio refinement QA
+
+Date: October 7, 2026 (Pacific). Ten routes across seven fictional concepts.
+Implementation: built public-site at http://127.0.0.1:58607/.
+Visual source: the approved restrained Field & Form mock,
+`output/portfolio-mocks-2026-10-07/01-landscape-refined.png`, in the parent task.
+For the other routes, existing compositions supply the visual identities;
+the approved principles are concise copy, generous space and details on demand.
+
+## Visual evidence and normalization
+
+Evidence folder:
+`/Users/kylestephens/Documents/Codex/2026-09-11/what-is-x20/output/portfolio-refinement-qa/`.
+Each route has a `-desktop.png` and `-mobile.png` capture. Desktop uses 1440px
+CSS width; phone uses 390px. Captures exclude the 15px scrollbar. Browser
+measurements also confirm no horizontal overflow at 320px on all ten routes.
+The comparison HTML files put reference and implementation at equal width
+without stretching heights. All ten combined comparisons were inspected.
+`comparison-landscape.png` records the final approved-mock comparison.
+
+The source raster is an illustrative composition, not an exact CSS specification.
+Other original desktop captures use 1280px CSS width versus 1440px for the
+implementation; comparisons assess composition and hierarchy after normalization.
+Existing images are reused rather than the mock's regenerated variants.
+All ten real phone captures were inspected separately.
+
+Initial P2: landscape headings and service labels were too small against the
+approved reference. Increased their desktop scale and rechecked the combined
+comparison. No actionable P0/P1/P2 remains in the checked states.
+
+- Typography: DM Sans and Libre Caslon retained; stronger landscape hierarchy,
+  concise service labels and readable dialog controls.
+- Layout: image-led identities retained, quieter main pages, selectable service
+  rows and supporting information behind explicit buttons. Juniper Contact
+  now has a workshop image and useful introduction before its request action.
+- Color: existing olive, cream, burgundy, terracotta and charcoal palettes retained.
+- Assets: existing concept images and arrow assets only; no new dependencies.
+- Copy: location/service context is labeled fictional or illustrative; no results,
+  real listings, clinical suitability, licenses or completed work are fabricated.
+  Shared design explanations distinguish design intent from measured outcomes.
+
+## Runtime evidence
+
+- All seven demo flows preview local sample requests. Service choices preselect
+  correctly; sample autofill, required fields, edit, reset, close and Escape work.
+- Restaurant rejects its unavailable sample time and accepts the offered
+  alternative. Contractor previews an out-of-area next step. Buyer/seller labels
+  and summaries differ correctly. Dental collects selections, not health data.
+- All 23 detail-panel triggers open the intended native dialog and close cleanly.
+- Juniper service links open the selected request; Contact navigation reaches
+  the page without opening a dialog automatically.
+- Sample text containing HTML syntax renders literally; no elements are injected.
+- Landscape redesign handoff retains its allowlisted concept and validated ref;
+  all real intake fields remain empty. No live submission was made.
+- No browser warning/error entries were recorded during these checks.
+
+## Validation and limitations
+
+17 backend tests, 11 attribution/intake tests, 11 site tests, all three JavaScript
+syntax checks and static build pass locally. Docker is unavailable locally;
+exact-head Validate CI owns the container build and smoke test.
+Shared framing and sample controls are generated once; dialog handling is shared.
+Production intake delivery, configuration, backend and deployment settings are
+unchanged. Independent review and live deployment checks are separate PR gates.
+Actual bookings, inbox delivery and conversion uplift remain NOT_PROVEN.
+
+final result: passed
+
+---
+
 # Redesign offer and intake release QA
 
 Date: October 7, 2026 (Pacific).

@@ -23,9 +23,19 @@ deployment in this chat. Exact-head validation and independent review precede me
 Vercel deployment and the live routes must be checked separately after merge.
 
 ## Validation
-Pending implementation. Required checks: backend unit tests, attribution tests,
-site contracts, JavaScript syntax, static build, exact-head Validate CI, browser
-checks for all ten concept routes on desktop/mobile and independent review.
+Implemented and locally validated: 17 backend tests, 11 attribution/intake tests,
+11 site contracts, three JavaScript syntax checks and the static build pass.
+All ten routes were inspected at desktop and 390px; 320px overflow checks pass.
+All seven sample flows, 23 detail triggers, edit/reset, invalid availability,
+service preselection and the concept/ref handoff were exercised in the browser.
+No live request was submitted. See design-qa.md for evidence and limitations.
+
+Consolidation keeps shared framing in the build, shared presentation in one
+stylesheet and dialog/sample handling in site-ui.js. The complete change was
+checked against the scope. Production app.js, config.js and backend are unchanged.
+Local Docker is unavailable; the required exact-head Validate workflow must prove
+the Docker build and container smoke check. Independent review, merge and live
+deployment verification remain release gates recorded on the PR.
 
 ## NOT_PROVEN
 Real delivery, actual appointments, customer conversion uplift and operator results

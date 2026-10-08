@@ -15,6 +15,13 @@ owns the Juniper identity. Navigation remains visible
 while scrolling. "Start your redesign" opens the production redesign intake in
 a native dialog. Direct `#request` links still work.
 
+portfolio.css owns shared portfolio framing, selectable service rows and
+on-demand detail panels. The build inserts one shared design explanation,
+redesign handoff and sample-data control on each of the ten concept routes.
+The seven identities retain their existing images, fonts and palettes.
+Only an allowlisted concept name and valid outreach reference carry into the
+real redesign form; demo inputs never carry over.
+
 `/landscape` and `/salon` are static concept demonstrations. Their forms never
 load the production quote script or send data. Vercel's clean URLs resolve these
 paths to their corresponding HTML files. No client work or results are claimed.
@@ -33,6 +40,8 @@ The preview serves only public-site, supports clean URLs, and binds only to
 loopback. No Docker, backend, credentials, or package installation is needed.
 The homepage retains its production intake; use only concept forms for demo QA.
 See portfolio-review.md for the portfolio acceptance evidence and asset provenance.
+See portfolio-refinement-release.md and the latest entry in design-qa.md for
+the restrained portfolio refinement, browser checks and release boundaries.
 
 Run `python3 -m unittest test_site.py`, `node --check site-ui.js`, and the existing
 validation workflow when changing the presentation or intake integration.

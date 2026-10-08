@@ -1,0 +1,98 @@
+/* Quiet shared framing and on-demand details, scoped to portfolio pages. */
+body{--portfolio-paper:var(--concept-paper,var(--paper));--portfolio-ink:var(--concept-ink,var(--ink));background:var(--portfolio-paper);color:var(--portfolio-ink)}
+.portfolio-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:4px 5%;font-size:12px;border-bottom:1px solid #7773;background:var(--portfolio-paper);color:var(--portfolio-ink)}
+.portfolio-bar a,.portfolio-bar button{display:inline-flex;align-items:center;min-height:44px}
+.portfolio-bar button{background:transparent!important;color:inherit!important;font:inherit!important;padding:0!important;border:0;transform:none;text-decoration:underline;text-underline-offset:4px}
+.portfolio-handoff{margin:0 5%;padding:24px 0 32px;border-top:1px solid #7773;display:flex;justify-content:space-between;gap:24px;font-size:14px;line-height:1.5}
+.portfolio-handoff a,.context-cta{text-decoration:underline;font-weight:600;text-underline-offset:5px;min-height:44px;display:inline-flex;align-items:center}
+.portfolio-handoff span{align-self:center}
+.industry-header{position:sticky;top:0;z-index:20;background:var(--paper)}
+html:has(.industry-page){scroll-padding-top:130px}
+.quiet-link,.concept-page .quiet-link,.industry-page .quiet-link{display:inline-block;background:transparent!important;color:inherit!important;padding:12px 0;font:inherit;font-size:15px!important;min-height:44px;text-decoration:underline;text-underline-offset:5px;border:0;transform:none;border-radius:0}
+.hero-copy .quiet-link{margin-left:20px}
+.industry-contact .quiet-link{display:block;margin:12px auto 0}
+.industry-header nav button{font:inherit;color:inherit;background:none;padding:0;border:0;min-height:44px;transform:none}
+.industry-header nav a:first-child{display:flex}
+.industry-header nav{gap:24px}
+.context-dialog{width:min(620px,calc(100% - 32px));max-height:88svh;background:var(--portfolio-paper);color:var(--portfolio-ink);border:0;padding:32px}
+.context-dialog .close{float:none;display:block;margin-left:auto;min-height:44px;color:inherit!important}
+.context-dialog h2{margin:24px 0;font-size:42px;line-height:1.1}
+.context-dialog p{font-size:16px;line-height:1.65;max-width:55ch}
+.context-dialog img{display:block;width:100%;height:auto;margin:24px 0}
+.context-dialog dl{margin:24px 0}.context-dialog dl>div{border-top:1px solid #7774;padding:16px 0}.context-dialog dt{font-weight:600;margin-bottom:6px}.context-dialog dd{margin:0;line-height:1.6;font-size:16px}
+.context-dialog .fine-print,.sample-contact{font-size:13px;line-height:1.6}
+dialog .eyebrow{clear:both}
+dialog .demo-tools{display:flex;justify-content:flex-end;margin:16px 0 0}
+dialog .demo-tools button{width:auto;padding:8px 0;background:none!important;color:inherit!important;box-shadow:none;font:inherit;font-size:14px!important;text-decoration:underline;min-height:44px}
+dialog :is(input,select,textarea){width:100%;min-width:0;max-width:100%;padding:12px;margin-top:8px;font:16px 'DM Sans',sans-serif;border:1px solid #7777;border-radius:0;background:var(--portfolio-paper);color:var(--portfolio-ink)}
+dialog label{display:block;font-size:15px;margin:18px 0}
+dialog .close{min-height:44px}
+dialog .demo-actions{gap:12px;margin-top:24px}
+dialog .demo-actions button{min-height:44px}
+#demo-status{white-space:pre-line;overflow-wrap:anywhere;line-height:1.65}
+.form-pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-pair label{min-width:0}
+.sample-contact{padding:14px 0;border-top:1px solid #7774;margin:20px 0}
+.choice-row,.concept-page .choice-row,.industry-page .choice-row{display:flex;align-items:center;justify-content:space-between;gap:20px;background:transparent;color:inherit;width:100%;padding:22px 0;border:0;border-top:1px solid #7774;border-radius:0;text-align:left;transform:none;font-weight:400}
+.choice-row strong{display:block;font:30px/1.2 'Libre Caslon Display',Georgia,serif;letter-spacing:-.025em}
+.choice-row small{display:block;font:15px/1.6 'DM Sans',sans-serif;margin-top:8px}
+.choice-row .choice-price{font:20px 'Libre Caslon Display',Georgia,serif;white-space:nowrap}
+.choice-row:hover strong{text-decoration:underline;text-underline-offset:5px}
+.choice-row img{width:18px;height:18px;flex:none}
+.landscape .land-photo{height:35vw;max-height:600px}
+.landscape .land-intro{grid-template-columns:1.2fr 1fr;padding:56px 5%;gap:10%}
+.landscape .land-intro p{max-width:28ch;font-size:30px}
+.landscape .land-intro h1{font-size:clamp(64px,6.8vw,110px)}
+.landscape .concept-services{padding:90px 5% 70px;align-items:center}
+.landscape .concept-services h2{margin:0;font-size:clamp(44px,4.7vw,68px)}
+.landscape .service-list .choice-row strong{font-size:clamp(30px,3vw,42px)}
+.landscape .service-list .choice-row small{font-size:17px}
+.landscape .feature{display:flex;flex-direction:column-reverse;gap:24px;padding:0 5% 70px}
+.landscape .feature>img{height:44vw;max-height:630px;object-position:center}
+.landscape .feature>div{display:flex;justify-content:space-between;align-items:center;gap:35px;width:100%}
+.landscape .feature h2{margin:8px 0 0;font-size:56px}.landscape .feature p{margin:0}.landscape .feature p:not(.eyebrow){font-size:16px}
+.landscape .feature .eyebrow{font-size:12px}
+.landscape .concept-contact{padding:65px 5%}
+.landscape .concept-contact h2{font-size:clamp(48px,5.2vw,78px)}
+.landscape .concept-contact p{font-size:16px;margin:20px 0 0}
+.landscape footer{display:flex;align-items:center;justify-content:space-between;text-transform:none;letter-spacing:0;text-align:left}
+.landscape footer p{font-size:12px;margin:0}
+.salon-services .choice-row{padding:17px 0}
+.salon-services .choice-row small{font-size:14px;margin-top:5px}
+.salon-services .quiet-link{font-family:'DM Sans',sans-serif}
+.salon-about{padding:70px 5%}.salon-about h2{margin-bottom:16px}
+.salon .concept-contact .demo-note{max-width:45ch;font-size:13px}
+.auto-contact-composition{display:grid;grid-template-columns:1.1fr 1fr;min-height:650px;align-items:center}
+.auto-contact-composition>img{width:100%;height:100%;object-fit:cover;min-height:650px}
+.auto-contact-composition>div{padding:60px 10%}
+.auto-contact-composition h1{font-size:clamp(48px,5vw,80px);margin-top:0}
+.auto-contact-composition p{font-size:18px;max-width:35ch}
+.auto-contact-composition .quiet-link{display:block;margin-top:16px}
+.auto-about-principles{display:flex;justify-content:space-between;align-items:center;gap:40px;padding:65px 5%;background:#e6e9de}
+.auto-about-principles h2{margin:0;max-width:22ch}.auto-about-principles p{max-width:32ch;margin:0;font-size:18px}
+.auto-theme .service-menu ul{margin:12px 0}
+.auto-theme .service-menu details summary{font-size:15px;cursor:pointer;text-decoration:underline;text-underline-offset:4px;padding:10px 0}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap}.hero-actions button:last-child{background:transparent;color:var(--hero-ink);border:1px solid currentColor}
+.journey-choice{display:grid;grid-template-columns:1fr 1fr;gap:9%;padding:85px 7%}
+.journey-choice h2{font-size:48px}.journey-choice p{max-width:32ch;line-height:1.6}
+.real-estate-theme .industry-details{border-top:1px solid #7773;padding-top:70px;padding-bottom:70px}
+.real-estate-theme .industry-details h2{font-size:55px}
+@media(min-width:1600px){.landscape .concept-services,.landscape .feature,.salon-services,.industry-details,.journey-choice,.auto-section{padding-left:max(5%,calc((100vw - 1450px)/2));padding-right:max(5%,calc((100vw - 1450px)/2))}}
+@media(max-width:720px){
+ .portfolio-bar{font-size:11px;gap:10px;padding-inline:5%}.portfolio-bar span{font-size:10px}
+ .portfolio-handoff{font-size:13px;gap:15px;align-items:start;flex-direction:column;padding:18px 0 24px}.portfolio-handoff span{align-self:start}
+ .industry-header nav{gap:14px}.industry-header nav a,.industry-header nav button{font-size:12px}
+ .industry-header{padding:16px 5%}.industry-header .wordmark{font-size:30px}
+ .hero-copy .quiet-link{margin:8px 0 0;display:block;width:fit-content}
+ .landscape .land-photo{height:300px}.landscape .land-intro{grid-template-columns:1fr;padding:38px 6%;gap:28px}.landscape .land-intro p{font-size:26px;margin-bottom:22px}
+ .landscape .land-intro h1{font-size:clamp(48px,14vw,65px)}.landscape .concept-contact h2{font-size:43px}
+ .landscape .concept-services{padding:55px 6%;gap:32px}.landscape .concept-services h2{font-size:40px}
+ .landscape .feature{padding:0 6% 50px}.landscape .feature>img{height:330px}.landscape .feature>div{display:block}.landscape .feature h2{font-size:38px;margin-bottom:20px}
+ .landscape .concept-contact{padding:45px 6%}.landscape footer{display:block}.landscape footer p{margin-top:14px}
+ .choice-row strong,.landscape .service-list .choice-row strong{font-size:27px}.choice-row small{font-size:14px}
+ .form-pair{grid-template-columns:1fr;gap:0}.context-dialog{padding:24px}.context-dialog h2{font-size:35px}
+ .auto-contact-composition{grid-template-columns:1fr}.auto-contact-composition>img{height:260px;min-height:0}.auto-contact-composition>div{padding:38px 6%}.auto-contact-composition h1{font-size:48px}
+ .auto-about-principles{flex-direction:column;align-items:start;padding:45px 6%;gap:24px}
+ .journey-choice{grid-template-columns:1fr;padding:55px 6%;gap:40px}.journey-choice h2{font-size:40px}
+ html:has(.concept-page),html:has(.industry-page){scroll-padding-top:145px}
+}
