@@ -1,12 +1,14 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Contact · Juniper Motor Works · Concept</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/auto-repair.css"><link rel="icon" href="/favicon.svg"></head>
-<body class="concept-page auto-theme"><a class="skip" href="#home">Skip to content</a><div class="auto-demo-bar"><a href="/#examples" data-preserve-ref>← Service Boost portfolio</a><span>Fictional business · Multi-page concept</span></div>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Contact · Juniper Motor Works · Concept</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/auto-repair.css"><link rel="stylesheet" href="/portfolio.css">
+<link rel="icon" href="/favicon.svg"></head>
+<body class="concept-page auto-theme"><a class="skip" href="#home">Skip to content</a><!-- portfolio-bar -->
 <header class="auto-header"><a class="auto-brand" href="/auto-repair" data-preserve-ref>JUNIPER<span>MOTOR WORKS</span></a><nav aria-label="Main navigation"><a href="/auto-repair" data-preserve-ref>Home</a>
 <a href="/auto-repair/services" data-preserve-ref>Services</a>
 <a href="/auto-repair/about" data-preserve-ref>About</a>
 <a href="/auto-repair/contact" data-preserve-ref aria-current="page">Contact</a></nav></header>
 <main id="home">
-<section class="auto-section auto-page-intro"><h1>Let’s talk about your car.</h1><button class="auto-button" type="button" data-open-demo>Request service ↗</button></section></main>
+<section class="auto-contact-composition"><img src="/assets/auto-workshop.jpg" alt="Illustrative Juniper workshop with warm light and a station wagon" width="1536" height="1024"><div><p class="auto-kicker">Contact · Juniper Motor Works</p><h1>Let’s talk<br>about your car.</h1><p>Tell us what you’ve noticed. We’ll explain the next step.</p><button class="auto-button" type="button" data-open-demo>Request service ↗</button><button class="quiet-link" type="button" data-open-panel="visit-details">Hours, location &amp; what happens next ↗</button><p class="auto-note">Explore a sample request. No appointment is booked.</p></div></section></main>
+<dialog id="visit-details" class="context-dialog" aria-labelledby="visit-heading"><form method="dialog"><button class="close">Close</button></form><p class="eyebrow">Illustrative shop details</p><h2 id="visit-heading">Before you come in.</h2><dl><div><dt>Location &amp; hours</dt><dd>Walnut Creek · East Bay. Monday–Friday, 8 AM–5 PM; weekends closed. A live site would show the verified address and phone.</dd></div><div><dt>Your vehicle</dt><dd>Share the year, make and model so the shop can confirm whether it can help.</dd></div><div><dt>What happens next</dt><dd>The shop reviews the concern, then contacts you to discuss an appropriate visit. A request is not an appointment or permission to begin work.</dd></div></dl></dialog>
 <!-- auto-request-start -->
 <dialog id="demo-dialog" class="auto-request-dialog" aria-labelledby="demo-heading" aria-describedby="auto-demo-note">
 <form method="dialog"><button class="auto-modal-close" aria-label="Close service request">×</button></form>
@@ -15,9 +17,11 @@
 <label>Service<select name="service" required autofocus><option value="unsure">Not sure yet</option><option value="maintenance">Maintenance</option><option value="diagnostics">Diagnostics</option><option value="repair">Repair &amp; replacement</option></select></label>
 <label>Vehicle<input name="vehicle" placeholder="e.g. 2018 Honda Civic" maxlength="120" required autocomplete="off"></label>
 <label>What’s happening? <span class="auto-optional">(optional)</span><textarea name="demo_details" placeholder="Tell us briefly…" rows="2" maxlength="2000"></textarea></label>
+<label>Sample reply email<input type="email" name="demo_email" value="demo@example.com" readonly></label>
 <button class="auto-button" type="submit">Preview request <span aria-hidden="true">↗</span></button>
 </form>
 <p id="demo-status" role="status" tabindex="-1" hidden></p><div class="demo-actions" hidden><button type="button" data-edit-demo>Edit request</button><button type="button" data-reset-demo>Start again</button></div>
 </dialog>
 <!-- auto-request-end -->
-<footer class="auto-footer"><a class="auto-brand" href="/auto-repair" data-preserve-ref>JUNIPER<span>MOTOR WORKS</span></a><p>A fictional business and design demonstration.<br>No real services, appointments or client results.</p><a href="/#examples" data-preserve-ref>Explore Service Boost ↗</a></footer><script src="/site-ui.js"></script></body></html>
+<footer class="auto-footer"><a class="auto-brand" href="/auto-repair" data-preserve-ref>JUNIPER<span>MOTOR WORKS</span></a><p>A fictional business and design demonstration.<br>No real services, appointments or client results.</p><a href="/#examples" data-preserve-ref>Explore Service Boost ↗</a></footer><!-- portfolio-context -->
+<script src="/site-ui.js"></script></body></html>

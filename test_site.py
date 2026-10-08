@@ -33,10 +33,43 @@ class SiteContracts(unittest.TestCase):
             self.assertIn('/' + filename.removesuffix('.html'), links)
             page = Page('public-site/' + filename)
             self.assertEqual(sum(t == 'h1' for t, _ in page.nodes), 1)
-            # Demos intentionally collect selections, never contact or health data.
+            # New industries use selections and a fixed fictional reply contact,
+            # never editable contact or health data.
             self.assertFalse(any(t in ('input', 'textarea') for t, _ in page.nodes))
-            self.assertEqual(sum(t == 'select' for t, _ in page.nodes), 2)
+            self.assertGreaterEqual(sum(t == 'select' for t, _ in page.nodes), 2)
             self.assertTrue(any('data-industry-demo' in a for _, a in page.nodes))
+
+    def test_built_portfolio_has_one_quiet_frame_and_isolated_sample_tools(self):
+        subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
+        for filename in CONCEPTS:
+            page = Page('public-site/' + filename)
+            ids = [a['id'] for _, a in page.nodes if 'id' in a]
+            self.assertEqual(len(ids), len(set(ids)), filename)
+            self.assertEqual(ids.count('design-details'), 1)
+            self.assertEqual(sum('data-use-sample' in a for _, a in page.nodes), 1)
+            links = [a['href'] for t, a in page.nodes if t == 'a' and a.get('href', '').endswith('#request')]
+            self.assertEqual(len(links), 2)
+            self.assertTrue(all(link.startswith('/?concept=') for link in links))
+            text = (ROOT / 'public-site' / filename).read_text()
+            self.assertNotIn('<!-- portfolio-', text)
+            self.assertNotIn('app.js', text)
+
+    def test_context_and_intent_do_not_copy_personal_data_or_offer_viewings(self):
+        page = Page('real-estate.html')
+        source = (ROOT / 'real-estate.html').read_text()
+        self.assertNotIn('sample viewing request', source)
+        self.assertIn('data-area-label', source)
+        for intent in ['Buying a home', 'Selling a home']:
+            self.assertTrue(any(a.get('data-demo-value') == intent for _, a in page.nodes))
+        home = (ROOT / 'index.html').read_text()
+        self.assertIn('id="concept-context"', home)
+        self.assertNotIn('Atelier', home)
+
+    def test_demo_assets_and_scripts_cannot_submit_or_persist_samples(self):
+        script = (ROOT / 'site-ui.js').read_text()
+        for forbidden in ['fetch(', 'XMLHttpRequest', 'sendBeacon', 'localStorage', 'sessionStorage', 'innerHTML']:
+            self.assertNotIn(forbidden, script)
+        self.assertIn('demoForm.reportValidity()', script)
 
     def test_build_includes_one_isolated_request_dialog_on_every_auto_page(self):
         subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)

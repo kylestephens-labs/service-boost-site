@@ -6,44 +6,48 @@
 <meta name="robots" content="noindex">
 <title>Elena Vale · Homes & real estate concept</title>
 <link rel="stylesheet" href="/industry-concepts.css">
+<link rel="stylesheet" href="/portfolio.css">
 <link rel="icon" href="/favicon.svg">
 </head>
 <body class="industry-page real-estate-theme">
 <a class="skip" href="#home">Skip to content</a>
-<div class="concept-bar"><a href="/" data-preserve-ref>← Service Boost</a><span>Fictional business · Design concept</span></div>
+<!-- portfolio-bar -->
 <header class="industry-header">
 <a class="wordmark" href="#home">Elena Vale<span>Homes & real estate</span></a>
-<nav aria-label="Main navigation"><a href="#details">The collection</a><a href="#contact">Let’s talk <span aria-hidden="true">↗</span></a></nav>
+<nav aria-label="Main navigation"><a href="#details">Your next move</a><button type="button" data-open-panel="project-details">The Olive House</button></nav>
 </header>
 <main id="home">
 <section class="industry-hero" aria-labelledby="hero-heading">
 <img src="/assets/real-estate-hero.jpg" alt="Contemporary hillside home with olive trees and warm evening light" width="1536" height="1024" fetchpriority="high">
-<div class="hero-copy"><p class="eyebrow">Elena Vale · Homes & real estate</p><h1 id="hero-heading">Find a place<br>that feels like you.</h1><p>A considered approach to your next move.</p><button type="button" data-open-demo>Try inquiry demo <span aria-hidden="true">↗</span></button></div>
+<div class="hero-copy"><p class="eyebrow">Elena Vale · Homes & real estate</p><h1 id="hero-heading">Find a place<br>that feels like you.</h1><p>Buying or selling in the East Bay.<br>Start with the right conversation.</p><div class="hero-actions"><button type="button" data-open-demo data-demo-field="selection" data-demo-value="Buying a home">I’m buying ↗</button><button type="button" data-open-demo data-demo-field="selection" data-demo-value="Selling a home">I’m selling ↗</button></div></div>
 <a class="hero-scroll" href="#details">Discover more <span aria-hidden="true">↓</span></a>
 </section>
-<section class="industry-details" id="details">
+<section class="journey-choice" id="details"><div><p class="eyebrow">For buyers</p><h2>Find your place.</h2><p>Explore the areas, spaces and timing that matter to you.</p><button class="quiet-link" type="button" data-open-demo data-demo-field="selection" data-demo-value="Buying a home">Start a buyer conversation ↗</button></div><div><p class="eyebrow">For sellers</p><h2>A thoughtful move.</h2><p>Discuss your property, your plans and the next chapter.</p><button class="quiet-link" type="button" data-open-demo data-demo-field="selection" data-demo-value="Selling a home">Start a seller conversation ↗</button></div></section>
+<section class="industry-details">
 <div><p class="eyebrow">The collection</p><h2>Room to<br>settle in.</h2><p class="intro">An imagined hillside retreat. Open spaces, warm materials and a quieter pace.</p></div>
 <div class="detail-list"><ul><li><span class="detail-lead">The Olive House</span><span>Illustrative property</span><span class="detail-tail">3 bedrooms · 2 bathrooms</span></li>
-<li><span class="detail-lead">For buyers</span><span>Discover your priorities</span><span class="detail-tail">Space, setting and everyday life.</span></li>
-<li><span class="detail-lead">For sellers</span><span>Tell your home’s story</span><span class="detail-tail">A thoughtful approach to presentation.</span></li></ul><p class="fine-print">Fictional property · Not a listing or offer for sale</p></div>
+</ul><button class="quiet-link" type="button" data-open-panel="project-details">Explore the design study ↗</button><p class="fine-print">Fictional property · Not a listing or offer for sale</p></div>
 </section>
-<section class="industry-contact" id="contact"><p class="eyebrow">Elena Vale</p><h2>Your next chapter<br>starts with a hello.</h2><button type="button" data-open-demo>Try inquiry demo <span aria-hidden="true">↗</span></button></section>
+<section class="industry-contact" id="contact"><p class="eyebrow">Elena Vale</p><h2>Your next chapter<br>starts with a hello.</h2><button type="button" data-open-demo>Start a conversation <span aria-hidden="true">↗</span></button></section>
 </main>
 <footer><a class="footer-wordmark" href="#home">Elena Vale</a><p>Fictional business. AI-generated imagery.<br>Demo by <a href="/" data-preserve-ref>Service Boost</a>.</p></footer>
+<dialog id="project-details" class="context-dialog" aria-labelledby="project-heading"><form method="dialog"><button class="close">Close</button></form><p class="eyebrow">Fictional property · Design study</p><h2 id="project-heading">The Olive House.</h2><img src="/assets/real-estate-hero.jpg" alt="Imagined hillside home with olive trees and evening light"><p>Three bedrooms, two bathrooms and open living spaces in an imagined East Bay setting. A study in warm materials and quiet surroundings.</p><p class="fine-print">Not a listing, valuation or offer for sale. No viewings are available. Listing feeds and other advanced integrations are separate scope.</p></dialog>
 <dialog id="demo-dialog" aria-labelledby="demo-heading">
 <form method="dialog"><button class="close" aria-label="Close demo">Close ×</button></form>
-<p class="eyebrow">Interactive demonstration</p><h2 id="demo-heading">inquiry preview</h2>
+<p class="eyebrow">Interactive demonstration</p><h2 id="demo-heading">Let’s talk about your move.</h2>
 <p>Nothing will be sent, saved or booked.</p>
 <form id="demo-form" method="dialog" data-industry-demo>
-<label>I’m interested in<select name="selection" required><option value="">Choose an option</option><option>The Olive House · fictional property</option><option>Buying a home</option><option>Selling a home</option></select></label>
-<label>Preferred next step<select name="preference" required><option value="">Choose an option</option><option>A conversation</option><option>A sample viewing request</option></select></label>
+<label>I’m interested in<select name="selection" required><option value="">Choose an option</option><option>Buying a home</option><option>Selling a home</option></select></label>
+<label><span data-area-label>Area of interest</span><select name="project_area" required><option value="">Choose a sample area</option><option>Walnut Creek</option><option>Oakland</option><option>Elsewhere in the East Bay</option></select></label>
+<label>Timing<select name="preference" required><option value="">Choose a timeframe</option><option>Within 3 months</option><option>3–6 months</option><option>Exploring / no set date</option></select></label>
+<p class="fine-print" data-intent-note>Choose buying or selling to explore a relevant conversation.</p>
 <button type="submit">Preview request <span aria-hidden="true">↗</span></button>
 </form>
 <p id="demo-next-step" class="fine-print">A live agent would contact you to discuss your plans. This fictional property is not available for viewing or purchase.</p>
 <p id="demo-status" role="status" tabindex="-1" hidden></p>
 <div class="demo-actions" hidden><button type="button" data-edit-demo>Back to form</button><button type="button" data-reset-demo>Start again</button></div>
 </dialog>
+<!-- portfolio-context -->
 <script src="/site-ui.js"></script>
 </body>
 </html>
-

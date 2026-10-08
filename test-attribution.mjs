@@ -137,3 +137,18 @@ test('portfolio navigation preserves explicit opt-out and rejects malformed refs
   assert.equal(removed.search, '');
   assert.equal(portfolioLink('https://www.serviceboost.co/?ref=' + 'a'.repeat(32), 'https://example.com/').search, '');
 });
+
+test('real intake links retain only known concept context and validated attribution', () => {
+  const ref = 'a'.repeat(32);
+  const link = portfolioLink('https://www.serviceboost.co/salon?ref=' + ref,
+    '/?concept=salon&demo_email=private@example.com#request');
+  assert.equal(link.searchParams.get('concept'), 'salon');
+  assert.equal(link.searchParams.get('ref'), ref);
+  assert.equal(link.searchParams.has('demo_email'), false);
+  assert.equal(link.hash, '#request');
+  const unknown = portfolioLink('https://www.serviceboost.co/salon?ref=' + ref, '/?concept=unknown#request');
+  assert.equal(unknown.searchParams.has('concept'), false);
+  const optedOut = portfolioLink('https://www.serviceboost.co/salon', '/?concept=salon#request');
+  assert.equal(optedOut.searchParams.has('ref'), false);
+  assert.equal(optedOut.searchParams.get('concept'), 'salon');
+});

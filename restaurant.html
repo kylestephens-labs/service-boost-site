@@ -6,44 +6,49 @@
 <meta name="robots" content="noindex">
 <title>Sera · Neighborhood Italian concept</title>
 <link rel="stylesheet" href="/industry-concepts.css">
+<link rel="stylesheet" href="/portfolio.css">
 <link rel="icon" href="/favicon.svg">
 </head>
 <body class="industry-page restaurant-theme">
 <a class="skip" href="#home">Skip to content</a>
-<div class="concept-bar"><a href="/" data-preserve-ref>← Service Boost</a><span>Fictional business · Design concept</span></div>
+<!-- portfolio-bar -->
 <header class="industry-header">
 <a class="wordmark" href="#home">Sera<span>Neighborhood Italian</span></a>
-<nav aria-label="Main navigation"><a href="#details">At the table</a><a href="#contact">Let’s talk <span aria-hidden="true">↗</span></a></nav>
+<nav aria-label="Main navigation"><a href="#details">Menu</a><button type="button" data-open-panel="visit-details">Plan your visit</button></nav>
 </header>
 <main id="home">
 <section class="industry-hero" aria-labelledby="hero-heading">
 <img src="/assets/restaurant-hero.jpg" alt="Handmade pasta on a ceramic plate in a warmly lit Italian dining room" width="1536" height="1024" fetchpriority="high">
-<div class="hero-copy"><p class="eyebrow">Sera · Neighborhood Italian</p><h1 id="hero-heading">Stay a little<br>longer.</h1><p>Handmade pasta. Good wine. Your kind of evening.</p><button type="button" data-open-demo>Try reservation demo <span aria-hidden="true">↗</span></button></div>
+<div class="hero-copy"><p class="eyebrow">Sera · Neighborhood Italian</p><h1 id="hero-heading">Stay a little<br>longer.</h1><p>Neighborhood Italian in Walnut Creek.<br>Handmade pasta. An evening to linger.</p><button type="button" data-open-demo>Find a table <span aria-hidden="true">↗</span></button></div>
 <a class="hero-scroll" href="#details">Discover more <span aria-hidden="true">↓</span></a>
 </section>
 <section class="industry-details" id="details">
-<div><p class="eyebrow">At the table</p><h2>A taste of Sera.</h2><p class="intro">Seasonal ingredients. A short menu. Everything made with care.</p></div>
+<div><p class="eyebrow">At the table</p><h2>A taste of Sera.</h2><p class="intro">Seasonal ingredients. Made with care.</p></div>
 <div class="detail-list"><ul><li><span class="detail-lead">Burrata</span><span>Heirloom tomato, basil, grilled sourdough</span><span class="detail-tail">18</span></li>
 <li><span class="detail-lead">Pappardelle</span><span>Slow-braised mushroom, pecorino, thyme</span><span class="detail-tail">28</span></li>
-<li><span class="detail-lead">Olive oil cake</span><span>Citrus, mascarpone</span><span class="detail-tail">12</span></li></ul><p class="fine-print">Illustrative menu · Not available to order</p></div>
+<li><span class="detail-lead">Olive oil cake</span><span>Citrus, mascarpone</span><span class="detail-tail">12</span></li></ul><button class="quiet-link" type="button" data-open-panel="menu-details">Explore the sample menu ↗</button><p class="fine-print">Illustrative menu · Not available to order</p></div>
 </section>
-<section class="industry-contact" id="contact"><p class="eyebrow">Sera</p><h2>There’s a place<br>for you.</h2><button type="button" data-open-demo>Try reservation demo <span aria-hidden="true">↗</span></button></section>
+<section class="industry-contact" id="contact"><p class="eyebrow">Sera</p><h2>There’s a place<br>for you.</h2><button type="button" data-open-demo>Find a table <span aria-hidden="true">↗</span></button><button class="quiet-link" type="button" data-open-panel="visit-details">Hours &amp; location ↗</button></section>
 </main>
 <footer><a class="footer-wordmark" href="#home">Sera</a><p>Fictional business. AI-generated imagery.<br>Demo by <a href="/" data-preserve-ref>Service Boost</a>.</p></footer>
+<dialog id="visit-details" class="context-dialog" aria-labelledby="visit-heading"><form method="dialog"><button class="close">Close</button></form><p class="eyebrow">Illustrative visit information</p><h2 id="visit-heading">Make an evening of it.</h2><dl><div><dt>Hours</dt><dd>Tuesday–Sunday · 5–10 PM. Closed Monday.</dd></div><div><dt>Location &amp; arrival</dt><dd>Walnut Creek, California. A live site would show a verified address, directions and access information.</dd></div><div><dt>Before you visit</dt><dd>Ask the restaurant about dietary needs, accessibility and larger groups before booking. This demo cannot confirm suitability or availability.</dd></div></dl></dialog>
+<dialog id="menu-details" class="context-dialog" aria-labelledby="menu-heading"><form method="dialog"><button class="close">Close</button></form><p class="eyebrow">Illustrative menu · Prices in USD</p><h2 id="menu-heading">At the table.</h2><dl><div><dt>To begin</dt><dd>Burrata · tomato, basil, sourdough — 18<br>Garden salad · leaves, lemon, herbs — 14</dd></div><div><dt>Pasta</dt><dd>Pappardelle · mushroom, pecorino, thyme — 28<br>Rigatoni · tomato, basil, parmesan — 24</dd></div><div><dt>Something sweet</dt><dd>Olive oil cake · citrus, mascarpone — 12<br>Affogato · espresso, vanilla — 10</dd></div></dl><p class="fine-print">Sample dishes only. Ask the restaurant about ingredients and dietary requirements; no dietary or allergen suitability is claimed.</p></dialog>
 <dialog id="demo-dialog" aria-labelledby="demo-heading">
 <form method="dialog"><button class="close" aria-label="Close demo">Close ×</button></form>
 <p class="eyebrow">Interactive demonstration</p><h2 id="demo-heading">reservation preview</h2>
 <p>Nothing will be sent, saved or booked.</p>
 <form id="demo-form" method="dialog" data-industry-demo>
-<label>Party size<select name="selection" required><option value="">Choose an option</option><option>2 guests</option><option>4 guests</option><option>6 guests</option></select></label>
-<label>Sample sitting<select name="preference" required><option value="">Choose an option</option><option>Friday · 6 PM</option><option>Saturday · 7 PM</option></select></label>
+<label>Party size<select name="selection" required><option value="">Choose an option</option><option>1 guest</option><option>2 guests</option><option>3 guests</option><option>4 guests</option><option>5 guests</option><option>6 guests</option></select></label>
+<label>Sample date<select name="sample_date" required><option value="">Choose a sample date</option><option>Friday, October 9, 2026 (sample)</option><option>Saturday, October 10, 2026 (sample)</option></select></label>
+<label>Sample time<select name="preference" required><option value="">Choose a sample time</option><option>6:30 PM</option><option value="unavailable">7:00 PM · Unavailable (sample)</option><option>7:30 PM</option></select></label>
+<p id="availability-note" class="fine-print" role="status" hidden>That sample time is unavailable. Try 6:30 PM or 7:30 PM.</p>
 <button type="submit">Preview request <span aria-hidden="true">↗</span></button>
 </form>
 <p id="demo-next-step" class="fine-print">A live reservation service would check availability before confirming a table.</p>
 <p id="demo-status" role="status" tabindex="-1" hidden></p>
 <div class="demo-actions" hidden><button type="button" data-edit-demo>Back to form</button><button type="button" data-reset-demo>Start again</button></div>
 </dialog>
+<!-- portfolio-context -->
 <script src="/site-ui.js"></script>
 </body>
 </html>
-

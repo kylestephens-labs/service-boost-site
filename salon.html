@@ -7,12 +7,13 @@
 <title>Morrow Studio · Concept</title>
 <link rel="stylesheet" href="/style.css">
 <link rel="stylesheet" href="/concepts.css">
+<link rel="stylesheet" href="/portfolio.css">
 <link rel="icon" href="/favicon.svg">
 </head>
 <body class="concept-page salon-theme">
 <div class="salon">
 <a class="skip" href="#home">Skip to content</a>
-<a class="concept-return" href="/" data-preserve-ref>← Back to Service Boost</a>
+<!-- portfolio-bar -->
 <header>
 <a class="brand" href="#home">Morrow Studio</a>
 <nav aria-label="Main navigation">
@@ -21,53 +22,39 @@
 <a href="#about">About</a>
 <a href="#contact">Contact</a>
 </nav>
-<button type="button" data-open-demo>Try booking demo</button>
+<button type="button" data-open-demo>Choose your service</button>
 </header>
 <main id="home">
 <section class="salon-hero">
 <img src="/assets/salon-portrait.png" alt="Editorial portrait of a layered brunette haircut"/>
 <div>
-<p class="eyebrow">Concept website</p>
+
 <h1>A cut<br/>above<br/>ordinary.</h1>
-<p>Modern hair.<br/>A more you.</p>
-<button type="button" data-open-demo>Try booking demo</button>
+<p>Cuts, color &amp; styling<br/>in Walnut Creek.</p>
+<button type="button" data-open-demo>Choose your service</button>
 </div>
 </section>
 <section class="salon-services" id="services">
 <div>
 <p class="eyebrow">Sample services</p>
 <h2 class="menu-heading">Find your next look.</h2>
-<div class="price">
-<span>Haircut</span>
-<span>$85</span>
-</div>
-<div class="price">
-<span>Color</span>
-<span>$150</span>
-</div>
-<div class="price">
-<span>Highlights</span>
-<span>$180+</span>
-</div>
-<div class="price">
-<span>Treatment</span>
-<span>$60</span>
-</div>
-<div class="price">
-<span>Style</span>
-<span>$75</span>
-</div>
-<p class="demo-note">Illustrative prices only. No services are available to purchase.</p>
-<button type="button" data-open-demo>Try booking demo</button>
+<button class="choice-row" type="button" data-open-demo data-demo-field="service" data-demo-value="Haircut · $85"><span><strong>Haircut</strong><small>60 min · Consultation, cut &amp; finish</small></span><span class="choice-price">$85 ↗</span></button>
+<button class="choice-row" type="button" data-open-demo data-demo-field="service" data-demo-value="Color · $150"><span><strong>Color</strong><small>120 min · A refreshed color</small></span><span class="choice-price">$150 ↗</span></button>
+<button class="choice-row" type="button" data-open-demo data-demo-field="service" data-demo-value="Highlights · $180+"><span><strong>Highlights</strong><small>150 min · Light &amp; dimension</small></span><span class="choice-price">$180+ ↗</span></button>
+<button class="choice-row" type="button" data-open-demo data-demo-field="service" data-demo-value="Treatment · $60"><span><strong>Treatment</strong><small>30 min · Conditioning care</small></span><span class="choice-price">$60 ↗</span></button>
+<button class="choice-row" type="button" data-open-demo data-demo-field="service" data-demo-value="Style · $75"><span><strong>Style</strong><small>45 min · A polished finish</small></span><span class="choice-price">$75 ↗</span></button>
+<p class="demo-note">Illustrative prices and durations.</p>
+<button class="quiet-link" type="button" data-open-demo data-demo-field="service" data-demo-value="Consultation">Not sure? Start with a consultation ↗</button>
 </div>
 <img src="/assets/salon-interior.png" alt="Warm salon interior with an arched mirror and burgundy chair"/>
 </section>
-<section class="salon-about" id="about"><p class="eyebrow">The studio concept</p><h2>Modern techniques.<br>Timeless style.</h2><p>A quiet moment. A fresh perspective. Morrow imagines a relaxed studio where a conversation about your hair comes first.</p></section>
-<section class="concept-contact" id="contact"><div><p class="eyebrow">Make a little time for you</p><h2>A new look<br>starts here.</h2></div><div><p>Explore the sample booking flow, from choosing a service to previewing a confirmation.</p><button type="button" data-open-demo>Try booking demo</button><p class="demo-note">No appointment is made. A live site could link to your existing scheduler; custom booking functionality is a separate scope.</p></div></section>
+<section class="salon-about" id="about"><p class="eyebrow">The studio concept</p><h2>Modern techniques.<br>Timeless style.</h2><p>A good cut starts with a conversation.</p><button class="quiet-link" type="button" data-open-panel="visit-details">Plan your visit ↗</button></section>
+<section class="concept-contact" id="contact"><div><p class="eyebrow">Make a little time for you</p><h2>A new look<br>starts here.</h2></div><div><p>Choose a service. Find your next look.</p><button type="button" data-open-demo>Choose your service</button><p class="demo-note">Explore a sample request. No appointment is reserved.</p></div></section>
 </main>
 <footer>Morrow Studio · Fictional business<p>Booking demonstration by <a href="/" data-preserve-ref>Service Boost</a>. No appointment is made.</p>
 </footer>
 </div>
+<dialog id="visit-details" class="context-dialog" aria-labelledby="visit-heading"><form method="dialog"><button class="close">Close</button></form><p class="eyebrow">Illustrative studio details</p><h2 id="visit-heading">A little time for you.</h2><dl><div><dt>Visit</dt><dd>Walnut Creek · Tuesday–Saturday, 10 AM–6 PM. A live site would show the verified address and arrival details.</dd></div><div><dt>Choosing a service</dt><dd>Start with a consultation for a major color change or if you’re unsure. Final timing and price are agreed before the appointment.</dd></div><div><dt>Booking</dt><dd>An agreed scheduling provider would confirm availability and explain cancellation policies. Provider costs and custom scheduling are separate scope.</dd></div></dl></dialog>
 <dialog id="demo-dialog" aria-labelledby="demo-heading">
 <form method="dialog">
 <button class="close">Close</button>
@@ -83,6 +70,7 @@
 <option>Highlights · $180+</option>
 <option>Treatment · $60</option>
 <option>Style · $75</option>
+<option>Consultation</option>
 </select>
 </label>
 <label>Sample appointment<select name="appointment" required>
@@ -101,6 +89,7 @@
 </p>
 <div class="demo-actions" hidden><button type="button" data-edit-demo>Back to form</button><button type="button" data-reset-demo>Start again</button></div>
 </dialog>
+<!-- portfolio-context -->
 <script src="/site-ui.js">
 </script>
 </body>
