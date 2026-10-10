@@ -72,7 +72,7 @@ form.addEventListener('submit', async event => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'omit',
-      // Redesigns use the existing improvement contract; no backend rollout required.
+      // Both existing-website services use the improvement contract.
       body: JSON.stringify({ website: address, name: form.elements.name.value.trim(), project_type: 'improve', problem: problem.value.trim(), email: form.elements.email.value.trim(), company: form.elements.company.value, ...sourceFields() }),
       signal: AbortSignal.timeout(45000),
     });
@@ -80,7 +80,7 @@ form.addEventListener('submit', async event => {
       status.textContent = response.status === 429 ? 'Too many requests. Please try again later.' : 'Delivery could not be confirmed. Your details are still here. Please try again or email notify@serviceboost.co.';
       return;
     }
-    status.textContent = 'Your redesign request has been sent. I’ll review your site and reply within 24 hours with next steps.';
+    status.textContent = 'Your request has been sent. I’ll review your site and reply within 24 hours with next steps.';
     form.querySelectorAll('.reassurance').forEach(text => { text.hidden = true; });
     form.reset();
     clearWebsiteError();
@@ -89,6 +89,6 @@ form.addEventListener('submit', async event => {
     status.textContent = 'Delivery could not be confirmed. Your details are still here. Please try again or email notify@serviceboost.co.';
   } finally {
     button.disabled = false;
-    button.textContent = 'Start my redesign';
+    button.textContent = 'Send my request';
   }
 });

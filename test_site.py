@@ -103,7 +103,7 @@ class SiteContracts(unittest.TestCase):
         text = (ROOT / 'index.html').read_text()
         self.assertIn('Privacy notice', text)
         self.assertNotIn('Form does not submit', text)
-        self.assertEqual(text.count('data-open-quote'), 4)
+        self.assertEqual(text.count('data-open-quote'), 5)
 
     def test_redesign_offer_order_and_unpublished_testimonials(self):
         page = Page('index.html')
@@ -117,7 +117,8 @@ class SiteContracts(unittest.TestCase):
         self.assertIn("No payment due today. I'll review your site and reply within 24 hours with next steps.", text)
         self.assertNotIn('Get a free quote', text)
         self.assertNotIn('A few questions', text)
-        self.assertNotIn('Small fixes', text)
+        self.assertIn('One-hour minimum', text)
+        self.assertIn('Estimate approved before work begins.', text)
 
     def test_demo_pages_cannot_load_production_quote_delivery(self):
         for filename in CONCEPTS:

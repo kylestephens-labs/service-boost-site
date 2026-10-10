@@ -23,14 +23,14 @@
 <meta name="twitter:image:alt" content="Service Boost — Grow your sales with a better website. Website redesign, $1,500.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css?v=portfolio-2">
-<link rel="stylesheet" href="homepage.css?v=redesign-3">
+<link rel="stylesheet" href="homepage.css?v=services-1">
 </head>
 <body>
 <div class="service">
 <a class="skip" href="#home">Skip to content</a>
 <header>
 <a class="brand sb" href="#home"><img src="/assets/brand.svg" alt="">Service Boost</a>
-<nav aria-label="Main navigation"><a href="#package">Package</a><a href="#examples">Examples</a><a href="#about">About</a><a href="#process">How it works</a><a href="#faq">FAQ</a></nav>
+<nav aria-label="Main navigation"><a href="#package">Services</a><a href="#examples">Examples</a><a href="#about">About</a><a href="#process">How it works</a><a href="#faq">FAQ</a></nav>
 <button type="button" data-open-quote>Start your redesign</button>
 </header>
 <main id="home">
@@ -40,13 +40,26 @@
 <button type="button" data-open-quote>Start your redesign</button>
 </section>
 <section class="package-section" id="package" aria-labelledby="package-heading">
+<div class="service-offer">
 <div class="package-copy">
 <h2 id="package-heading">Website redesign</h2>
 <p class="package-price">$1,500</p>
-<button type="button" data-open-quote>Start your redesign</button>
-<p class="approval-note"><img src="/assets/icons/shield-check.svg" alt="" width="28" height="28">You approve the design before<br class="desktop-break"> anything goes live.</p>
+<p class="price-basis">Fixed price</p>
+<button type="button" data-open-quote>Discuss your redesign</button>
+<p class="offer-note">$750 to start. $750 at launch.</p>
 </div>
 <ul class="package-includes"><li>Up to four pages</li><li>Rewritten content</li><li>Mobile improvements</li><li>Contact or booking process</li><li>One revision round</li><li>Launch included</li></ul>
+</div>
+<div class="service-offer" role="group" aria-labelledby="updates-heading">
+<div class="package-copy">
+<h2 id="updates-heading">Website updates &amp;<br> small fixes</h2>
+<p class="package-price">$100<span class="price-unit"> / hour</span></p>
+<p class="price-basis">One-hour minimum</p>
+<button type="button" data-open-quote>Tell me what you need</button>
+<p class="offer-note">Estimate approved before work begins.</p>
+</div>
+<ul class="package-includes"><li>Text, photos &amp; calendar updates</li><li>Blog or News publishing</li><li>Small layout and link fixes</li></ul>
+</div>
 </section>
 <section class="examples" id="examples" aria-labelledby="examples-heading">
 <h2 id="examples-heading">Explore the possibilities</h2>
@@ -132,7 +145,7 @@
 <dialog id="request" aria-labelledby="intake-heading">
 <form method="dialog"><button class="close" type="submit">Close</button></form>
 <div class="intake">
-<h2 id="intake-heading">Start your redesign</h2>
+<h2 id="intake-heading">Tell me what you need</h2>
 <p id="concept-context" class="reassurance" hidden></p>
 <form id="request-form">
 <div hidden aria-hidden="true"><label for="company">Leave blank</label><input id="company" name="company" tabindex="-1" autocomplete="off"></div>
@@ -141,7 +154,7 @@
 <label for="website" id="website-label">Website</label><input id="website" name="website" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com" required maxlength="500" aria-describedby="website-error">
 <span id="website-error" class="field-error"></span>
 <label for="problem">What would you like to improve?</label><textarea id="problem" name="problem" rows="3" placeholder="Tell me what you’d like to improve." required minlength="10" maxlength="4000"></textarea>
-<button class="submit" type="submit">Start my redesign</button>
+<button class="submit" type="submit">Send my request</button>
 <p class="reassurance">No payment due today. I'll review your site and reply within 24 hours with next steps.</p>
 <details class="reassurance privacy-notice"><summary>Privacy notice</summary>
 <p>Your details are emailed to Service Boost through Google Workspace to respond to your request. Please don’t include passwords or sensitive information.</p>
