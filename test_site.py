@@ -117,8 +117,8 @@ class SiteContracts(unittest.TestCase):
         self.assertIn("No payment due today. I'll review your site and reply within 24 hours with next steps.", text)
         self.assertNotIn('Get a free quote', text)
         self.assertNotIn('A few questions', text)
-        self.assertIn('One-hour minimum', text)
-        self.assertIn('Estimate approved before work begins.', text)
+        self.assertIn('one-hour minimum', text)
+        self.assertIn('send an estimate for your approval before work begins.', text)
 
     def test_demo_pages_cannot_load_production_quote_delivery(self):
         for filename in CONCEPTS:
