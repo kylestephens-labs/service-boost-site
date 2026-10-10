@@ -1,3 +1,21 @@
+# Service offer hierarchy QA — October 10, 2026
+
+Source visual: `/Users/kylestephens/.codex/generated_images/01a093d4-f7dc-7413-8dc8-fe858777f181/exec-8d370bf1-139d-447b-9175-ec0f9076cbcc.png` (1435 x 1096), with the requested single hourly heading, “Website updates & small fixes.”
+Implementation: `http://127.0.0.1:8123/#package`, desktop `/private/tmp/service-hierarchy-desktop-v2.png` (1428 x 1091), mobile `/private/tmp/service-hierarchy-mobile.png` and `/private/tmp/service-hierarchy-mobile-updates.png`.
+Desktop CSS viewport: 1440 x 1100. Mobile: 390 x 844; narrow overflow check: 320 pixels. Browser zoom requires a 1.2 override multiplier. Captures contain unused white padding; comparison normalized the visible content width, excluding padding. The generated reference supplies composition rather than exact font metrics.
+
+Full reference and implementation were opened together for comparison. The initial capture (`/private/tmp/service-hierarchy-desktop.png`) had a P2 hierarchy mismatch: redesign type and section height were too compact. Enlarged the title, price, CTA and checklist, increased padding, and restored the hourly column divider. The v2 capture resolves that finding. Both offers and their text are readable in the full comparison, so an additional focused crop was unnecessary.
+
+Typography: existing site family retained; larger redesign title and price, smaller hourly title and price. Spacing: dominant navy block followed by compact white offer, aligned columns and mobile stacking. Colors: existing navy, lavender and purple tokens retained; outline hourly action. Assets: existing brand and check SVG retained, no replacement artwork. Copy: one hourly heading, short supporting sentence, separate action labels and explicit hourly terms; existing prices and inclusions retained. Header size and exact font metrics follow the existing site intentionally. No remaining actionable P0/P1/P2 findings.
+
+Both offer buttons open the existing neutral dialog; close works on desktop and mobile. No horizontal overflow at 1440, 390 or 320 CSS pixels. Browser error log empty. No form submitted. Live email delivery and conversion impact remain NOT_PROVEN. No backend, attribution or schema changes.
+
+Implementation checklist: desktop comparison complete; responsive check complete; primary interactions complete; exact-head CI and independent review required before merge.
+
+final result: passed
+
+---
+
 # Two-service section QA — October 9, 2026
 
 Source: `/Users/kylestephens/.codex/generated_images/01a093d4-f7dc-7413-8dc8-fe858777f181/exec-f97c77c3-b12e-43ea-8f2f-c0ab48eddc80.png` (1190 x 1322 raster), with the user-requested removal of the intro and shared footer disclaimer.
