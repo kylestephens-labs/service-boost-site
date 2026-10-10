@@ -21,15 +21,25 @@
 .service-hero h1 { font-size: clamp(48px, 6vw, 104px); margin: 0 auto 32px; letter-spacing: -.055em; line-height: 1.06; }
 .service-hero em { color: var(--brand-blue); font-style: normal; }
 .service-hero > p { font-size: clamp(22px, 1.8vw, 28px); max-width: 980px; margin: 0 auto 36px; }
-.package-section { padding: 0 max(6%, calc((100% - 1200px) / 2)); background: #111e40; color: white; }
-.service-offer { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 64px; padding: 64px 0; }
-.service-offer + .service-offer { border-top: 1px solid #67718b; }
-.service .package-copy h2 { margin-bottom: 0; font-size: clamp(36px, 3.5vw, 52px); }
-.service .package-price { color: #a39aff; font-weight: 700; font-size: clamp(72px, 6.5vw, 104px); letter-spacing: -.055em; line-height: 1.1; margin: 8px 0 12px; }
+.package-section { padding: 0; }
+.service-offer { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; gap: 64px; padding: 100px max(6%, calc((100% - 1264px) / 2)); background: #111e40; color: white; }
+.service .package-copy h2 { margin-bottom: 0; font-size: clamp(36px, 4.5vw, 64px); }
+.service .package-price { color: #a39aff; font-weight: 700; font-size: clamp(72px, 10vw, 144px); letter-spacing: -.055em; line-height: 1.1; margin: 12px 0 24px; }
+.service .package-copy button { font-size: 26px; padding: 22px 32px; }
 .price-unit { font-size: .45em; letter-spacing: -.035em; white-space: nowrap; }
-.package-includes { display: grid; align-self: stretch; align-content: center; gap: 20px; padding: 4px 0 4px 52px; margin: 0; border-left: 1px solid #67718b; list-style: none; }
-.package-includes li { display: flex; align-items: center; gap: 16px; font-size: 23px; }
+.package-includes { display: grid; align-self: stretch; align-content: center; gap: 24px; padding: 4px 0 4px 52px; margin: 0; border-left: 1px solid #67718b; list-style: none; }
+.package-includes li { display: flex; align-items: center; gap: 16px; font-size: 28px; }
 .package-includes li::before { content: ""; flex: 0 0 26px; width: 26px; height: 26px; background: #eeedff url('/assets/icons/check.svg') center / 19px no-repeat; border-radius: 50%; }
+.updates-offer { padding-top: 48px; padding-bottom: 48px; background: white; color: #111e40; }
+.service .updates-copy h2 { font-size: clamp(28px, 2.5vw, 36px); margin-bottom: 12px; }
+.updates-copy > p { margin: 0 0 24px; font-size: 21px; }
+.updates-offer .package-includes { padding: 0; border: 0; gap: 14px; }
+.updates-offer .package-includes li { font-size: 20px; }
+.updates-action { padding: 20px 0 20px 52px; border-left: 1px solid var(--divider); }
+.service .updates-action .package-price { color: #111e40; font-size: 56px; margin: 0 0 20px; }
+.updates-action .price-unit { font-size: .55em; font-weight: 500; }
+.service .updates-action button { background: white; color: var(--brand-blue); border: 2px solid var(--brand-blue); }
+.service .updates-terms { font-size: 17px; margin: 18px 0 0; }
 .examples { padding: 80px 4% 64px; text-align: center; }
 .service .examples h2 { margin-bottom: 18px; }
 .portfolio-carousel { position: relative; max-width: 1440px; margin: auto; }
@@ -90,9 +100,10 @@
   html:has(.service) { scroll-padding-top: 155px; }
   .service header { flex-wrap: wrap; gap: 8px 20px; }
   .service header nav { order: 3; width: 100%; justify-content: center; flex-wrap: wrap; gap: 0 24px; }
-  .package-section { padding: 0 7%; }
-  .service-offer { padding: 48px 0; gap: 32px; }
+  .service-offer { padding: 48px 7%; gap: 32px; }
   .package-includes { padding-left: 32px; }
+  .package-includes li { font-size: 23px; }
+  .updates-action { padding-left: 32px; }
   .about-section { padding: 48px 8%; gap: 40px; grid-template-columns: 36% 1fr; }
   .process-grid li { gap: 12px; padding: 0 16px; }
   .step-number { flex-basis: 36px; height: 36px; font-size: 20px; }
@@ -107,10 +118,12 @@
   .service-hero h1 { font-size: clamp(34px, 8vw, 52px); margin-bottom: 22px; }
   .service-hero > p { font-size: 20px; }
   .desktop-break { display: none; }
-  .package-section { padding: 0 8%; }
-  .service-offer { grid-template-columns: 1fr; padding: 36px 0; gap: 32px; }
+  .service-offer { grid-template-columns: 1fr; padding: 36px 8%; gap: 32px; }
+  .service .package-copy button { font-size: 20px; padding: 18px 24px; }
   .package-includes { padding: 28px 0 0; border-left: 0; border-top: 1px solid #67718b; gap: 18px; }
   .package-includes li { font-size: 20px; }
+  .updates-action { padding: 0; border: 0; }
+  .service .updates-action .package-price { font-size: 48px; }
   .examples { padding: 36px 3%; }
   .service h2 { font-size: 32px; }
   .work-row { padding: 0 26px; }
