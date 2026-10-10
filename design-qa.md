@@ -1,3 +1,21 @@
+# Service-aware popup QA — October 10, 2026
+
+Source visual: `/Users/kylestephens/.codex/generated_images/01a093d4-f7dc-7413-8dc8-fe858777f181/exec-a6392e71-28fe-4a34-aea8-11a36dffcc5e.png` (1036 x 1518), an approved comparison board showing two states of one modal. The user explicitly confirmed these must remain popup dialogs over the page.
+Implementation: built public-only preview at `http://127.0.0.1:8768/`. Final desktop captures: `/private/tmp/service-intake-updates-final.png`, `/private/tmp/service-intake-redesign-final.png`, `/private/tmp/service-intake-page-faq.png` (1428 x 1091 each). Mobile: `/private/tmp/service-intake-updates-mobile.png`, `/private/tmp/service-intake-mobile-footer.png`, `/private/tmp/service-intake-narrow-final.png` (last 308 x 722).
+Viewports: desktop 1440 x 1100 CSS; mobile 390 x 844 and 320 x 750. Browser override needs a 1.2 multiplier at the current zoom. Captures include unused canvas padding; normalized comparison uses modal content width and ignores that padding. Source is a multi-state board, while implementation shows one real popup at a time; the full board and both desktop states were opened together for comparison.
+
+Typography: existing DM Sans family, strong navy heading, readable labeled controls and purple submit action. Spacing: a single dropdown beneath the heading divider, consistent field grouping, scrollable modal on short screens. Colors: existing navy/purple/slate palette and white surface; existing dimmed native backdrop intentionally replaces the board's pale presentation background. Assets: existing site imagery and native controls preserved; no new image assets needed. Copy: both exact dropdown choices, matching titles/prompts/submit labels, no Change service control, approved FAQ only in the page, removed hourly subtitle. Intentional accessible variations: existing text Close button, native select affordance, stacked privacy/email footer, and website/email placeholder examples remain. Footer arrangement is P3 polish only.
+
+Initial P2: at 320 CSS pixels the long hourly option was truncated by the browser's default dialog maximum width. Set an explicit viewport-based max-width and reduced narrow-screen padding/select type. Recaptured `service-intake-narrow-final.png`; full selected value is visible and no horizontal overflow remains. Desktop final captures were then compared with the source; no actionable P0/P1/P2 findings remain. Full-view modal text is legible at original size, so a separate focused crop was unnecessary.
+
+Interactions checked: both entry services, dropdown changes preserving name/email/website/message, native `:modal` state, Escape close and trigger focus restoration, mobile footer access, direct `#request` default, allowlisted concept context, and page FAQ expansion. Console error log empty. No real request submitted; payload, success/reset, failure/retry, bounds and pending-submit behavior are covered by deterministic tests. Fresh inbox receipt remains NOT_PROVEN.
+
+Implementation checklist: visual comparison complete; responsive correction verified; popup behavior verified; exact-head CI and independent review required before merge.
+
+final result: passed
+
+---
+
 # Service offer hierarchy QA — October 10, 2026
 
 Source visual: `/Users/kylestephens/.codex/generated_images/01a093d4-f7dc-7413-8dc8-fe858777f181/exec-8d370bf1-139d-447b-9175-ec0f9076cbcc.png` (1435 x 1096), with the requested single hourly heading, “Website updates & small fixes.”

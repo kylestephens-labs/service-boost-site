@@ -31,8 +31,7 @@
 .package-includes li { display: flex; align-items: center; gap: 16px; font-size: 28px; }
 .package-includes li::before { content: ""; flex: 0 0 26px; width: 26px; height: 26px; background: #eeedff url('/assets/icons/check.svg') center / 19px no-repeat; border-radius: 50%; }
 .updates-offer { padding-top: 48px; padding-bottom: 48px; background: white; color: #111e40; }
-.service .updates-copy h2 { font-size: clamp(28px, 2.5vw, 36px); margin-bottom: 12px; }
-.updates-copy > p { margin: 0 0 24px; font-size: 21px; }
+.service .updates-copy h2 { font-size: clamp(28px, 2.5vw, 36px); margin-bottom: 28px; }
 .updates-offer .package-includes { padding: 0; border: 0; gap: 14px; }
 .updates-offer .package-includes li { font-size: 20px; }
 .updates-action { padding: 20px 0 20px 52px; border-left: 1px solid var(--divider); }
@@ -88,11 +87,14 @@
 .contact-section { padding: 48px 6% 32px; text-align: center; }
 .service .contact-section h2 { font-size: clamp(32px, 3vw, 48px); max-width: 1000px; margin: 0 auto 32px; }
 .service footer { display: block; text-align: center; color: var(--muted); font-size: 17px; padding: 40px 6% 48px; }
-#request { width: min(560px, calc(100vw - 32px)); max-height: 90dvh; padding: 24px 30px 30px; }
-#request h2 { font-size: 32px; margin: 48px 0 26px; }
+#request { width: min(620px, calc(100vw - 32px)); max-width: calc(100vw - 24px); max-height: 90dvh; padding: 24px 36px 30px; }
+#request h2 { font-size: 36px; margin: 44px 0 20px; padding-bottom: 20px; border-bottom: 1px solid #d7ddeb; }
 #request .close { min-width: 44px; min-height: 44px; font-size: 16px!important; }
 #request label { font-size: 16px; margin: 16px 0 8px; }
-#request input, #request textarea { font-size: 16px; }
+#request input, #request select, #request textarea { font-size: 16px; }
+#request :is(input, select, textarea, button):focus-visible { outline: 3px solid #4438f5; outline-offset: 3px; }
+#request select { margin-bottom: 24px; }
+#request .submit { margin-top: 24px; }
 #request .reassurance, #request .email-alternative, #request .field-error { font-size: 14px; }
 #request .reassurance { margin: 12px 0; }
 #request .privacy-notice summary { padding: 12px 0; }
@@ -149,6 +151,8 @@
   #request h2 { font-size: 28px; }
 }
 @media (max-width: 360px) {
+  #request { padding: 16px 12px 24px; }
+  #request select { font-size: 14px; padding-left: 6px; padding-right: 6px; }
   .service header { gap: 8px; }
   .service .sb { font-size: 14px; gap: 6px; }
   .service .sb img { width: 28px; height: 28px; }

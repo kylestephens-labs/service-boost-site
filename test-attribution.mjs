@@ -19,23 +19,142 @@ function portfolioLink(currentUrl, destination) {
   return new URL(link.href, currentUrl);
 }
 
-function page({ ref = 'a'.repeat(32), visible = true, blocked = false, storage = new Map(), fetchFail = false, address = 'example.com', quoteStatus = 200, quoteThrows = false } = {}) {
+function page({ ref = 'a'.repeat(32), visible = true, blocked = false, storage = new Map(), fetchFail = false, address = 'example.com', quoteStatus = 200, quoteThrows = false, service, quoteResponse } = {}) {
   const handlers = {}, calls = [];
   const button = {}, status = {}, error = {};
   const website = { value: address, required: true, addEventListener() {}, setCustomValidity() {}, removeAttribute() {}, setAttribute() {}, focus() {} };
-  const problem = { value: 'Please fix my booking form.' };
+  const problem = { value: 'Please fix my booking form.', focus() {} };
+  const serviceHandlers = {};
+  const serviceControl = service === undefined ? null : { value: service, disabled: false,
+    addEventListener: (name, callback) => serviceHandlers[name] = callback, focus() {} };
   const form = { elements: { name: { value: 'Test Visitor' }, email: { value: 'private@example.com' }, company: { value: '' } }, addEventListener: (n, f) => handlers[n] = f, querySelector: () => button, querySelectorAll: () => [], reset() { this.resetCalled = true; } };
   const nodes = { '#request-form': form, '#website': website, '#problem': problem, '#form-status': status, '#website-error': error, '#website-label': {} };
+  Object.assign(nodes, { '#request-service': serviceControl, '#intake-heading': {}, '#problem-label': {}, '#service-reassurance': {} });
   const document = { visibilityState: visible ? 'visible' : 'hidden', querySelector: s => nodes[s], querySelectorAll: () => [], addEventListener: (n, f) => handlers[n] = f, removeEventListener: n => delete handlers[n] };
   vm.runInNewContext(source, {
     document, location: { search: '?ref=' + ref }, navigator: {},
     window: { SERVICE_BOOST_QUOTE_ENDPOINT: 'https://quotes.serviceboost.co/quote' },
     URL, URLSearchParams, AbortSignal, crypto: { randomUUID: () => '12345678-1234-1234-1234-123456789abc' },
     sessionStorage: { getItem(k) { if (blocked) throw Error(); return storage.get(k); }, setItem(k,v) { storage.set(k,v); } },
-    fetch: async (url, options) => { calls.push({ url: String(url), data: JSON.parse(options.body) }); if (String(url).endsWith('/events')) { if (fetchFail) throw Error(); return { ok: true }; } if (quoteThrows) throw Error(); return { ok: quoteStatus === 200, status: quoteStatus }; },
+    fetch: async (url, options) => { calls.push({ url: String(url), data: JSON.parse(options.body) }); if (String(url).endsWith('/events')) { if (fetchFail) throw Error(); return { ok: true }; } if (quoteThrows) throw Error(); return quoteResponse || { ok: quoteStatus === 200, status: quoteStatus }; },
   });
-  return { calls, handlers, form, status, document, website, error, button };
+  return { calls, handlers, form, status, document, website, error, button, problem, nodes, serviceControl, serviceHandlers };
 }
+
+test('service changes update the modal copy without losing visitor details', () => {
+  const p = page({ ref: '', service: 'redesign' });
+  assert.equal(p.nodes['#intake-heading'].textContent, 'Start your redesign');
+  assert.equal(p.button.textContent, 'Start my redesign');
+  p.serviceControl.value = 'updates';
+  p.serviceHandlers.change();
+  assert.equal(p.nodes['#intake-heading'].textContent, 'Request an update');
+  assert.equal(p.button.textContent, 'Request my update');
+  assert.equal(p.nodes['#problem-label'].textContent, 'What needs updating?');
+  assert.match(p.problem.placeholder, /updates or fixes/);
+  assert.equal(p.problem.value, 'Please fix my booking form.');
+  assert.equal(p.form.elements.name.value, 'Test Visitor');
+  assert.equal(p.form.elements.email.value, 'private@example.com');
+  assert.equal(p.website.value, 'example.com');
+  p.serviceControl.value = 'redesign';
+  p.serviceHandlers.change();
+  assert.equal(p.nodes['#intake-heading'].textContent, 'Start your redesign');
+  assert.equal(p.button.textContent, 'Start my redesign');
+  assert.match(p.problem.placeholder, /redesign to achieve/);
+});
+
+test('both selections reach the existing delivery contract within its length limit', async () => {
+  for (const [service, label, action] of [
+    ['redesign', 'Website redesign', 'Start my redesign'],
+    ['updates', 'Website updates and small fixes', 'Request my update'],
+  ]) {
+    const p = page({ service });
+    p.problem.value = 'x'.repeat(3950);
+    // Native reset returns selects to the first option; keep the submitted service.
+    p.form.reset = () => { p.serviceControl.value = 'redesign'; p.problem.value = ''; };
+    await p.handlers.submit({ preventDefault() {} });
+    const payload = p.calls.at(-1).data;
+    assert.equal(payload.project_type, 'improve');
+    assert.equal(payload.problem, `Service: ${label}\n\n${'x'.repeat(3950)}`);
+    assert.ok(payload.problem.length <= 4000);
+    assert.equal(payload.ref, 'a'.repeat(32));
+    assert.equal(p.serviceControl.value, service);
+    assert.equal(p.serviceControl.disabled, false);
+    assert.equal(p.button.textContent, action);
+    assert.match(p.status.textContent, /Your request has been sent/);
+  }
+});
+
+test('invalid service and short or oversized descriptions never send', async () => {
+  const invalid = page({ ref: '', service: 'unknown' });
+  await invalid.handlers.submit({ preventDefault() {} });
+  assert.equal(invalid.calls.length, 0);
+  assert.match(invalid.status.textContent, /Choose a service/);
+  for (const description of ['short', ' '.repeat(12), 'x'.repeat(4000)]) {
+    const p = page({ ref: '', service: 'updates' });
+    p.problem.value = description;
+    await p.handlers.submit({ preventDefault() {} });
+    assert.equal(p.calls.length, 0);
+    assert.equal(p.problem.value, description);
+  }
+});
+
+test('hourly failure and retry preserve selection, details and event identity', async () => {
+  const p = page({ service: 'updates', quoteStatus: 502 });
+  await p.handlers.submit({ preventDefault() {} });
+  assert.equal(p.serviceControl.value, 'updates');
+  assert.equal(p.serviceControl.disabled, false);
+  assert.equal(p.problem.value, 'Please fix my booking form.');
+  assert.equal(p.button.textContent, 'Request my update');
+  assert.equal(p.form.resetCalled, undefined);
+  assert.match(p.status.textContent, /Delivery could not be confirmed/);
+  await p.handlers.submit({ preventDefault() {} });
+  assert.deepEqual(p.calls[1].data, p.calls[2].data);
+});
+
+test('pending delivery locks the service and blocks duplicate submits', async () => {
+  let resolve;
+  const response = new Promise(done => { resolve = done; });
+  const p = page({ ref: '', service: 'updates', quoteResponse: response });
+  const pending = p.handlers.submit({ preventDefault() {} });
+  assert.equal(p.serviceControl.disabled, true);
+  assert.equal(p.button.textContent, 'Sending…');
+  await p.handlers.submit({ preventDefault() {} });
+  assert.equal(p.calls.length, 1);
+  resolve({ ok: false, status: 502 });
+  await pending;
+  assert.equal(p.serviceControl.disabled, false);
+  assert.equal(p.button.disabled, false);
+  assert.equal(p.button.textContent, 'Request my update');
+});
+
+test('service entry buttons open a native modal and cannot switch an in-flight request', () => {
+  const clicks = {}, changes = [];
+  const selection = { value: 'redesign', disabled: false, dispatchEvent: event => changes.push(event.type) };
+  const dialog = { open: false, showModal() { this.open = true; } };
+  const buttons = ['redesign', 'updates'].map(service => ({ dataset: { quoteService: service }, addEventListener: (_, callback) => clicks[service] = callback }));
+  vm.runInNewContext(navigationSource, {
+    URL, URLSearchParams, Event, location: new URL('https://www.serviceboost.co/'),
+    window: { addEventListener() {} },
+    document: {
+      querySelector: selector => ({ '#request': dialog, '#request-service': selection })[selector] || null,
+      querySelectorAll: selector => selector === '[data-open-quote]' ? buttons : [],
+    },
+  });
+  clicks.updates();
+  assert.equal(selection.value, 'updates');
+  assert.equal(dialog.open, true);
+  assert.deepEqual(changes, ['change']);
+  dialog.open = false;
+  selection.disabled = true;
+  clicks.redesign();
+  assert.equal(selection.value, 'updates');
+  assert.equal(dialog.open, true);
+  selection.disabled = false;
+  dialog.open = false;
+  clicks.redesign();
+  assert.equal(selection.value, 'redesign');
+  assert.equal(dialog.open, true);
+});
 
 test('tagged arrival records only allowlisted metadata; reload reuses ID', () => {
   const storage = new Map(), a = page({ storage }), b = page({ storage });
