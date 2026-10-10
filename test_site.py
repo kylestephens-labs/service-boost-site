@@ -118,7 +118,23 @@ class SiteContracts(unittest.TestCase):
         self.assertNotIn('Get a free quote', text)
         self.assertNotIn('A few questions', text)
         self.assertIn('one-hour minimum', text)
-        self.assertIn('send an estimate for your approval before work begins.', text)
+        self.assertIn('If the work needs more time than agreed, I’ll ask for your approval before continuing.', text)
+
+    def test_service_choices_and_hourly_faq_stay_in_their_correct_surfaces(self):
+        page = Page('index.html')
+        choices = [a.get('value') for t, a in page.nodes if t == 'option']
+        self.assertEqual(choices, ['redesign', 'updates'])
+        triggers = [a.get('data-quote-service') for _, a in page.nodes if 'data-open-quote' in a]
+        self.assertEqual(triggers.count('redesign'), 4)
+        self.assertEqual(triggers.count('updates'), 1)
+        source = (ROOT / 'index.html').read_text()
+        dialog = source.split('<dialog id="request"', 1)[1].split('</dialog>', 1)[0]
+        self.assertNotIn('How does hourly billing work?', dialog)
+        self.assertNotIn('Change service', dialog)
+        self.assertNotIn('For the website you already have.', source)
+        faq = source.split('<section class="faq-section"', 1)[1].split('</section>', 1)[0]
+        self.assertIn('How does hourly billing work?', faq)
+        self.assertIn('Updates are $100 per hour with a one-hour minimum. I’ll review your request and provide an estimate before starting. If the work needs more time than agreed, I’ll ask for your approval before continuing.', faq)
 
     def test_demo_pages_cannot_load_production_quote_delivery(self):
         for filename in CONCEPTS:

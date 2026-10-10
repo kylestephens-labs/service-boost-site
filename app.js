@@ -3,6 +3,36 @@ const website = document.querySelector('#website');
 const problem = document.querySelector('#problem');
 const status = document.querySelector('#form-status');
 const websiteError = document.querySelector('#website-error');
+const serviceControl = document.querySelector('#request-service');
+const serviceOptions = new Map([
+  ['redesign', {
+    name: 'Website redesign', heading: 'Start your redesign', action: 'Start my redesign',
+    label: 'What would you like to improve?',
+    prompt: 'Tell me about your website and what you want your redesign to achieve.',
+    reassurance: "No payment due today. I'll review your site and reply within 24 hours with next steps.",
+  }],
+  ['updates', {
+    name: 'Website updates and small fixes', heading: 'Request an update', action: 'Request my update',
+    label: 'What needs updating?',
+    prompt: 'Describe the updates or fixes you need. Include page links if helpful.',
+    reassurance: 'One-hour minimum. You’ll approve an estimate before work begins.',
+  }],
+]);
+function syncService() {
+  const selected = serviceOptions.get(serviceControl?.value);
+  if (!selected) return;
+  document.querySelector('#intake-heading').textContent = selected.heading;
+  document.querySelector('#problem-label').textContent = selected.label;
+  problem.placeholder = selected.prompt;
+  document.querySelector('#service-reassurance').textContent = selected.reassurance;
+  form.querySelector('button[type="submit"]').textContent = selected.action;
+}
+serviceControl?.addEventListener('change', () => {
+  syncService();
+  status.hidden = true;
+  form.querySelectorAll('.reassurance').forEach(text => { text.hidden = false; });
+});
+syncService();
 function clearWebsiteError() {
   website.setCustomValidity('');
   website.removeAttribute('aria-invalid');
@@ -47,8 +77,28 @@ function websiteUrl(value) {
 website.addEventListener('input', clearWebsiteError);
 form.addEventListener('submit', async event => {
   event.preventDefault();
+  const button = form.querySelector('button[type="submit"]');
+  if (button.disabled) return;
   form.querySelectorAll('.reassurance').forEach(text => { text.hidden = false; });
   status.hidden = true;
+  const selectedService = serviceControl?.value;
+  const selected = serviceOptions.get(selectedService);
+  if (serviceControl && !selected) {
+    status.hidden = false;
+    status.textContent = 'Choose a service before sending your request.';
+    serviceControl.focus();
+    return;
+  }
+  const description = problem.value.trim();
+  // Reserve room for the selected service in the existing 4000-character contract.
+  // The label reaches the inbox without a backend deployment or schema change.
+  const requestDescription = selected ? `Service: ${selected.name}\n\n${description}` : description;
+  if (description.length < 10 || requestDescription.length > 4000) {
+    status.hidden = false;
+    status.textContent = 'Describe your request in 10 to 3,950 characters.';
+    problem.focus();
+    return;
+  }
   const address = website.value.trim();
   if (!address || !websiteUrl(address) || /\s/.test(address)) {
     websiteError.textContent = 'Enter a website address, like yourbusiness.com.';
@@ -62,9 +112,9 @@ form.addEventListener('submit', async event => {
     status.textContent = 'Preview only — your request has not been sent. Service Boost’s inbox is not connected yet.';
     return;
   }
-  const button = form.querySelector('button[type="submit"]');
   if (!quoteEventId && crypto.randomUUID) quoteEventId = crypto.randomUUID();
   button.disabled = true;
+  if (serviceControl) serviceControl.disabled = true;
   button.textContent = 'Sending…';
   status.textContent = '';
   try {
@@ -73,7 +123,7 @@ form.addEventListener('submit', async event => {
       headers: { 'Content-Type': 'application/json' },
       credentials: 'omit',
       // Both existing-website services use the improvement contract.
-      body: JSON.stringify({ website: address, name: form.elements.name.value.trim(), project_type: 'improve', problem: problem.value.trim(), email: form.elements.email.value.trim(), company: form.elements.company.value, ...sourceFields() }),
+      body: JSON.stringify({ website: address, name: form.elements.name.value.trim(), project_type: 'improve', problem: requestDescription, email: form.elements.email.value.trim(), company: form.elements.company.value, ...sourceFields() }),
       signal: AbortSignal.timeout(45000),
     });
     if (!response.ok) {
@@ -83,12 +133,15 @@ form.addEventListener('submit', async event => {
     status.textContent = 'Your request has been sent. I’ll review your site and reply within 24 hours with next steps.';
     form.querySelectorAll('.reassurance').forEach(text => { text.hidden = true; });
     form.reset();
+    if (serviceControl) serviceControl.value = selectedService;
     clearWebsiteError();
     quoteEventId = null;
   } catch {
     status.textContent = 'Delivery could not be confirmed. Your details are still here. Please try again or email notify@serviceboost.co.';
   } finally {
     button.disabled = false;
+    if (serviceControl) serviceControl.disabled = false;
     button.textContent = 'Send my request';
+    syncService();
   }
 });

@@ -48,9 +48,18 @@ validation workflow when changing the presentation or intake integration.
 
 ## Redesign intake release
 
-The homepage requires name, email, website and improvement details. There is no
-build/improve selector. Redesign requests use the existing `project_type: improve`
-backend contract, so this frontend release requires no backend deployment.
+The homepage requires name, email, website and improvement details. Its one native
+popup dialog offers Website redesign or Website updates and small fixes. Entry
+buttons preselect the service; changing the dropdown updates the title, prompt,
+submit label and reassurance without clearing typed details. The hourly billing
+FAQ stays on the page, outside the modal. Direct `#request` arrivals default to redesign.
+
+Both services use the existing `project_type: improve` backend contract. The
+allowlisted service name is prepended to the emailed problem description, so this
+frontend release requires no backend deployment. The textarea reserves 50 of the
+backend's 4,000 characters for that label. During submission the service and submit
+button are disabled; failures retain details and the selected service for retry.
+Successful submission clears the form's details while retaining the selected service.
 Website validation, delivery errors, honeypot and attribution remain in app.js.
 The backend continues to accept its existing legacy/build clients unchanged.
 

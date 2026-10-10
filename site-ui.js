@@ -30,11 +30,16 @@ if (conceptContext && conceptNames.has(chosenConcept)) {
   conceptContext.textContent = 'Inspired by ' + conceptNames.get(chosenConcept) + '. Only this example is carried over; no demo details.';
   conceptContext.hidden = false;
 }
-const openQuote = () => {
+const quoteService = document.querySelector('#request-service');
+const openQuote = service => {
+  if (quoteService && !quoteService.disabled && ['redesign', 'updates'].includes(service)) {
+    quoteService.value = service;
+    quoteService.dispatchEvent(new Event('change'));
+  }
   if (quoteDialog && !quoteDialog.open) quoteDialog.showModal();
 };
 document.querySelectorAll('[data-open-quote]').forEach(button => {
-  button.addEventListener('click', openQuote);
+  button.addEventListener('click', () => openQuote(button.dataset.quoteService));
 });
 if (location.hash === '#request') openQuote();
 window.addEventListener('hashchange', () => {

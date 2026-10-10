@@ -23,7 +23,7 @@
 <meta name="twitter:image:alt" content="Service Boost — Grow your sales with a better website. Website redesign, $1,500.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css?v=portfolio-2">
-<link rel="stylesheet" href="homepage.css?v=services-2">
+<link rel="stylesheet" href="homepage.css?v=service-intake-1">
 </head>
 <body>
 <div class="service">
@@ -31,32 +31,31 @@
 <header>
 <a class="brand sb" href="#home"><img src="/assets/brand.svg" alt="">Service Boost</a>
 <nav aria-label="Main navigation"><a href="#package">Services</a><a href="#examples">Examples</a><a href="#about">About</a><a href="#process">How it works</a><a href="#faq">FAQ</a></nav>
-<button type="button" data-open-quote>Start your redesign</button>
+<button type="button" data-open-quote data-quote-service="redesign">Start your redesign</button>
 </header>
 <main id="home">
 <section class="service-hero" aria-labelledby="hero-heading">
 <h1 id="hero-heading">Turn more visitors<br><em>into customers.</em></h1>
 <p>I Redesign your existing website with <strong>clearer messaging, mobile improvements, and a contact process that works</strong> so the traffic you already have brings you more business.</p>
-<button type="button" data-open-quote>Start your redesign</button>
+<button type="button" data-open-quote data-quote-service="redesign">Start your redesign</button>
 </section>
 <section class="package-section" id="package" aria-labelledby="package-heading">
 <div class="service-offer">
 <div class="package-copy">
 <h2 id="package-heading">Website redesign</h2>
 <p class="package-price">$1,500</p>
-<button type="button" data-open-quote>Start your redesign</button>
+<button type="button" data-open-quote data-quote-service="redesign">Start your redesign</button>
 </div>
 <ul class="package-includes"><li>Up to four pages</li><li>Rewritten content</li><li>Mobile improvements</li><li>Contact or booking process</li><li>One revision round</li><li>Launch included</li></ul>
 </div>
 <div class="service-offer updates-offer" role="group" aria-labelledby="updates-heading">
 <div class="updates-copy">
 <h2 id="updates-heading">Website updates &amp; small fixes</h2>
-<p>For the website you already have.</p>
 <ul class="package-includes"><li>Text, photos &amp; calendar updates</li><li>Blog or News publishing</li><li>Small layout and link fixes</li></ul>
 </div>
 <div class="updates-action">
 <p class="package-price">$100<span class="price-unit"> / hour</span></p>
-<button type="button" data-open-quote>Request an update</button>
+<button type="button" data-open-quote data-quote-service="updates">Request an update</button>
 <p class="updates-terms">One-hour minimum.<br>Estimate approved before work begins.</p>
 </div>
 </div>
@@ -132,34 +131,36 @@
 <section class="faq-section" id="faq" aria-labelledby="faq-heading">
 <h2 id="faq-heading">FAQ</h2>
 <details><summary>How much does a redesign cost, and when do I pay?</summary><p>The redesign is a fixed price of $1,500: $750 to start and $750 at launch. You approve the design before anything goes live — the second half isn't due until you're happy with it.</p></details>
-<details><summary>How are website updates and small fixes priced?</summary><p>Website updates and small fixes are $100 per hour with a one-hour minimum. I’ll review your request and send an estimate for your approval before work begins.</p></details>
+<details><summary>How does hourly billing work?</summary><p>Updates are $100 per hour with a one-hour minimum. I’ll review your request and provide an estimate before starting. If the work needs more time than agreed, I’ll ask for your approval before continuing.</p></details>
 <details><summary>How long does it take?</summary><p>Most redesigns launch within 2–3 weeks. The main variable is how quickly you review the design — fast feedback means a faster launch.</p></details>
 <details><summary>Will my website stay online while you work?</summary><p>I’ll review your setup and plan the changes to minimize disruption. Where possible, I’ll test on a separate copy first. If downtime is needed, I’ll agree on it with you before work begins.</p></details>
 <details><summary>Can you work with my current website platform?</summary><p>Send me your website and I’ll review the platform before confirming the scope. I’ll flag any limitations or access requirements before work begins. Please don’t send passwords in the form or by email.</p></details>
 <details><summary>What if I need more than four pages?</summary><p>The package covers up to four pages. If you need more, I’ll discuss the additional scope and price with you before any work begins.</p></details>
 <details><summary>Are hosting and ongoing support included?</summary><p>The redesign package covers the redesign and launch. Hosting and third-party costs are separate. Ongoing updates and small fixes are available at $100 per hour with a one-hour minimum. I’ll confirm any additional costs before work begins.</p></details>
 </section>
-<section class="contact-section" id="contact" aria-labelledby="contact-heading"><h2 id="contact-heading">Ready to turn more visitors into customers?</h2><button type="button" data-open-quote>Start your redesign</button></section>
+<section class="contact-section" id="contact" aria-labelledby="contact-heading"><h2 id="contact-heading">Ready to turn more visitors into customers?</h2><button type="button" data-open-quote data-quote-service="redesign">Start your redesign</button></section>
 </main>
 <footer>Service Boost · Walnut Creek, California.</footer>
 </div>
 <dialog id="request" aria-labelledby="intake-heading">
 <form method="dialog"><button class="close" type="submit">Close</button></form>
 <div class="intake">
-<h2 id="intake-heading">Tell me what you need</h2>
+<h2 id="intake-heading">Start your redesign</h2>
 <p id="concept-context" class="reassurance" hidden></p>
 <form id="request-form">
 <div hidden aria-hidden="true"><label for="company">Leave blank</label><input id="company" name="company" tabindex="-1" autocomplete="off"></div>
+<label for="request-service">Service</label>
+<select id="request-service" name="service" required><option value="redesign">Website redesign</option><option value="updates">Website updates and small fixes</option></select>
 <label for="name">Name</label><input id="name" name="name" type="text" autocomplete="name" placeholder="Your name" required maxlength="120">
 <label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required maxlength="254">
 <label for="website" id="website-label">Website</label><input id="website" name="website" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com" required maxlength="500" aria-describedby="website-error">
 <span id="website-error" class="field-error"></span>
-<label for="problem">What would you like to improve?</label><textarea id="problem" name="problem" rows="3" placeholder="Tell me what you’d like to improve." required minlength="10" maxlength="4000"></textarea>
-<button class="submit" type="submit">Send my request</button>
-<p class="reassurance">No payment due today. I'll review your site and reply within 24 hours with next steps.</p>
+<label for="problem" id="problem-label">What would you like to improve?</label><textarea id="problem" name="problem" rows="3" placeholder="Tell me about your website and what you want your redesign to achieve." required minlength="10" maxlength="3950"></textarea>
+<button class="submit" type="submit">Start my redesign</button>
+<p id="service-reassurance" class="reassurance">No payment due today. I'll review your site and reply within 24 hours with next steps.</p>
 <details class="reassurance privacy-notice"><summary>Privacy notice</summary>
 <p>Your details are emailed to Service Boost through Google Workspace to respond to your request. Please don’t include passwords or sensitive information.</p>
-<p>If you arrive through an outreach link, I record its reference, visit time, and accepted redesign requests to understand which outreach is useful. The reference is privately associated with the prospect and campaign. I use temporary browser storage to avoid counting repeat visits in the same tab. Attribution records expire 90 days after the link is created and are removed within the next day. I do not record what you type for analytics. You can remove the ref parameter from the URL before using the site to avoid this tracking.</p></details>
+<p>If you arrive through an outreach link, I record its reference, visit time, and accepted service requests to understand which outreach is useful. The reference is privately associated with the prospect and campaign. I use temporary browser storage to avoid counting repeat visits in the same tab. Attribution records expire 90 days after the link is created and are removed within the next day. I do not record what you type for analytics. You can remove the ref parameter from the URL before using the site to avoid this tracking.</p></details>
 <div id="form-status" role="status" aria-live="polite" hidden></div>
 </form>
 <p class="email-alternative">Prefer email? <a href="mailto:notify@serviceboost.co">notify@serviceboost.co</a></p>
