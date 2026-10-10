@@ -1,3 +1,20 @@
+# Two-service section QA — October 9, 2026
+
+Source: `/Users/kylestephens/.codex/generated_images/01a093d4-f7dc-7413-8dc8-fe858777f181/exec-f97c77c3-b12e-43ea-8f2f-c0ab48eddc80.png` (1190 x 1322 raster), with the user-requested removal of the intro and shared footer disclaimer.
+Implementation: local homepage `http://127.0.0.1:8123/#package`.
+Evidence: `/private/tmp/services-desktop-final.jpg` and `/private/tmp/services-mobile.jpg`.
+Desktop CSS viewport 1440 x 1500; mobile 390 x 844. Browser zoom required a 1.2 viewport override multiplier; screenshot output includes unused white padding, excluded from visual comparison. Source is a conceptual raster, normalized by content width rather than treated as a pixel-exact CSS specification.
+
+Compared reference and desktop capture together, including both service rows. Navy surface, lavender prices, purple buttons, aligned columns, check icons and stacked composition match. Existing font and icon assets retained. Intro and disclaimer are absent as requested; hero and portfolio are preserved. Mobile stacks each offer and checklist with readable wrapping and no horizontal overflow. No new imagery needed.
+
+Initial P2: vertical checklist dividers did not span the offer height. Fixed with stretch alignment and centered list content, then recaptured and inspected both full service rows. No remaining P0/P1/P2 findings. Typography, spacing, palette, asset fidelity and copy checked; responsive sizing intentionally uses existing site typography.
+
+Both service buttons open the same neutral inquiry dialog; close works on desktop/mobile. Browser error log empty. Existing automated tests cover required/invalid website input, unchanged improve payload, failed delivery and success/reset copy. No live email submitted; fresh inbox delivery NOT_PROVEN. No backend changes.
+
+final result: passed
+
+---
+
 # Restrained portfolio refinement QA
 
 Date: October 7, 2026 (Pacific). Ten routes across seven fictional concepts.

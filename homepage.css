@@ -21,12 +21,15 @@
 .service-hero h1 { font-size: clamp(48px, 6vw, 104px); margin: 0 auto 32px; letter-spacing: -.055em; line-height: 1.06; }
 .service-hero em { color: var(--brand-blue); font-style: normal; }
 .service-hero > p { font-size: clamp(22px, 1.8vw, 28px); max-width: 980px; margin: 0 auto 36px; }
-.package-section { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 64px; padding: 72px max(6%, calc((100% - 1200px) / 2)); background: #111e40; color: white; }
+.package-section { padding: 0 max(6%, calc((100% - 1200px) / 2)); background: #111e40; color: white; }
+.service-offer { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 64px; padding: 64px 0; }
+.service-offer + .service-offer { border-top: 1px solid #67718b; }
 .service .package-copy h2 { margin-bottom: 0; font-size: clamp(36px, 3.5vw, 52px); }
-.service .package-price { color: #a39aff; font-weight: 700; font-size: clamp(72px, 6.5vw, 104px); letter-spacing: -.055em; line-height: 1.1; margin: 8px 0 24px; }
-.service .approval-note { display: flex; gap: 12px; align-items: flex-start; color: #e1e5f6; font-size: 19px; margin: 24px 0 0; }
-.approval-note img { flex-shrink: 0; filter: invert(80%) sepia(24%) saturate(2800%) hue-rotate(201deg); }
-.package-includes { display: grid; gap: 20px; padding: 4px 0 4px 52px; margin: 0; border-left: 1px solid #67718b; list-style: none; }
+.service .package-price { color: #a39aff; font-weight: 700; font-size: clamp(72px, 6.5vw, 104px); letter-spacing: -.055em; line-height: 1.1; margin: 8px 0 12px; }
+.price-unit { font-size: .45em; letter-spacing: -.035em; white-space: nowrap; }
+.service .price-basis { color: #c6cee4; margin: 0 0 28px; font-size: 23px; }
+.service .offer-note { color: #c6cee4; font-size: 19px; margin: 20px 0 0; }
+.package-includes { display: grid; align-self: stretch; align-content: center; gap: 20px; padding: 4px 0 4px 52px; margin: 0; border-left: 1px solid #67718b; list-style: none; }
 .package-includes li { display: flex; align-items: center; gap: 16px; font-size: 23px; }
 .package-includes li::before { content: ""; flex: 0 0 26px; width: 26px; height: 26px; background: #eeedff url('/assets/icons/check.svg') center / 19px no-repeat; border-radius: 50%; }
 .examples { padding: 80px 4% 64px; text-align: center; }
@@ -89,7 +92,8 @@
   html:has(.service) { scroll-padding-top: 155px; }
   .service header { flex-wrap: wrap; gap: 8px 20px; }
   .service header nav { order: 3; width: 100%; justify-content: center; flex-wrap: wrap; gap: 0 24px; }
-  .package-section { padding: 48px 7%; gap: 32px; }
+  .package-section { padding: 0 7%; }
+  .service-offer { padding: 48px 0; gap: 32px; }
   .package-includes { padding-left: 32px; }
   .about-section { padding: 48px 8%; gap: 40px; grid-template-columns: 36% 1fr; }
   .process-grid li { gap: 12px; padding: 0 16px; }
@@ -105,7 +109,8 @@
   .service-hero h1 { font-size: clamp(34px, 8vw, 52px); margin-bottom: 22px; }
   .service-hero > p { font-size: 20px; }
   .desktop-break { display: none; }
-  .package-section { grid-template-columns: 1fr; padding: 36px 8%; gap: 32px; }
+  .package-section { padding: 0 8%; }
+  .service-offer { grid-template-columns: 1fr; padding: 36px 0; gap: 32px; }
   .package-includes { padding: 28px 0 0; border-left: 0; border-top: 1px solid #67718b; gap: 18px; }
   .package-includes li { font-size: 20px; }
   .examples { padding: 36px 3%; }

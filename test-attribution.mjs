@@ -74,8 +74,8 @@ test('redesign without project controls sends existing improvement contract', as
   assert.equal(p.calls[0].data.project_type, 'improve');
   assert.equal(p.form.resetCalled, true);
   assert.equal(p.website.required, true);
-  assert.equal(p.button.textContent, 'Start my redesign');
-  assert.match(p.status.textContent, /redesign request has been sent/);
+  assert.equal(p.button.textContent, 'Send my request');
+  assert.match(p.status.textContent, /Your request has been sent/);
 });
 test('redesign requires a website and rejects unsafe or malformed addresses', async () => {
   for (const address of ['', '   ', 'javascript:alert(1)', 'bad site.com', 'https://user:pass@example.com']) {
@@ -94,7 +94,7 @@ test('failed delivery preserves input, restores button and does not claim succes
     assert.equal(p.form.elements.name.value, 'Test Visitor');
     assert.equal(p.button.disabled, false);
     assert.match(p.status.textContent, /Too many requests|Delivery could not be confirmed/);
-    assert.equal(p.button.textContent, 'Start my redesign');
+    assert.equal(p.button.textContent, 'Send my request');
   }
 });
 
