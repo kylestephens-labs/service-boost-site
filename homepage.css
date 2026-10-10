@@ -25,12 +25,11 @@
 .service-offer { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 64px; padding: 64px 0; }
 .service-offer + .service-offer { border-top: 1px solid #67718b; }
 .service .package-copy h2 { margin-bottom: 0; font-size: clamp(36px, 3.5vw, 52px); }
-.service .package-price { color: #a39aff; font-weight: 700; font-size: clamp(72px, 6.5vw, 104px); letter-spacing: -.055em; line-height: 1.1; margin: 8px 0 24px; }
-.service .package-price { margin-bottom: 12px; }
+.service .package-price { color: #a39aff; font-weight: 700; font-size: clamp(72px, 6.5vw, 104px); letter-spacing: -.055em; line-height: 1.1; margin: 8px 0 12px; }
 .price-unit { font-size: .45em; letter-spacing: -.035em; white-space: nowrap; }
 .service .price-basis { color: #c6cee4; margin: 0 0 28px; font-size: 23px; }
 .service .offer-note { color: #c6cee4; font-size: 19px; margin: 20px 0 0; }
-.package-includes { display: grid; gap: 20px; padding: 4px 0 4px 52px; margin: 0; border-left: 1px solid #67718b; list-style: none; }
+.package-includes { display: grid; align-self: stretch; align-content: center; gap: 20px; padding: 4px 0 4px 52px; margin: 0; border-left: 1px solid #67718b; list-style: none; }
 .package-includes li { display: flex; align-items: center; gap: 16px; font-size: 23px; }
 .package-includes li::before { content: ""; flex: 0 0 26px; width: 26px; height: 26px; background: #eeedff url('/assets/icons/check.svg') center / 19px no-repeat; border-radius: 50%; }
 .examples { padding: 80px 4% 64px; text-align: center; }
