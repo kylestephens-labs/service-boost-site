@@ -74,7 +74,7 @@ nav a:hover { color:var(--blue); }
 dialog { width:min(620px,calc(100% - 32px)); max-height:calc(100dvh - 40px); border:0; border-radius:20px; padding:30px; color:var(--ink); box-shadow:0 24px 100px #10163833; overscroll-behavior:contain; }
 dialog::backdrop { background:#10163880; }
 body:has(dialog[open]) { overflow:hidden; }
-dialog form { display:flex; justify-content:flex-end; margin:0 0 12px; }
+.dialog-close { display:flex; justify-content:flex-end; margin:0 0 12px; }
 .close { background:var(--tint); border:0; color:var(--ink); padding:10px 16px; border-radius:8px; }
 dialog h2 { font-size:32px; line-height:1.15; letter-spacing:-1px; margin:0 0 18px; }
 dialog p,dialog li { color:var(--muted); line-height:1.6; }
@@ -85,6 +85,28 @@ dialog li { padding-left:4px; margin:8px 0; }
 .email-action:hover,.cta-action:hover { background:#203bc5; }
 .email-note,.email-fallback { font-size:16px; }
 .email-fallback a { overflow-wrap:anywhere; }
+dialog { width:min(680px,calc(100% - 32px)); }
+.contact-intro { margin:0 0 18px; }
+.contact-actions { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:24px; }
+.contact-actions a { flex:1; text-align:center; padding:12px; border:1px solid var(--blue); border-radius:8px; color:var(--blue); text-decoration:none; font-weight:700; }
+.contact-actions span { width:100%; text-align:center; color:var(--muted); font-size:16px; }
+#help-fields { border:0; padding:0; margin:0; min-width:0; }
+#tech-help-form label { display:block; font-weight:600; font-size:16px; margin:14px 0 6px; }
+#tech-help-form input,#tech-help-form textarea,#tech-help-form select { width:100%; min-width:0; padding:12px; border:1px solid #a7b2cf; border-radius:8px; background:white; color:var(--ink); font:inherit; font-size:16px; }
+#tech-help-form textarea { resize:vertical; }
+#tech-help-form :focus-visible { outline:3px solid var(--blue); outline-offset:2px; }
+.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.form-note,#help-status,.privacy-details { font-size:14px; }
+#help-submit { width:100%; border:0; margin:0; }
+#help-submit:disabled { opacity:.6; cursor:wait; }
+.honeypot { position:absolute; left:-10000px; width:1px; height:1px; overflow:hidden; }
+dialog details { border-top:1px solid var(--line); padding:16px 0 0; margin-top:16px; }
+dialog summary { cursor:pointer; font-weight:600; }
+dialog [hidden] { display:none; }
+@media(max-width:540px) {
+  dialog { width:100%; max-width:100%; height:100dvh; max-height:100dvh; margin:0; border-radius:0; padding:20px; }
+  .contact-grid { grid-template-columns:1fr; gap:0; }
+}
 
 @media(max-width:1000px) {
   .service-menu { width:calc(100% - 48px); padding:24px; }

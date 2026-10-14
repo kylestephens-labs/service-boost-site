@@ -23,31 +23,21 @@ class Page(HTMLParser):
 
 
 class SiteContracts(unittest.TestCase):
-    def test_tech_home_has_six_services_and_explicit_email_handoffs(self):
-        from urllib.parse import urlsplit, parse_qs
+    def test_tech_home_has_shared_intake_and_direct_contact(self):
         page = Page('index.html')
-        source = (ROOT / 'index.html').read_text()
         services = ['wifi', 'workspace', 'computer', 'printer', 'mobile', 'smart-home']
         triggers = [a.get('data-dialog') for _, a in page.nodes if a.get('class') == 'service-row']
         self.assertEqual(triggers, services)
-        dialogs = [a.get('id') for t, a in page.nodes if t == 'dialog']
-        self.assertEqual(set(dialogs), set(services + ['help']))
-        emails = [a['href'] for t, a in page.nodes if a.get('class') == 'email-action']
-        self.assertEqual(len(emails), 7)
-        for href in emails:
-            url = urlsplit(href)
-            self.assertEqual(url.scheme, 'mailto')
-            self.assertEqual(url.path, 'notify@serviceboost.co')
-            query = parse_qs(url.query)
-            self.assertTrue(query['subject'][0].startswith('Service Boost: '))
-            self.assertIn('My city / ZIP code:', query['body'][0])
-        self.assertIn('Opens your email app.', source)
-        self.assertNotIn('Design Concept', source)
-        self.assertNotIn('Walnut Creek &amp; nearby communities', source)
-        self.assertEqual([a['src'] for t, a in page.nodes if t == 'script'], ['tech-support.js'])
+        self.assertEqual([a.get('id') for t, a in page.nodes if t == 'dialog'], ['tech-help'])
+        self.assertEqual([a['src'] for t, a in page.nodes if t == 'script'], ['config.js', 'tech-support.js'])
+        links = [a.get('href') for t, a in page.nodes if t == 'a']
+        self.assertIn('tel:+19282257944', links)
+        self.assertIn('sms:+19282257944', links)
+        names = {a.get('name') for _, a in page.nodes}
+        self.assertTrue({'service', 'name', 'location', 'problem', 'reply_method', 'phone', 'email', 'company'} <= names)
         self.assertTrue(all(a.get('method') == 'dialog' for t, a in page.nodes if t == 'form'))
-        self.assertFalse(any(t in ('input', 'textarea') for t, _ in page.nodes))
-        self.assertNotIn('fetch(', (ROOT / 'tech-support.js').read_text())
+        self.assertEqual({a['data-service-detail'] for _, a in page.nodes if 'data-service-detail' in a}, set(services + ['help']))
+        self.assertTrue(any(a.get('id') == 'help-submit' and 'disabled' in a for _, a in page.nodes))
 
     def test_both_offerings_have_correct_canonical_and_public_assets(self):
         subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)

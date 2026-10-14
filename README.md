@@ -1,13 +1,14 @@
 # service-boost-site
 Service Boost website frontend. The homepage offers six tech setup and
-troubleshooting services. Each choice opens accessible details and an explicit
-email-app handoff to notify@serviceboost.co; no inquiry is sent by the page.
+troubleshooting services. Each choice opens one shared tech-help form with the
+service preselected, direct Call/Text links, and collapsible service details.
 The approved design is implemented in tech-support.css and tech-support.js.
 The website-design offering and its existing production intake are preserved
 at /web-design. Portfolio return links target that page. Legacy homepage
 #request, #examples, #package, #faq and #contact links redirect to /web-design;
 allowlisted concept and outreach references are preserved. Tech inquiries do
-not invoke the website-quote backend or add analytics collection.
+not add analytics collection. They use the additive tech_support intake contract
+on the existing backend; website-design payloads keep their existing behavior.
 
 Run `node --check tech-support.js` alongside the existing validation gate.
 See tech-support-release.md and design-qa.md for release scope and proof.
