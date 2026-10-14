@@ -21,6 +21,12 @@ Validation: backend unit checks, static site contracts, JavaScript regression
 tests, full Validate gate, desktop/mobile browser and visual comparison.
 Local delivery checks must use the synthetic preview, never send inquiries.
 
+Author evidence: 22 backend tests, 14 site tests and 25 JavaScript tests passed.
+Local browser checks covered all six service links, general help, changing
+service without clearing input, native required fields, synthetic 502 retention
+and synthetic 200 clearing. Desktop and mobile comparison passed after fixing
+column proportions and 320px navigation overflow; see design-qa.md.
+
 Merge publishes the frontend through Vercel. Backend readiness is currently
 unproven after the previous deployment failed on missing environment settings;
 this frontend change does not resolve or bypass that operational blocker.
