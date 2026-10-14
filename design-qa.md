@@ -1,3 +1,30 @@
+# Request confirmation visual QA — 2026-10-14
+
+final result: passed
+
+Source: approved confirmation mock
+/Users/kylestephens/.codex/generated_images/01a13831-9c9b-7863-a02d-85f85f22f3a7/exec-3bffba37-6dbf-4bd7-8951-e594850306c0.png.
+Implementation: local synthetic-delivery preview, /request-help?service=wifi.
+Evidence: ../../outputs/request-confirmation-desktop.png and
+../../outputs/request-confirmation-mobile.png. Source and desktop render compared
+together at 1536x1024 without stretching. Mobile is a responsive adaptation.
+
+The page retains the approved hierarchy: contact links on the left, confirmation
+and two next steps on the right, booking disclaimer and Back to services action.
+No submitted personal details are shown. Existing DM Sans and brand color tokens
+are preserved. The circle-check is the official Tabler outline SVG; existing
+phone and chat assets are reused. Initial column drift was corrected and the
+confirmation stacks below 1000px. Contact labels remain intact when links wrap.
+Widths 320, 390, 768, 1024 and 1536 were inspected without document overflow.
+
+A synthetic 502 retains entered details and does not show confirmation. A local
+200 clears the form, reveals confirmation, moves focus to its heading and blocks
+repeat submission. Reload returns to intake. Unit coverage verifies pending and
+completed duplicate guards. Backend delivery and live mailbox receipt were not
+exercised by this visual test; no production email was sent.
+
+---
+
 # Dedicated request page visual QA
 
 final result: passed

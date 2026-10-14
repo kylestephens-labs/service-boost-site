@@ -6,8 +6,8 @@ const source = readFileSync(new URL('./tech-support.js', import.meta.url), 'utf8
 
 function page({ available = true, serviceQuery = 'wifi', response = async () => ({ok:true}), readiness } = {}) {
   const nodes = {}, calls = [];
-  for (const id of ['tech-help-form','help-fields','help-service','help-email','help-status','help-submit','retry-availability','service-picker','change-service','selected-name','selected-icon','service-summary']) {
-    nodes[id] = {value:'', handlers:{}, addEventListener(name, callback) {this.handlers[name] = callback;},
+  for (const id of ['tech-help-form','help-fields','help-service','help-email','help-status','help-submit','retry-availability','service-picker','change-service','selected-name','selected-icon','service-summary','request-form','request-confirmation','confirmation-title']) {
+    nodes[id] = {value:'', hidden:id === 'request-confirmation', handlers:{}, addEventListener(name, callback) {this.handlers[name] = callback;},
       setAttribute(name, value) {this[name] = value;}, focus() {this.focused = true;}};
   }
   const service = nodes['help-service'];
@@ -19,8 +19,8 @@ function page({ available = true, serviceQuery = 'wifi', response = async () => 
   form.reset = () => {form.resetCalled = true; service.value = 'help'; nodes['help-email'].value = '';};
   vm.runInNewContext(source, {
     URL, URLSearchParams, AbortSignal, location:new URL('https://serviceboost.co/request-help?service=' + encodeURIComponent(serviceQuery)),
-    window:{SERVICE_BOOST_QUOTE_ENDPOINT:'https://quotes.serviceboost.co/quote', addEventListener() {}},
-    document:{getElementById:id => nodes[id], querySelectorAll:() => []},
+    window:{SERVICE_BOOST_QUOTE_ENDPOINT:'https://quotes.serviceboost.co/quote', addEventListener() {}, scrollTo() {}},
+    document:{getElementById:id => nodes[id], querySelectorAll:() => [], body:{classList:{add() {}}}},
     FormData: class { *[Symbol.iterator]() {
       yield ['service',service.value]; yield ['email',nodes['help-email'].value];
       yield ['name','Test visitor']; yield ['location','Walnut Creek']; yield ['problem','Wi-Fi drops during calls.'];
@@ -56,7 +56,12 @@ test('email-only requests retain service and clear personal fields on success', 
   assert.equal(p.calls[0].phone, undefined);
   assert.equal(p.nodes['help-service'].value, 'wifi');
   assert.equal(p.nodes['help-email'].value, '');
-  assert.match(p.nodes['help-status'].textContent, /follow up by email/);
+  assert.equal(p.nodes['request-form'].hidden, true);
+  assert.equal(p.nodes['request-confirmation'].hidden, false);
+  assert.equal(p.nodes['confirmation-title'].focused, true);
+  assert.equal(p.nodes['help-fields'].disabled, true);
+  await p.submit();
+  assert.equal(p.calls.length, 1, 'completed request cannot be resubmitted');
 });
 
 test('pending request blocks duplicates and failure retains visitor details', async () => {
@@ -66,10 +71,13 @@ test('pending request blocks duplicates and failure retains visitor details', as
   const first = p.submit(); await p.submit();
   assert.equal(p.calls.length, 1);
   assert.equal(p.nodes['help-fields'].disabled, true);
+  assert.equal(p.nodes['request-confirmation'].hidden, true);
   resolve({ok:false,status:502}); await first;
   assert.equal(p.form.resetCalled, undefined);
   assert.equal(p.nodes['help-email'].value, 'visitor@example.com');
   assert.equal(p.nodes['help-fields'].disabled, false);
+  assert.equal(p.nodes['request-form'].hidden, false);
+  assert.equal(p.nodes['request-confirmation'].hidden, true);
   assert.match(p.nodes['help-status'].textContent, /could not confirm delivery/);
 });
 

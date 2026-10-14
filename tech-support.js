@@ -42,6 +42,7 @@ function initializeTechHelp() {
   let sending = false;
   let ready = false;
   let checking = false;
+  let completed = false;
 
   function updateService() {
     const selected = Array.from(service.options).find(option => option.value === service.value);
@@ -49,7 +50,7 @@ function initializeTechHelp() {
     document.getElementById('selected-icon').src = 'assets/icons/' + serviceIcons[service.value] + '.svg';
   }
   async function checkAvailability() {
-    if (ready || sending || checking) return;
+    if (ready || sending || checking || completed) return;
     checking = true;
     retry.hidden = true;
     submit.disabled = true;
@@ -76,7 +77,7 @@ function initializeTechHelp() {
   retry.addEventListener('click', checkAvailability);
   form.addEventListener('submit', async event => {
     event.preventDefault();
-    if (sending || !ready || !form.reportValidity()) return;
+    if (completed || sending || !ready || !form.reportValidity()) return;
     const payload = Object.fromEntries(new FormData(form));
     payload.project_type = 'tech_support';
     payload.reply_method = 'email';
@@ -101,12 +102,19 @@ function initializeTechHelp() {
       form.reset();
       service.value = selected;
       updateService();
-      status.textContent = 'Thanks! Your request has been sent. Kyle will follow up by email. This does not book an appointment.';
+      completed = true;
+      status.textContent = '';
+      document.getElementById('request-form').hidden = true;
+      document.getElementById('request-confirmation').hidden = false;
+      document.body.classList.add('request-complete');
+      document.title = 'Request sent | Service Boost';
+      document.getElementById('confirmation-title').focus();
+      window.scrollTo(0, 0);
     } catch {
       status.textContent = 'We could not confirm delivery. Your details are still here. Please call or text Kyle before retrying.';
     } finally {
       sending = false;
-      fields.disabled = false;
+      fields.disabled = completed;
     }
   });
   const requested = new URLSearchParams(location.search).get('service');
