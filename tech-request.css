@@ -10,7 +10,9 @@
 .request-contact { border-top:1px solid var(--line); margin-top:44px; padding-top:26px; font-size:20px; }
 .request-contact p { margin:0 0 12px; }
 .request-contact div { display:flex; gap:28px; }
-.request-contact a { color:var(--blue); text-underline-offset:5px; }
+.request-contact a { color:var(--blue); text-decoration:none; }
+.request-contact a,.request-page .direct-contact { display:inline-flex; align-items:center; gap:8px; }
+.request-contact a img,.request-page .direct-contact img { flex:none; filter:var(--icon-filter); }
 .request-content { border-left:1px solid var(--line); padding-left:56px; min-width:0; }
 .request-content h2 { font-size:40px; line-height:1.15; letter-spacing:-.03em; margin:0 0 24px; }
 .request-content [hidden] { display:none; }
@@ -34,8 +36,6 @@
 .request-content details { border-top:1px solid var(--line); padding:14px 0; font-size:16px; color:var(--muted); }
 .request-content summary { cursor:pointer; color:var(--ink); }
 .request-content details p { margin:14px 0 0; }
-.request-content .scope { border-top:1px solid var(--line); padding-top:14px; }
-.request-content details ul { padding-left:22px; }
 @media(max-width:1100px) {
   .request-layout { padding:32px; gap:32px; grid-template-columns:36% minmax(0,1fr); }
   .request-content { padding-left:32px; }
@@ -45,6 +45,7 @@
 @media(max-width:760px) {
   .request-page .site-header { padding:14px 16px; }
   .request-page nav a { font-size:16px; }
+  .request-page nav { flex-wrap:wrap; }
   .request-layout { display:flex; flex-direction:column; padding:28px 20px 40px; gap:28px; }
   .request-intro h1 { font-size:38px; margin:28px 0 16px; }
   .request-intro > p { font-size:20px; max-width:40ch; }

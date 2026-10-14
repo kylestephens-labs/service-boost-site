@@ -39,7 +39,6 @@ class SiteContracts(unittest.TestCase):
         self.assertFalse({'phone', 'reply_method'} & names)
         self.assertTrue(any(a.get('id') == 'help-email' and 'required' in a for _, a in page.nodes))
         self.assertTrue(any(a.get('id') == 'help-fields' and 'disabled' in a for _, a in page.nodes))
-        self.assertEqual({a['data-service-detail'] for _, a in page.nodes if 'data-service-detail' in a}, set(services + ['help']))
         self.assertTrue(any(a.get('id') == 'help-submit' and 'disabled' in a for _, a in page.nodes))
 
     def test_both_offerings_have_correct_canonical_and_public_assets(self):

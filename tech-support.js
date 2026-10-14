@@ -47,9 +47,6 @@ function initializeTechHelp() {
     const selected = Array.from(service.options).find(option => option.value === service.value);
     document.getElementById('selected-name').textContent = selected.textContent;
     document.getElementById('selected-icon').src = 'assets/icons/' + serviceIcons[service.value] + '.svg';
-    document.querySelectorAll('[data-service-detail]').forEach(section => {
-      section.hidden = section.dataset.serviceDetail !== service.value;
-    });
   }
   async function checkAvailability() {
     if (ready || sending || checking) return;
