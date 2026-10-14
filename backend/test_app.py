@@ -27,7 +27,7 @@ class IntakeTests(unittest.TestCase):
     def test_valid_and_fixed_recipient(self, send):
         self.assertEqual(self.request({**self.data, 'to': 'attacker@example.com'})[0], '200 OK')
         self.assertNotIn('to', send.call_args.args[0])
-        self.assertEqual(app.RECIPIENT, 'notify@serviceboost.co')
+        self.assertEqual(app.RECIPIENT, 'kyle@serviceboost.co')
 
     @patch('backend.app.send_quote')
     def test_rejected_requests_do_not_send(self, send):
@@ -35,6 +35,27 @@ class IntakeTests(unittest.TestCase):
             self.assertEqual(self.request(data)[0], '400 Bad Request')
         self.assertEqual(self.request(self.data, 'https://evil.example')[0], '403 Forbidden')
         send.assert_not_called()
+
+    @patch('backend.app.smtplib.SMTP')
+    def test_both_intakes_use_kyle_for_headers_and_envelope(self, smtp):
+        transport = smtp.return_value.__enter__.return_value
+        transport.send_message.return_value = {}
+        for data in (self.data, self.tech_data(reply_method='email', email='visitor@example.com')):
+            with self.subTest(project=data.get('project_type', 'improve')):
+                app.send_quote(app.validate({**data, 'to': 'attacker@example.com'}))
+                call = transport.send_message.call_args
+                self.assertEqual(call.args[0]['From'], 'kyle@serviceboost.co')
+                self.assertEqual(call.args[0]['To'], 'kyle@serviceboost.co')
+                self.assertEqual(call.args[0]['Reply-To'], 'visitor@example.com')
+                self.assertEqual(call.kwargs, dict(from_addr='kyle@serviceboost.co', to_addrs=['kyle@serviceboost.co']))
+
+    @patch('backend.app.send_quote', side_effect=OSError('delivery unavailable'))
+    def test_delivery_failure_points_to_current_business_email(self, send):
+        for data in (self.data, self.tech_data()):
+            status, body = self.request(data)
+            self.assertEqual(status, '502 Bad Gateway')
+            self.assertIn(b'kyle@serviceboost.co', body)
+            self.assertNotIn(b'notify@serviceboost.co', body)
 
     @patch('backend.app.send_quote')
     def test_build_can_omit_website_and_preserves_name_and_scope(self, send):

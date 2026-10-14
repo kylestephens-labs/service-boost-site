@@ -12,6 +12,6 @@ Vercel serves serviceboost.co and www.serviceboost.co. The user approved replaci
 
 ## Quote delivery
 
-The form sends to https://quotes.serviceboost.co/quote. Hetzner processes submissions and Google Workspace delivers them to notify@serviceboost.co. No application database or submission-content logging is used.
+The form sends to https://quotes.serviceboost.co/quote. Hetzner processes submissions and Google Workspace delivers them to kyle@serviceboost.co. No application database or submission-content logging is used.
 
 API TLS, security headers, container restrictions, rejection controls, and Gmail inbox delivery were verified on 2026-09-12. Verify the browser form again after frontend deployment. Credentials stay outside Git and browser assets. Roll back the frontend deployment if submissions fail; do not change unrelated hosted applications.

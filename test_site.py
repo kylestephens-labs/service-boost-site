@@ -87,12 +87,21 @@ class SiteContracts(unittest.TestCase):
         website = next(node for node in graph if node['@type'] == 'WebSite')
         self.assertEqual(website['publisher']['@id'], organization['@id'])
         self.assertEqual(organization['url'], 'https://www.serviceboost.co/')
+        self.assertEqual(organization['email'], 'kyle@serviceboost.co')
         self.assertIn('mailto:' + organization['email'], visible_source)
         self.assertIn('tel:' + organization['telephone'].replace('-', ''), visible_source)
         for area in organization['areaServed']:
             self.assertIn(area.removesuffix(', CA'), visible_source)
         self.assertNotIn('address', organization)
         self.assertNotIn('aggregateRating', organization)
+
+    def test_public_contact_links_use_current_business_mailbox(self):
+        for filename in ('index.html', 'request-help.html', 'web-design.html'):
+            with self.subTest(filename=filename):
+                links = [a['href'] for t, a in Page(filename).nodes
+                         if t == 'a' and a.get('href', '').startswith('mailto:')]
+                self.assertTrue(links)
+                self.assertTrue(all(link == 'mailto:kyle@serviceboost.co' for link in links))
 
     def test_new_industries_are_published_and_reachable_from_carousel(self):
         subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)

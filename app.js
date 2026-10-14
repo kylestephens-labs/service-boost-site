@@ -127,7 +127,7 @@ form.addEventListener('submit', async event => {
       signal: AbortSignal.timeout(45000),
     });
     if (!response.ok) {
-      status.textContent = response.status === 429 ? 'Too many requests. Please try again later.' : 'Delivery could not be confirmed. Your details are still here. Please try again or email notify@serviceboost.co.';
+      status.textContent = response.status === 429 ? 'Too many requests. Please try again later.' : 'Delivery could not be confirmed. Your details are still here. Please try again or email kyle@serviceboost.co.';
       return;
     }
     status.textContent = 'Your request has been sent. I’ll review your site and reply within 24 hours with next steps.';
@@ -137,7 +137,7 @@ form.addEventListener('submit', async event => {
     clearWebsiteError();
     quoteEventId = null;
   } catch {
-    status.textContent = 'Delivery could not be confirmed. Your details are still here. Please try again or email notify@serviceboost.co.';
+    status.textContent = 'Delivery could not be confirmed. Your details are still here. Please try again or email kyle@serviceboost.co.';
   } finally {
     button.disabled = false;
     if (serviceControl) serviceControl.disabled = false;
