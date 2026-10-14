@@ -68,6 +68,59 @@ class IntakeTests(unittest.TestCase):
         self.assertEqual(self.request(self.data)[0], '429 Too Many Requests')
         self.assertEqual(send.call_count, 5)
 
+    def tech_data(self, **changes):
+        return dict(project_type='tech_support', service='wifi', name='Test Visitor',
+                    location='Walnut Creek', problem='My Wi-Fi keeps dropping.',
+                    **{'reply_method': 'text', 'phone': '202-555-0123', **changes})
+
+    def test_readiness_requires_allowed_origin(self):
+        for origin, expected in [('https://serviceboost.co', '200 OK'), ('https://evil.example', '404 Not Found')]:
+            result = []
+            with patch.dict(os.environ, ALLOWED_ORIGINS='https://serviceboost.co'):
+                body = b''.join(app.application({'PATH_INFO':'/tech-help-ready', 'REQUEST_METHOD':'GET', 'HTTP_ORIGIN':origin}, lambda status, headers:result.append((status, headers))))
+            self.assertEqual(result[0][0], expected)
+            if expected == '200 OK':
+                self.assertIn(('Access-Control-Allow-Origin', origin), result[0][1])
+                self.assertEqual(json.loads(body)['message'], 'tech_support_v1')
+
+    @patch('backend.app.attribution.known')
+    @patch('backend.app.send_quote')
+    def test_tech_preserves_abuse_controls_and_does_not_attribute(self, send, known):
+        self.assertEqual(self.request({**self.tech_data(), 'company':'bot'})[0], '400 Bad Request')
+        self.assertEqual(self.request(self.tech_data(), origin='https://evil.example')[0], '403 Forbidden')
+        send.assert_not_called()
+        self.assertEqual(self.request({**self.tech_data(), 'ref':'a'*32})[0], '200 OK')
+        known.assert_not_called()
+
+    @patch('backend.app.send_quote')
+    def test_tech_contact_methods_and_no_website_required(self, send):
+        for method in ('text', 'call', 'email'):
+            data = self.tech_data(reply_method=method)
+            if method == 'email':
+                data.update(email='visitor@example.com', phone='')
+            status, body = self.request(data)
+            self.assertEqual(status, '200 OK')
+            self.assertIn(b'preferred reply method', body)
+            self.assertEqual(send.call_args.args[0]['service'], 'wifi')
+
+    def test_tech_rejects_missing_malformed_and_injected_contacts(self):
+        for change in [dict(phone=''), dict(phone='abc1234567'), dict(phone='1'),
+                       dict(reply_method='email'), dict(reply_method=[]), dict(service=[]),
+                       dict(location=''), dict(location='Town\nInjected'), dict(name=''),
+                       dict(email='bad'), dict(phone='2025550123\nInjected')]:
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                app.validate({**self.tech_data(), **change})
+
+    @patch('backend.app.smtplib.SMTP')
+    def test_phone_only_notification_has_no_reply_to_and_keeps_fixed_recipient(self, smtp):
+        smtp.return_value.__enter__.return_value.send_message.return_value = {}
+        app.send_quote(app.validate(self.tech_data()))
+        message = smtp.return_value.__enter__.return_value.send_message.call_args.args[0]
+        self.assertEqual(message['To'], app.RECIPIENT)
+        self.assertIsNone(message['Reply-To'])
+        for text in ('Service: wifi', 'City / ZIP: Walnut Creek', 'Preferred reply: text', 'Phone: 202-555-0123'):
+            self.assertIn(text, message.get_content())
+
     @patch('backend.app.send_quote')
     def test_exact_exemption_bypasses_both_limits_without_consuming_budget(self, send):
         with patch.dict(os.environ, RATE_LIMIT_EXEMPT_IP='192.0.2.10'):

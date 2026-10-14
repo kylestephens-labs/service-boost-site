@@ -19,6 +19,29 @@ except ImportError:
 RECIPIENT = 'notify@serviceboost.co'
 MAX_BODY = 16384
 EMAIL = re.compile(r"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\.[A-Za-z]{2,63}")
+TECH_SERVICES = ('wifi', 'workspace', 'computer', 'printer', 'mobile', 'smart-home', 'help')
+
+
+def validate_tech(fields, data):
+    for key, maximum in [('phone', 40), ('location', 120), ('service', 30), ('reply_method', 10)]:
+        value = data.get(key, '')
+        if not isinstance(value, str) or len(value) > maximum or any(ord(c) < 32 for c in value):
+            raise ValueError('Check your contact details.')
+        value.encode('utf-8')
+        fields[key] = value.strip()
+    if fields['service'] not in TECH_SERVICES or fields['reply_method'] not in ('email', 'call', 'text'):
+        raise ValueError('Choose a service and reply method.')
+    if not fields['name'] or not fields['location']:
+        raise ValueError('Enter your name and city or ZIP.')
+    if fields['email'] and not EMAIL.fullmatch(fields['email']):
+        raise ValueError('Enter a valid email address.')
+    phone = fields['phone']
+    if phone and (not re.fullmatch(r'[+0-9(). -]+', phone) or not 7 <= sum(c.isdigit() for c in phone) <= 15):
+        raise ValueError('Enter a valid phone number.')
+    contact = fields['email'] if fields['reply_method'] == 'email' else phone
+    if not contact:
+        raise ValueError('Enter contact details for your preferred reply method.')
+    return fields
 
 
 class Limiter:
@@ -65,14 +88,18 @@ def validate(data):
         fields[key] = value.strip()
     if fields['company']:
         raise ValueError('Unable to accept this request.')
-    if not EMAIL.fullmatch(fields['email']):
-        raise ValueError('Enter a valid email address.')
     # Missing type remains a repair request for older frontend clients.
     fields['project_type'] = data.get('project_type', 'improve')
-    if fields['project_type'] not in ('build', 'improve'):
+    if fields['project_type'] not in ('build', 'improve', 'tech_support'):
         raise ValueError('Choose a project type.')
     if any(ord(c) < 32 for c in fields['name']):
         raise ValueError('Enter a valid name.')
+    if len(fields['problem']) < 10 or '\x00' in fields['problem']:
+        raise ValueError('Describe the problem in at least 10 characters.')
+    if fields['project_type'] == 'tech_support':
+        return validate_tech(fields, data)
+    if not EMAIL.fullmatch(fields['email']):
+        raise ValueError('Enter a valid email address.')
     address = fields['website']
     if not address and fields['project_type'] != 'build':
         raise ValueError('Enter a website address, like yourbusiness.com.')
@@ -82,8 +109,6 @@ def validate(data):
         url = urlsplit(address)
         if url.scheme not in ('http', 'https') or not url.hostname or '.' not in url.hostname or url.username or url.password or any(c.isspace() for c in address):
             raise ValueError('Enter a website address, like yourbusiness.com.')
-    if len(fields['problem']) < 10 or '\x00' in fields['problem']:
-        raise ValueError('Describe the problem in at least 10 characters.')
     fields['website'] = address
     return fields
 
@@ -92,11 +117,16 @@ def send_quote(fields):
     message = EmailMessage()
     message['From'] = RECIPIENT
     message['To'] = RECIPIENT
-    message['Reply-To'] = fields['email']
-    message['Subject'] = 'Service Boost — new quote request'
-    source = f"\nOutreach reference: {fields['ref']}\n" if fields.get('ref') else ''
-    project = 'New website' if fields['project_type'] == 'build' else 'Website improvements'
-    message.set_content(f"Project: {project}\nName: {fields['name'] or 'Not provided'}\nWebsite: {fields['website'] or 'Not provided'}\nCustomer email: {fields['email']}\n\n{fields['problem']}\n{source}")
+    if fields['email']:
+        message['Reply-To'] = fields['email']
+    if fields['project_type'] == 'tech_support':
+        message['Subject'] = 'Service Boost — new tech help request'
+        message.set_content(f"Service: {fields['service']}\nName: {fields['name']}\nCity / ZIP: {fields['location']}\nPreferred reply: {fields['reply_method']}\nPhone: {fields['phone'] or 'Not provided'}\nEmail: {fields['email'] or 'Not provided'}\n\n{fields['problem']}\n")
+    else:
+        message['Subject'] = 'Service Boost — new quote request'
+        source = f"\nOutreach reference: {fields['ref']}\n" if fields.get('ref') else ''
+        project = 'New website' if fields['project_type'] == 'build' else 'Website improvements'
+        message.set_content(f"Project: {project}\nName: {fields['name'] or 'Not provided'}\nWebsite: {fields['website'] or 'Not provided'}\nCustomer email: {fields['email']}\n\n{fields['problem']}\n{source}")
     # STARTTLS is mandatory. Never log SMTP traffic or message contents.
     with smtplib.SMTP('smtp-relay.gmail.com', 587, timeout=15) as smtp:
         smtp.ehlo()
@@ -120,6 +150,8 @@ def application(env, start_response):
 
     if env.get('PATH_INFO') == '/health' and env.get('REQUEST_METHOD') == 'GET':
         return respond('200 OK', 'ok')
+    if env.get('PATH_INFO') == '/tech-help-ready' and env.get('REQUEST_METHOD') == 'GET' and origin in allowed:
+        return respond('200 OK', 'tech_support_v1')
     tracking = env.get('PATH_INFO') == '/events'
     if env.get('PATH_INFO') not in ('/quote', '/events'):
         return respond('404 Not Found', 'Not found.')
@@ -158,11 +190,11 @@ def application(env, start_response):
             # Do not expose whether a private reference exists.
             return respond('200 OK', 'Recorded if eligible.')
         fields = validate(data)
-        ref = attribution.known(data.get('ref'))
+        ref = attribution.known(data.get('ref')) if fields['project_type'] != 'tech_support' else None
         if ref:
             fields['ref'] = ref
     except (ValueError, UnicodeError):
-        return respond('400 Bad Request', 'Check your website, email, and problem description.')
+        return respond('400 Bad Request', 'Check your contact details and request description.')
     try:
         send_quote(fields)
     except (smtplib.SMTPException, OSError):
@@ -177,4 +209,6 @@ def application(env, start_response):
             # SMTP already accepted: never invite a duplicate submission because
             # analytics failed. The notification includes the source reference.
             pass
+    if fields['project_type'] == 'tech_support':
+        return respond('200 OK', 'Your request has been sent. Kyle will follow up using your preferred reply method.')
     return respond('200 OK', 'Your request has been sent. We’ll reply by email.')
