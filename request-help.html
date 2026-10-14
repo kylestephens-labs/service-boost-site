@@ -15,7 +15,7 @@
     <a class="back-services" href="/#services"><img src="assets/icons/arrow-right.svg" width="20" height="20" alt="">Back to services</a>
     <h1>Let’s get your<br>tech working.</h1>
     <p>Tell me a little about the problem. I’ll follow up to confirm scope, price and availability.</p>
-    <div class="request-contact"><p>Prefer to talk?</p><div><a href="tel:+19282257944">Call Kyle</a><a href="sms:+19282257944">Text Kyle</a></div><span>928-225-7944</span></div>
+    <div class="request-contact"><p>Prefer to talk?</p><div><a href="tel:+19282257944">Call Kyle</a><a href="sms:+19282257944">Text Kyle</a></div></div>
   </aside>
   <section class="request-content" id="request-form" aria-labelledby="request-title">
     <h2 id="request-title">Request tech help</h2>
@@ -27,13 +27,10 @@
         <div id="service-picker"><label for="help-service">What do you need help with?</label><select id="help-service" name="service">
           <option value="help">Not sure / something else</option><option value="wifi">Fix my Wi-Fi</option><option value="workspace">Set up my workspace</option><option value="computer">Help with my computer</option><option value="printer">Connect my printer</option><option value="mobile">Help with my phone or tablet</option><option value="smart-home">Set up my smart home</option>
         </select></div>
-        <h3>Your tech problem</h3>
         <label for="help-problem">What’s happening?</label><textarea id="help-problem" name="problem" minlength="10" maxlength="4000" rows="3" required></textarea>
         <label for="help-location">City or ZIP code</label><input id="help-location" name="location" autocomplete="address-level2" maxlength="120" required>
-        <h3>How to reach you</h3>
         <label for="help-name">Your name</label><input id="help-name" name="name" autocomplete="name" maxlength="120" required>
-        <label for="help-email">Email address</label><input id="help-email" name="email" type="email" autocomplete="email" maxlength="254" aria-describedby="email-hint" required>
-        <p id="email-hint" class="form-note">Kyle will reply by email.</p>
+        <label for="help-email">Email address</label><input id="help-email" name="email" type="email" autocomplete="email" maxlength="254" required>
         <div class="honeypot" aria-hidden="true"><label for="help-company">Company</label><input id="help-company" name="company" tabindex="-1" autocomplete="off"></div>
         <button class="cta-action" id="help-submit" type="submit" disabled>Send request to Kyle</button>
       </fieldset>
