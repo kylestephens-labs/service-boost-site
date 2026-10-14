@@ -23,29 +23,32 @@ class Page(HTMLParser):
 
 
 class SiteContracts(unittest.TestCase):
-    def test_tech_home_has_shared_intake_and_direct_contact(self):
+    def test_tech_home_links_to_dedicated_intake_and_direct_contact(self):
         page = Page('index.html')
         services = ['wifi', 'workspace', 'computer', 'printer', 'mobile', 'smart-home']
-        triggers = [a.get('data-dialog') for _, a in page.nodes if a.get('class') == 'service-row']
-        self.assertEqual(triggers, services)
-        self.assertEqual([a.get('id') for t, a in page.nodes if t == 'dialog'], ['tech-help'])
-        self.assertEqual([a['src'] for t, a in page.nodes if t == 'script'], ['config.js', 'tech-support.js'])
+        destinations = [a.get('href') for _, a in page.nodes if a.get('class') == 'service-row']
+        self.assertEqual(destinations, ['/request-help?service=' + service for service in services])
+        self.assertFalse(any(t in ('dialog', 'form') for t, _ in page.nodes))
+        self.assertEqual([a['src'] for t, a in page.nodes if t == 'script'], ['tech-support.js'])
         links = [a.get('href') for t, a in page.nodes if t == 'a']
         self.assertIn('tel:+19282257944', links)
         self.assertIn('sms:+19282257944', links)
+        page = Page('request-help.html')
         names = {a.get('name') for _, a in page.nodes}
-        self.assertTrue({'service', 'name', 'location', 'problem', 'reply_method', 'phone', 'email', 'company'} <= names)
-        self.assertTrue(all(a.get('method') == 'dialog' for t, a in page.nodes if t == 'form'))
-        self.assertEqual({a['data-service-detail'] for _, a in page.nodes if 'data-service-detail' in a}, set(services + ['help']))
+        self.assertTrue({'service', 'name', 'location', 'problem', 'email', 'company'} <= names)
+        self.assertFalse({'phone', 'reply_method'} & names)
+        self.assertTrue(any(a.get('id') == 'help-email' and 'required' in a for _, a in page.nodes))
+        self.assertTrue(any(a.get('id') == 'help-fields' and 'disabled' in a for _, a in page.nodes))
         self.assertTrue(any(a.get('id') == 'help-submit' and 'disabled' in a for _, a in page.nodes))
 
     def test_both_offerings_have_correct_canonical_and_public_assets(self):
         subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
         for filename, url in [('index.html', 'https://www.serviceboost.co/'),
+                              ('request-help.html', 'https://www.serviceboost.co/request-help'),
                               ('web-design.html', 'https://www.serviceboost.co/web-design')]:
             page = Page('public-site/' + filename)
             self.assertEqual([a['href'] for t, a in page.nodes if a.get('rel') == 'canonical'], [url])
-        for name in ['tech-support.css', 'tech-support.js', 'assets/tech-workspace.webp']:
+        for name in ['tech-support.css', 'tech-request.css', 'tech-support.js', 'assets/tech-workspace.webp']:
             self.assertTrue((ROOT / 'public-site' / name).is_file())
         self.assertFalse((ROOT / 'public-site/backend').exists())
 
@@ -179,7 +182,7 @@ class SiteContracts(unittest.TestCase):
             self.assertIn('Nothing will be sent, saved or booked.', (ROOT / filename).read_text())
 
     def test_local_assets_and_section_links_resolve(self):
-        for filename in ['index.html', 'web-design.html'] + CONCEPTS:
+        for filename in ['index.html', 'request-help.html', 'web-design.html'] + CONCEPTS:
             page = Page(filename)
             ids = {attrs.get('id') for _, attrs in page.nodes}
             all_ids = [attrs['id'] for _, attrs in page.nodes if 'id' in attrs]
@@ -197,7 +200,8 @@ class SiteContracts(unittest.TestCase):
                     route = href.split('?')[0].split('#')[0]
                     target = ROOT / ('index.html' if route == '/' else route.lstrip('/') + '.html')
                     self.assertTrue(target.is_file(), f'{filename}: {href}')
-                    self.assertIn('data-preserve-ref', attrs)
+                    if filename not in ('index.html', 'request-help.html'):
+                        self.assertIn('data-preserve-ref', attrs)
                 if tag == 'img':
                     self.assertIn('alt', attrs)
 

@@ -1,49 +1,57 @@
-// Preserve legacy website-design links after moving that offering.
+// Keep old website-design arrivals separate from tech support requests.
 const legacyFragments = new Set(['#request', '#examples', '#package', '#faq', '#contact']);
 const conceptNames = new Set(['landscape', 'salon', 'auto-repair', 'restaurant', 'dental', 'contractor', 'real-estate']);
-function routeLegacy() {
+const serviceIcons = {
+  help: 'message-circle', wifi: 'wifi', workspace: 'device-desktop',
+  computer: 'device-laptop', printer: 'printer', mobile: 'device-mobile', 'smart-home': 'smart-home'
+};
+function routeArrival() {
+  if (location.pathname !== '/' && location.pathname !== '/index.html') return false;
   const query = new URLSearchParams(location.search);
-  if (!legacyFragments.has(location.hash) && !conceptNames.has(query.get('concept'))) return false;
-  const target = new URL('/web-design', location.origin);
-  if (conceptNames.has(query.get('concept'))) target.searchParams.set('concept', query.get('concept'));
-  if (/^[A-Za-z0-9_-]{32}$/.test(query.get('ref') || '')) target.searchParams.set('ref', query.get('ref'));
-  target.hash = location.hash || '#request';
-  location.replace(target.href);
-  return true;
+  if (legacyFragments.has(location.hash) || conceptNames.has(query.get('concept'))) {
+    const target = new URL('/web-design', location.origin);
+    if (conceptNames.has(query.get('concept'))) target.searchParams.set('concept', query.get('concept'));
+    if (/^[A-Za-z0-9_-]{32}$/.test(query.get('ref') || '')) target.searchParams.set('ref', query.get('ref'));
+    target.hash = location.hash || '#request';
+    location.replace(target.href);
+    return true;
+  }
+  const service = location.hash.slice(1);
+  if (Object.hasOwn(serviceIcons, service) || service === 'tech-help') {
+    const target = new URL('/request-help', location.origin);
+    if (service !== 'tech-help' && service !== 'help') target.searchParams.set('service', service);
+    location.replace(target.href);
+    return true;
+  }
+  return false;
 }
-routeLegacy();
-const dialog = document.getElementById('tech-help');
-if (dialog) initializeTechHelp();
+routeArrival();
+window.addEventListener('hashchange', routeArrival);
+if (document.getElementById('tech-help-form')) initializeTechHelp();
+
 function initializeTechHelp() {
   const form = document.getElementById('tech-help-form');
   const fields = document.getElementById('help-fields');
   const service = document.getElementById('help-service');
-  const reply = document.getElementById('help-reply');
-  const phone = document.getElementById('help-phone');
-  const email = document.getElementById('help-email');
   const status = document.getElementById('help-status');
   const submit = document.getElementById('help-submit');
+  const retry = document.getElementById('retry-availability');
+  const picker = document.getElementById('service-picker');
+  const change = document.getElementById('change-service');
   const serviceIds = new Set(Array.from(service.options, option => option.value));
-  let returnFocus = null;
   let sending = false;
   let ready = false;
+  let checking = false;
 
   function updateService() {
-    document.querySelectorAll('[data-service-detail]').forEach(section => {
-      section.hidden = section.dataset.serviceDetail !== service.value;
-    });
-  }
-  function updateReply() {
-    const byEmail = reply.value === 'email';
-    document.getElementById('phone-field').hidden = byEmail;
-    document.getElementById('email-field').hidden = !byEmail;
-    phone.required = !byEmail;
-    email.required = byEmail;
-    phone.disabled = byEmail;
-    email.disabled = !byEmail;
+    const selected = Array.from(service.options).find(option => option.value === service.value);
+    document.getElementById('selected-name').textContent = selected.textContent;
+    document.getElementById('selected-icon').src = 'assets/icons/' + serviceIcons[service.value] + '.svg';
   }
   async function checkAvailability() {
-    if (ready || sending) return;
+    if (ready || sending || checking) return;
+    checking = true;
+    retry.hidden = true;
     submit.disabled = true;
     status.textContent = 'Checking form availability…';
     try {
@@ -54,45 +62,24 @@ function initializeTechHelp() {
       const data = await response.json();
       ready = response.ok && data.message === 'tech_support_v1';
     } catch { ready = false; }
+    checking = false;
     submit.disabled = !ready;
-    status.textContent = ready ? '' : 'The request form is unavailable right now. Please call or text Kyle, or close and reopen to try again.';
+    retry.hidden = ready;
+    status.textContent = ready ? '' : 'The request form is unavailable right now. Please call or text Kyle, or check availability again.';
   }
-  function openDialog(id, trigger) {
-    if (!serviceIds.has(id) && id !== 'tech-help') return;
-    returnFocus = trigger || null;
-    if (!sending) {
-      if (ready) status.textContent = '';
-      service.value = serviceIds.has(id) ? id : 'help';
-      updateService();
-    }
-    if (!dialog.open) dialog.showModal();
-    checkAvailability();
-  }
-  document.querySelectorAll('[data-dialog]').forEach(link => {
-    link.addEventListener('click', event => {
-      event.preventDefault();
-      openDialog(link.dataset.dialog, link);
-    });
-  });
-  dialog.addEventListener('close', () => {
-    returnFocus?.focus();
-    returnFocus = null;
-    if (serviceIds.has(location.hash.slice(1)) || location.hash === '#tech-help') {
-      history.replaceState(null, '', location.pathname + location.search);
-    }
-  });
-  dialog.addEventListener('click', event => {
-    if (event.target !== dialog) return;
-    const rect = dialog.getBoundingClientRect();
-    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
+  change.addEventListener('click', () => {
+    picker.hidden = !picker.hidden;
+    change.setAttribute('aria-expanded', String(!picker.hidden));
+    if (!picker.hidden) service.focus();
   });
   service.addEventListener('change', updateService);
-  reply.addEventListener('change', updateReply);
+  retry.addEventListener('click', checkAvailability);
   form.addEventListener('submit', async event => {
     event.preventDefault();
     if (sending || !ready || !form.reportValidity()) return;
     const payload = Object.fromEntries(new FormData(form));
     payload.project_type = 'tech_support';
+    payload.reply_method = 'email';
     sending = true;
     fields.disabled = true;
     status.textContent = 'Sending your request…';
@@ -104,19 +91,17 @@ function initializeTechHelp() {
       });
       if (!response.ok) {
         status.textContent = response.status === 400
-          ? 'Please check your contact details and describe the issue in at least 10 characters.'
+          ? 'Please check your email address and describe the issue in at least 10 characters.'
           : response.status === 429
             ? 'Too many requests. Please call or text Kyle, or try again later.'
             : 'We could not confirm delivery. Your details are still here. Please call or text Kyle before retrying.';
         return;
       }
       const selected = service.value;
-      const preferredReply = reply.value;
       form.reset();
       service.value = selected;
-      reply.value = preferredReply;
-      updateReply();
-      status.textContent = 'Thanks! Your request has been sent. Kyle will follow up using your preferred reply method. This does not book an appointment.';
+      updateService();
+      status.textContent = 'Thanks! Your request has been sent. Kyle will follow up by email. This does not book an appointment.';
     } catch {
       status.textContent = 'We could not confirm delivery. Your details are still here. Please call or text Kyle before retrying.';
     } finally {
@@ -124,11 +109,11 @@ function initializeTechHelp() {
       fields.disabled = false;
     }
   });
-  function openFromHash() {
-    if (!routeLegacy()) openDialog(location.hash.slice(1));
-  }
+  const requested = new URLSearchParams(location.search).get('service');
+  service.value = serviceIds.has(requested) ? requested : 'help';
   updateService();
-  updateReply();
-  window.addEventListener('hashchange', openFromHash);
-  if (location.hash && !legacyFragments.has(location.hash)) openFromHash();
+  document.getElementById('service-summary').hidden = false;
+  picker.hidden = true;
+  fields.disabled = false;
+  checkAvailability();
 }
