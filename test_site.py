@@ -32,7 +32,7 @@ class SiteContracts(unittest.TestCase):
         self.assertEqual([a['src'] for t, a in page.nodes if t == 'script'], ['tech-support.js'])
         links = [a.get('href') for t, a in page.nodes if t == 'a']
         self.assertIn('tel:+19282257944', links)
-        self.assertIn('sms:+19282257944', links)
+        self.assertIn('sms:+19282257944?body=Hi%20Kyle%2C%20I%20need%20tech%20help.', links)
         page = Page('request-help.html')
         names = {a.get('name') for _, a in page.nodes}
         self.assertTrue({'service', 'name', 'location', 'problem', 'email', 'company'} <= names)
