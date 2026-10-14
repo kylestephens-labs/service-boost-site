@@ -260,14 +260,45 @@ test('portfolio navigation preserves explicit opt-out and rejects malformed refs
 test('real intake links retain only known concept context and validated attribution', () => {
   const ref = 'a'.repeat(32);
   const link = portfolioLink('https://www.serviceboost.co/salon?ref=' + ref,
-    '/?concept=salon&demo_email=private@example.com#request');
+    '/web-design?concept=salon&demo_email=private@example.com#request');
+  assert.equal(link.pathname, '/web-design');
   assert.equal(link.searchParams.get('concept'), 'salon');
   assert.equal(link.searchParams.get('ref'), ref);
   assert.equal(link.searchParams.has('demo_email'), false);
   assert.equal(link.hash, '#request');
-  const unknown = portfolioLink('https://www.serviceboost.co/salon?ref=' + ref, '/?concept=unknown#request');
+  const unknown = portfolioLink('https://www.serviceboost.co/salon?ref=' + ref, '/web-design?concept=unknown#request');
   assert.equal(unknown.searchParams.has('concept'), false);
-  const optedOut = portfolioLink('https://www.serviceboost.co/salon', '/?concept=salon#request');
+  const optedOut = portfolioLink('https://www.serviceboost.co/salon', '/web-design?concept=salon#request');
   assert.equal(optedOut.searchParams.has('ref'), false);
   assert.equal(optedOut.searchParams.get('concept'), 'salon');
+});
+
+test('legacy homepage arrivals keep website intake and discard unsafe query data', () => {
+  const techSource = readFileSync(new URL('./tech-support.js', import.meta.url), 'utf8');
+  function arrival(suffix) {
+    const location = new URL('https://www.serviceboost.co/' + suffix);
+    let destination = null;
+    location.replace = href => { destination = new URL(href); };
+    vm.runInNewContext(techSource, {
+      URL, URLSearchParams, location, HTMLDialogElement: class {},
+      window: { addEventListener() {} },
+      document: { querySelectorAll: () => [], getElementById: () => null },
+    });
+    return destination;
+  }
+  const ref = 'a'.repeat(32);
+  const link = arrival('?ref=' + ref + '&concept=salon&email=private@example.com#request');
+  assert.equal(link.pathname, '/web-design');
+  assert.equal(link.hash, '#request');
+  assert.equal(link.search, '?concept=salon&ref=' + ref);
+  for (const hash of ['request', 'examples', 'package', 'faq', 'contact']) {
+    const legacy = arrival('?ref=bad&concept=unknown#' + hash);
+    assert.equal(legacy.pathname, '/web-design');
+    assert.equal(legacy.hash, '#' + hash);
+    assert.equal(legacy.search, '');
+  }
+  assert.equal(arrival('?concept=salon').hash, '#request');
+  for (const suffix of ['', '?concept=unknown', '#wifi', '#services']) {
+    assert.equal(arrival(suffix), null);
+  }
 });

@@ -23,9 +23,45 @@ class Page(HTMLParser):
 
 
 class SiteContracts(unittest.TestCase):
+    def test_tech_home_has_six_services_and_explicit_email_handoffs(self):
+        from urllib.parse import urlsplit, parse_qs
+        page = Page('index.html')
+        source = (ROOT / 'index.html').read_text()
+        services = ['wifi', 'workspace', 'computer', 'printer', 'mobile', 'smart-home']
+        triggers = [a.get('data-dialog') for _, a in page.nodes if a.get('class') == 'service-row']
+        self.assertEqual(triggers, services)
+        dialogs = [a.get('id') for t, a in page.nodes if t == 'dialog']
+        self.assertEqual(set(dialogs), set(services + ['help', 'about']))
+        emails = [a['href'] for t, a in page.nodes if a.get('class') == 'email-action']
+        self.assertEqual(len(emails), 8)
+        for href in emails:
+            url = urlsplit(href)
+            self.assertEqual(url.scheme, 'mailto')
+            self.assertEqual(url.path, 'notify@serviceboost.co')
+            query = parse_qs(url.query)
+            self.assertTrue(query['subject'][0].startswith('Service Boost: '))
+            self.assertIn('My city / ZIP code:', query['body'][0])
+        self.assertIn('Opens your email app.', source)
+        self.assertNotIn('Design Concept', source)
+        self.assertNotIn('Walnut Creek &amp; nearby communities', source)
+        self.assertEqual([a['src'] for t, a in page.nodes if t == 'script'], ['tech-support.js'])
+        self.assertTrue(all(a.get('method') == 'dialog' for t, a in page.nodes if t == 'form'))
+        self.assertFalse(any(t in ('input', 'textarea') for t, _ in page.nodes))
+        self.assertNotIn('fetch(', (ROOT / 'tech-support.js').read_text())
+
+    def test_both_offerings_have_correct_canonical_and_public_assets(self):
+        subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
+        for filename, url in [('index.html', 'https://www.serviceboost.co/'),
+                              ('web-design.html', 'https://www.serviceboost.co/web-design')]:
+            page = Page('public-site/' + filename)
+            self.assertEqual([a['href'] for t, a in page.nodes if a.get('rel') == 'canonical'], [url])
+        for name in ['tech-support.css', 'tech-support.js', 'assets/tech-workspace.webp']:
+            self.assertTrue((ROOT / 'public-site' / name).is_file())
+        self.assertFalse((ROOT / 'public-site/backend').exists())
+
     def test_new_industries_are_published_and_reachable_from_carousel(self):
         subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
-        home = Page('public-site/index.html')
+        home = Page('public-site/web-design.html')
         slides = [a for _, a in home.nodes if a.get('aria-roledescription') == 'slide']
         self.assertEqual(len(slides), 7)
         links = {a.get('href') for t, a in home.nodes if t == 'a'}
@@ -49,7 +85,7 @@ class SiteContracts(unittest.TestCase):
             self.assertEqual(sum('data-use-sample' in a for _, a in page.nodes), 1)
             links = [a['href'] for t, a in page.nodes if t == 'a' and a.get('href', '').endswith('#request')]
             self.assertEqual(len(links), 2)
-            self.assertTrue(all(link.startswith('/?concept=') for link in links))
+            self.assertTrue(all(link.startswith('/web-design?concept=') for link in links))
             text = (ROOT / 'public-site' / filename).read_text()
             self.assertNotIn('<!-- portfolio-', text)
             self.assertNotIn('app.js', text)
@@ -61,7 +97,7 @@ class SiteContracts(unittest.TestCase):
         self.assertIn('data-area-label', source)
         for intent in ['Buying a home', 'Selling a home']:
             self.assertTrue(any(a.get('data-demo-value') == intent for _, a in page.nodes))
-        home = (ROOT / 'index.html').read_text()
+        home = (ROOT / 'web-design.html').read_text()
         self.assertIn('id="concept-context"', home)
         self.assertNotIn('Atelier', home)
 
@@ -85,7 +121,7 @@ class SiteContracts(unittest.TestCase):
                                 for t, a in page.nodes if t == 'form'))
 
     def test_main_has_one_production_form_and_one_script_instance(self):
-        page = Page('index.html')
+        page = Page('web-design.html')
         ids = [attrs['id'] for _, attrs in page.nodes if 'id' in attrs]
         self.assertEqual(len(ids), len(set(ids)), 'IDs must remain unique')
         for required in ['request', 'request-form', 'website', 'website-label',
@@ -100,20 +136,20 @@ class SiteContracts(unittest.TestCase):
         self.assertFalse(any(a.get('type') == 'radio' for _, a in page.nodes))
         scripts = [attrs['src'] for tag, attrs in page.nodes if tag == 'script']
         self.assertEqual(scripts, ['config.js', 'app.js', 'site-ui.js'])
-        text = (ROOT / 'index.html').read_text()
+        text = (ROOT / 'web-design.html').read_text()
         self.assertIn('Privacy notice', text)
         self.assertNotIn('Form does not submit', text)
         self.assertEqual(text.count('data-open-quote'), 5)
 
     def test_redesign_offer_order_and_unpublished_testimonials(self):
-        page = Page('index.html')
+        page = Page('web-design.html')
         sections = [a.get('id') for t, a in page.nodes if t == 'section']
         self.assertEqual([s for s in sections if s],
                          ['package', 'examples', 'about', 'process', 'faq', 'contact'])
         testimonials = next(a for _, a in page.nodes
                             if a.get('class') == 'testimonials-section')
         self.assertIn('hidden', testimonials)
-        text = (ROOT / 'index.html').read_text()
+        text = (ROOT / 'web-design.html').read_text()
         self.assertIn("No payment due today. I'll review your site and reply within 24 hours with next steps.", text)
         self.assertNotIn('Get a free quote', text)
         self.assertNotIn('A few questions', text)
@@ -121,13 +157,13 @@ class SiteContracts(unittest.TestCase):
         self.assertIn('If the work needs more time than agreed, I’ll ask for your approval before continuing.', text)
 
     def test_service_choices_and_hourly_faq_stay_in_their_correct_surfaces(self):
-        page = Page('index.html')
+        page = Page('web-design.html')
         choices = [a.get('value') for t, a in page.nodes if t == 'option']
         self.assertEqual(choices, ['redesign', 'updates'])
         triggers = [a.get('data-quote-service') for _, a in page.nodes if 'data-open-quote' in a]
         self.assertEqual(triggers.count('redesign'), 4)
         self.assertEqual(triggers.count('updates'), 1)
-        source = (ROOT / 'index.html').read_text()
+        source = (ROOT / 'web-design.html').read_text()
         dialog = source.split('<dialog id="request"', 1)[1].split('</dialog>', 1)[0]
         self.assertNotIn('How does hourly billing work?', dialog)
         self.assertNotIn('Change service', dialog)
@@ -153,7 +189,7 @@ class SiteContracts(unittest.TestCase):
             self.assertIn('Nothing will be sent, saved or booked.', (ROOT / filename).read_text())
 
     def test_local_assets_and_section_links_resolve(self):
-        for filename in ['index.html'] + CONCEPTS:
+        for filename in ['index.html', 'web-design.html'] + CONCEPTS:
             page = Page(filename)
             ids = {attrs.get('id') for _, attrs in page.nodes}
             all_ids = [attrs['id'] for _, attrs in page.nodes if 'id' in attrs]
@@ -176,7 +212,7 @@ class SiteContracts(unittest.TestCase):
                     self.assertIn('alt', attrs)
 
     def test_portfolio_links_keep_attribution_hooks_and_logos_use_fragments(self):
-        for filename in ['index.html'] + CONCEPTS:
+        for filename in ['index.html', 'web-design.html'] + CONCEPTS:
             for tag, attrs in Page(filename).nodes:
                 if tag != 'a':
                     continue

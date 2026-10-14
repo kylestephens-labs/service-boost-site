@@ -1,15 +1,25 @@
 # service-boost-site
-Service Boost website frontend. The homepage offers a $1,500 redesign of up to
-four existing pages, working directly with Kyle Stephens.
+Service Boost website frontend. The homepage offers six tech setup and
+troubleshooting services. Each choice opens accessible details and an explicit
+email-app handoff to notify@serviceboost.co; no inquiry is sent by the page.
+The approved design is implemented in tech-support.css and tech-support.js.
+The website-design offering and its existing production intake are preserved
+at /web-design. Portfolio return links target that page. Legacy homepage
+#request, #examples, #package, #faq and #contact links redirect to /web-design;
+allowlisted concept and outreach references are preserved. Tech inquiries do
+not invoke the website-quote backend or add analytics collection.
+
+Run `node --check tech-support.js` alongside the existing validation gate.
+See tech-support-release.md and design-qa.md for release scope and proof.
 
 Build the public-only static output with `python3 build-site.py`. Quote delivery
 and attribution remain in the existing backend; see BACKEND.md and ATTRIBUTION.md.
 
-The single-page homepage orders its outcome, package, seven fictional portfolio
+The preserved website-design page orders its outcome, package, seven fictional portfolio
 concepts, founder introduction, three-step process, and FAQ. The manual carousel
 supports arrows, pagination, swiping and keyboard navigation. The testimonial
 slot stays hidden until real client feedback is approved.
-Homepage typography and responsive layouts live in homepage.css; style.css
+Website-design typography and responsive layouts live in homepage.css; style.css
 owns shared foundations. concepts.css adds landscape/salon sections; auto-repair.css
 owns the Juniper identity. Navigation remains visible
 while scrolling. "Start your redesign" opens the production redesign intake in
@@ -38,7 +48,7 @@ For a local static preview, run `python3 build-site.py`, then
 `python3 preview-site.py --port 8768` and open `http://127.0.0.1:8768`.
 The preview serves only public-site, supports clean URLs, and binds only to
 loopback. No Docker, backend, credentials, or package installation is needed.
-The homepage retains its production intake; use only concept forms for demo QA.
+The website-design page retains its production intake; use only concept forms for demo QA.
 See portfolio-review.md for the portfolio acceptance evidence and asset provenance.
 See portfolio-refinement-release.md and the latest entry in design-qa.md for
 the restrained portfolio refinement, browser checks and release boundaries.
@@ -48,7 +58,7 @@ validation workflow when changing the presentation or intake integration.
 
 ## Redesign intake release
 
-The homepage requires name, email, website and improvement details. Its one native
+The website-design page requires name, email, website and improvement details. Its one native
 popup dialog offers Website redesign or Website updates and small fixes. Entry
 buttons preselect the service; changing the dropdown updates the title, prompt,
 submit label and reassurance without clearing typed details. The hourly billing
