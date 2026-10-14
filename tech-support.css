@@ -55,6 +55,7 @@ nav a:hover { color:var(--blue); }
 .service-row:hover .row-arrow { transform:translateX(6px); }
 .not-sure { text-align:center; margin:32px 20px 48px; font-size:var(--body-size); }
 .not-sure a { display:inline-flex; align-items:center; gap:10px; color:var(--blue); font-weight:600; text-underline-offset:6px; }
+.service-area { margin:0 24px 24px; text-align:center; color:var(--muted); font-size:18px; line-height:1.5; }
 .visit-pricing { width:calc(100% - 96px); max-width:var(--content); margin:0 auto 64px; padding:40px 32px 0; border-top:1px solid var(--line); display:grid; grid-template-columns:1fr 1fr; align-items:center; }
 .pricing-intro { padding:24px 48px 24px 0; }
 .pricing-intro h2 { margin:0 0 16px; font-size:clamp(32px,3.2vw,48px); line-height:1.15; letter-spacing:-.035em; }
