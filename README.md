@@ -11,7 +11,8 @@ not add analytics collection. They use the additive tech_support intake contract
 on the existing backend; website-design payloads keep their existing behavior.
 
 Run `node --check tech-support.js` alongside the existing validation gate.
-See tech-support-release.md and design-qa.md for release scope and proof.
+See tech-help-release.md for the current intake contract and rollout order.
+See tech-support-release.md and design-qa.md for homepage scope and proof.
 
 Build the public-only static output with `python3 build-site.py`. Quote delivery
 and attribution remain in the existing backend; see BACKEND.md and ATTRIBUTION.md.

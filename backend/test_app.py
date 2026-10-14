@@ -73,6 +73,25 @@ class IntakeTests(unittest.TestCase):
                     location='Walnut Creek', problem='My Wi-Fi keeps dropping.',
                     **{'reply_method': 'text', 'phone': '202-555-0123', **changes})
 
+    def test_readiness_requires_allowed_origin(self):
+        for origin, expected in [('https://serviceboost.co', '200 OK'), ('https://evil.example', '404 Not Found')]:
+            result = []
+            with patch.dict(os.environ, ALLOWED_ORIGINS='https://serviceboost.co'):
+                body = b''.join(app.application({'PATH_INFO':'/tech-help-ready', 'REQUEST_METHOD':'GET', 'HTTP_ORIGIN':origin}, lambda status, headers:result.append((status, headers))))
+            self.assertEqual(result[0][0], expected)
+            if expected == '200 OK':
+                self.assertIn(('Access-Control-Allow-Origin', origin), result[0][1])
+                self.assertEqual(json.loads(body)['message'], 'tech_support_v1')
+
+    @patch('backend.app.attribution.known')
+    @patch('backend.app.send_quote')
+    def test_tech_preserves_abuse_controls_and_does_not_attribute(self, send, known):
+        self.assertEqual(self.request({**self.tech_data(), 'company':'bot'})[0], '400 Bad Request')
+        self.assertEqual(self.request(self.tech_data(), origin='https://evil.example')[0], '403 Forbidden')
+        send.assert_not_called()
+        self.assertEqual(self.request({**self.tech_data(), 'ref':'a'*32})[0], '200 OK')
+        known.assert_not_called()
+
     @patch('backend.app.send_quote')
     def test_tech_contact_methods_and_no_website_required(self, send):
         for method in ('text', 'call', 'email'):

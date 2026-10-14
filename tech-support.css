@@ -71,21 +71,18 @@ nav a:hover { color:var(--blue); }
 .site-footer a { text-underline-offset:4px; }
 .no-script { padding:20px; text-align:center; }
 
-dialog { width:min(620px,calc(100% - 32px)); max-height:calc(100dvh - 40px); border:0; border-radius:20px; padding:30px; color:var(--ink); box-shadow:0 24px 100px #10163833; overscroll-behavior:contain; }
+dialog { width:min(680px,calc(100% - 32px)); max-height:calc(100dvh - 40px); border:0; border-radius:20px; padding:30px; color:var(--ink); box-shadow:0 24px 100px #10163833; overscroll-behavior:contain; }
 dialog::backdrop { background:#10163880; }
 body:has(dialog[open]) { overflow:hidden; }
-.dialog-close { display:flex; justify-content:flex-end; margin:0 0 12px; }
+.dialog-close { position:sticky; top:0; z-index:1; background:white; display:flex; justify-content:flex-end; margin:0 0 12px; }
 .close { background:var(--tint); border:0; color:var(--ink); padding:10px 16px; border-radius:8px; }
 dialog h2 { font-size:32px; line-height:1.15; letter-spacing:-1px; margin:0 0 18px; }
 dialog p,dialog li { color:var(--muted); line-height:1.6; }
 dialog ul { padding-left:22px; }
 dialog li { padding-left:4px; margin:8px 0; }
 .scope { border-top:1px solid var(--line); padding-top:16px; font-size:16px; }
-.email-action,.cta-action { display:inline-block; background:var(--blue); color:white; padding:14px 20px; border-radius:9px; text-decoration:none; font-weight:700; margin-top:12px; }
-.email-action:hover,.cta-action:hover { background:#203bc5; }
-.email-note,.email-fallback { font-size:16px; }
-.email-fallback a { overflow-wrap:anywhere; }
-dialog { width:min(680px,calc(100% - 32px)); }
+.cta-action { display:inline-block; background:var(--blue); color:white; padding:14px 20px; border-radius:9px; text-decoration:none; font-weight:700; margin-top:12px; }
+.cta-action:hover { background:#203bc5; }
 .contact-intro { margin:0 0 18px; }
 .contact-actions { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:24px; }
 .contact-actions a { flex:1; text-align:center; padding:12px; border:1px solid var(--blue); border-radius:8px; color:var(--blue); text-decoration:none; font-weight:700; }

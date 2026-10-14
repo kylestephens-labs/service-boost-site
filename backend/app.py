@@ -109,8 +109,6 @@ def validate(data):
         url = urlsplit(address)
         if url.scheme not in ('http', 'https') or not url.hostname or '.' not in url.hostname or url.username or url.password or any(c.isspace() for c in address):
             raise ValueError('Enter a website address, like yourbusiness.com.')
-    if len(fields['problem']) < 10 or '\x00' in fields['problem']:
-        raise ValueError('Describe the problem in at least 10 characters.')
     fields['website'] = address
     return fields
 
@@ -121,13 +119,14 @@ def send_quote(fields):
     message['To'] = RECIPIENT
     if fields['email']:
         message['Reply-To'] = fields['email']
-    message['Subject'] = 'Service Boost — new quote request'
-    source = f"\nOutreach reference: {fields['ref']}\n" if fields.get('ref') else ''
-    project = 'New website' if fields['project_type'] == 'build' else 'Website improvements'
-    message.set_content(f"Project: {project}\nName: {fields['name'] or 'Not provided'}\nWebsite: {fields['website'] or 'Not provided'}\nCustomer email: {fields['email']}\n\n{fields['problem']}\n{source}")
     if fields['project_type'] == 'tech_support':
-        message.replace_header('Subject', 'Service Boost — new tech help request')
+        message['Subject'] = 'Service Boost — new tech help request'
         message.set_content(f"Service: {fields['service']}\nName: {fields['name']}\nCity / ZIP: {fields['location']}\nPreferred reply: {fields['reply_method']}\nPhone: {fields['phone'] or 'Not provided'}\nEmail: {fields['email'] or 'Not provided'}\n\n{fields['problem']}\n")
+    else:
+        message['Subject'] = 'Service Boost — new quote request'
+        source = f"\nOutreach reference: {fields['ref']}\n" if fields.get('ref') else ''
+        project = 'New website' if fields['project_type'] == 'build' else 'Website improvements'
+        message.set_content(f"Project: {project}\nName: {fields['name'] or 'Not provided'}\nWebsite: {fields['website'] or 'Not provided'}\nCustomer email: {fields['email']}\n\n{fields['problem']}\n{source}")
     # STARTTLS is mandatory. Never log SMTP traffic or message contents.
     with smtplib.SMTP('smtp-relay.gmail.com', 587, timeout=15) as smtp:
         smtp.ehlo()

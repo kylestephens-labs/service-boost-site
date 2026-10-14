@@ -27,10 +27,18 @@ after reverting the frontend; readiness then disables the new form.
 ## Validation and proof
 
 Run backend unittest discovery, test_site.py, JavaScript syntax checks and
-test-attribution.mjs; exact-head Validate also runs Docker build/container smoke.
+test-attribution.mjs and test-tech-help.mjs; exact-head Validate also runs
+Docker build/container smoke.
 Inspect desktop/mobile, service preselection, reply switching, Escape/focus,
 failed delivery retaining details, duplicate-submit protection, and success.
 Use synthetic local delivery only. Live deployment, inbox arrival, call/text
 handoff on a physical phone, availability and service outcomes remain NOT_PROVEN.
 
 This contract supersedes the email-only interaction in tech-support-release.md.
+
+Local evidence: all six service rows and the header CTA preselect correctly;
+Escape restores trigger focus; the 390px mobile dialog scrolls without horizontal
+overflow and keeps Close accessible. Synthetic local responses exercised 502
+detail retention and 200 clearing, email reply switching, and native required
+field focus. Unit checks cover older-backend readiness and in-flight duplicate
+submission. No live customer inquiry, call or text was sent during validation.
