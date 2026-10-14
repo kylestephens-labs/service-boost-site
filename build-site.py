@@ -8,7 +8,7 @@ output = root / 'public-site'
 if output.exists():
     shutil.rmtree(output)
 output.mkdir()
-for name in ('index.html', 'request-help.html', 'web-design.html', 'landscape.html', 'salon.html', 'auto-repair.html',
+for name in ('robots.txt', 'sitemap.xml', 'index.html', 'request-help.html', 'web-design.html', 'landscape.html', 'salon.html', 'auto-repair.html',
              'restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html',
              'style.css', 'homepage.css', 'concepts.css', 'auto-repair.css', 'industry-concepts.css', 'portfolio.css',
              'tech-support.css', 'tech-request.css', 'tech-support.js', 'app.js', 'site-ui.js', 'config.js', 'favicon.svg'):
