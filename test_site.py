@@ -25,7 +25,7 @@ class Page(HTMLParser):
 class SiteContracts(unittest.TestCase):
     def test_tech_home_links_to_dedicated_intake_and_direct_contact(self):
         page = Page('index.html')
-        services = ['wifi', 'workspace', 'computer', 'printer', 'mobile', 'smart-home']
+        services = ['computer', 'mobile', 'smart-home', 'wifi', 'workspace', 'printer']
         destinations = [a.get('href') for _, a in page.nodes if a.get('class') == 'service-row']
         self.assertEqual(destinations, ['/request-help?service=' + service for service in services])
         self.assertFalse(any(t in ('dialog', 'form') for t, _ in page.nodes))
@@ -34,6 +34,7 @@ class SiteContracts(unittest.TestCase):
         self.assertIn('tel:+19282257944', links)
         self.assertIn('sms:+19282257944?body=Hi%20Kyle%2C%20I%20need%20tech%20help.', links)
         page = Page('request-help.html')
+        self.assertEqual([a.get('value') for t, a in page.nodes if t == 'option'], ['help'] + services)
         names = {a.get('name') for _, a in page.nodes}
         self.assertTrue({'service', 'name', 'location', 'problem', 'email', 'company'} <= names)
         self.assertFalse({'phone', 'reply_method'} & names)
