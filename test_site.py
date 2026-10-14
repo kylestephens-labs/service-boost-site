@@ -31,9 +31,9 @@ class SiteContracts(unittest.TestCase):
         triggers = [a.get('data-dialog') for _, a in page.nodes if a.get('class') == 'service-row']
         self.assertEqual(triggers, services)
         dialogs = [a.get('id') for t, a in page.nodes if t == 'dialog']
-        self.assertEqual(set(dialogs), set(services + ['help', 'about']))
+        self.assertEqual(set(dialogs), set(services + ['help']))
         emails = [a['href'] for t, a in page.nodes if a.get('class') == 'email-action']
-        self.assertEqual(len(emails), 8)
+        self.assertEqual(len(emails), 7)
         for href in emails:
             url = urlsplit(href)
             self.assertEqual(url.scheme, 'mailto')
