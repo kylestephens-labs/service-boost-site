@@ -65,7 +65,10 @@ nav a:hover { color:var(--blue); }
 .founder-inner > img { display:block; width:100%; height:auto; border-radius:3px; }
 .founder-copy h2 { margin:0 0 24px; font-size:44px; line-height:1.15; letter-spacing:-1.3px; }
 .founder-copy p { margin:18px 0 0; color:var(--muted); font-size:20px; line-height:1.6; }
-.site-footer { display:flex; justify-content:center; padding:24px; color:var(--muted); font-size:17px; }
+.closing-cta { max-width:var(--content); margin:0 auto; padding:72px 24px 48px; text-align:center; border-top:1px solid var(--line); }
+.closing-cta h2 { margin:0 0 18px; font-size:clamp(30px,3vw,40px); line-height:1.2; letter-spacing:-1px; }
+.site-footer { display:flex; flex-direction:column; align-items:center; gap:8px; padding:24px 24px 32px; color:var(--muted); font-size:17px; text-align:center; }
+.site-footer p { margin:0; }
 .site-footer a { text-underline-offset:4px; }
 .no-script { padding:20px; text-align:center; }
 
@@ -79,8 +82,8 @@ dialog p,dialog li { color:var(--muted); line-height:1.6; }
 dialog ul { padding-left:22px; }
 dialog li { padding-left:4px; margin:8px 0; }
 .scope { border-top:1px solid var(--line); padding-top:16px; font-size:16px; }
-.email-action { display:inline-block; background:var(--blue); color:white; padding:14px 20px; border-radius:9px; text-decoration:none; font-weight:700; margin-top:12px; }
-.email-action:hover { background:#203bc5; }
+.email-action,.cta-action { display:inline-block; background:var(--blue); color:white; padding:14px 20px; border-radius:9px; text-decoration:none; font-weight:700; margin-top:12px; }
+.email-action:hover,.cta-action:hover { background:#203bc5; }
 .email-note,.email-fallback { font-size:16px; }
 .email-fallback a { overflow-wrap:anywhere; }
 
