@@ -1,9 +1,13 @@
 """Static integration contracts for the production site and isolated demos."""
 from html.parser import HTMLParser
 from pathlib import Path
+import json
+import re
 import subprocess
 import sys
 import unittest
+from urllib.robotparser import RobotFileParser
+from xml.etree import ElementTree
 
 ROOT = Path(__file__).resolve().parent
 AUTO_CONCEPTS = ['auto-repair.html', 'auto-repair/services.html',
@@ -29,7 +33,7 @@ class SiteContracts(unittest.TestCase):
         destinations = [a.get('href') for _, a in page.nodes if a.get('class') == 'service-row']
         self.assertEqual(destinations, ['/request-help?service=' + service for service in services])
         self.assertFalse(any(t in ('dialog', 'form') for t, _ in page.nodes))
-        self.assertEqual([a['src'] for t, a in page.nodes if t == 'script'], ['tech-support.js'])
+        self.assertEqual([a['src'] for t, a in page.nodes if t == 'script' and 'src' in a], ['tech-support.js'])
         links = [a.get('href') for t, a in page.nodes if t == 'a']
         self.assertIn('tel:+19282257944', links)
         self.assertIn('sms:+19282257944?body=Hi%20Kyle%2C%20I%20need%20tech%20help.', links)
@@ -52,6 +56,43 @@ class SiteContracts(unittest.TestCase):
         for name in ['tech-support.css', 'tech-request.css', 'tech-support.js', 'assets/tech-workspace.webp']:
             self.assertTrue((ROOT / 'public-site' / name).is_file())
         self.assertFalse((ROOT / 'public-site/backend').exists())
+
+    def test_search_discovery_assets_reach_public_build(self):
+        subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
+        public = ROOT / 'public-site'
+        robots = RobotFileParser()
+        robots.parse((public / 'robots.txt').read_text().splitlines())
+        self.assertEqual(robots.site_maps(), ['https://www.serviceboost.co/sitemap.xml'])
+        for bot in ['Googlebot', 'bingbot', 'OAI-SearchBot']:
+            for path in ['/', '/web-design', '/tech-support.css', '/dental']:
+                self.assertTrue(robots.can_fetch(bot, 'https://www.serviceboost.co' + path))
+        sitemap = ElementTree.parse(public / 'sitemap.xml')
+        urls = [node.text for node in sitemap.findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
+        self.assertEqual(urls, ['https://www.serviceboost.co/', 'https://www.serviceboost.co/web-design'])
+        for filename in ['index.html', 'web-design.html']:
+            self.assertFalse(any(a.get('name') == 'robots' and 'noindex' in a.get('content', '')
+                                 for _, a in Page('public-site/' + filename).nodes))
+        # Crawlers must still be able to read the existing noindex on fictional concepts.
+        for filename in CONCEPTS:
+            self.assertTrue(any(a.get('name') == 'robots' and 'noindex' in a.get('content', '')
+                                for _, a in Page('public-site/' + filename).nodes))
+
+    def test_business_identity_markup_matches_public_contact(self):
+        source = (ROOT / 'index.html').read_text()
+        match = re.search(r'<script type="application/ld\+json">(.*?)</script>', source, re.S)
+        self.assertIsNotNone(match)
+        graph = json.loads(match.group(1))['@graph']
+        visible_source = source[:match.start()] + source[match.end():]
+        organization = next(node for node in graph if node['@type'] == 'Organization')
+        website = next(node for node in graph if node['@type'] == 'WebSite')
+        self.assertEqual(website['publisher']['@id'], organization['@id'])
+        self.assertEqual(organization['url'], 'https://www.serviceboost.co/')
+        self.assertIn('mailto:' + organization['email'], visible_source)
+        self.assertIn('tel:' + organization['telephone'].replace('-', ''), visible_source)
+        for area in organization['areaServed']:
+            self.assertIn(area.removesuffix(', CA'), visible_source)
+        self.assertNotIn('address', organization)
+        self.assertNotIn('aggregateRating', organization)
 
     def test_new_industries_are_published_and_reachable_from_carousel(self):
         subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
