@@ -298,7 +298,14 @@ test('legacy homepage arrivals keep website intake and discard unsafe query data
     assert.equal(legacy.search, '');
   }
   assert.equal(arrival('?concept=salon').hash, '#request');
-  for (const suffix of ['', '?concept=unknown', '#wifi', '#services']) {
+  for (const suffix of ['', '?concept=unknown', '#services']) {
     assert.equal(arrival(suffix), null);
   }
+  for (const service of ['wifi', 'workspace', 'computer', 'printer', 'mobile', 'smart-home']) {
+    const target = arrival('?email=private@example.com&ref=' + ref + '#' + service);
+    assert.equal(target.pathname, '/request-help');
+    assert.equal(target.search, '?service=' + service);
+    assert.equal(target.hash, '');
+  }
+  assert.equal(arrival('#tech-help').pathname, '/request-help');
 });
