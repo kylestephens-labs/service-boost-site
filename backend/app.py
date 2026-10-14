@@ -16,7 +16,7 @@ try:
 except ImportError:
     import attribution
 
-RECIPIENT = 'notify@serviceboost.co'
+RECIPIENT = 'kyle@serviceboost.co'
 MAX_BODY = 16384
 EMAIL = re.compile(r"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\.[A-Za-z]{2,63}")
 TECH_SERVICES = ('wifi', 'workspace', 'computer', 'printer', 'mobile', 'smart-home', 'help')
@@ -198,7 +198,7 @@ def application(env, start_response):
     try:
         send_quote(fields)
     except (smtplib.SMTPException, OSError):
-        return respond('502 Bad Gateway', 'We could not confirm delivery. Your details remain here; please try again or email notify@serviceboost.co.')
+        return respond('502 Bad Gateway', 'We could not confirm delivery. Your details remain here; please try again or email kyle@serviceboost.co.')
     if fields.get('ref'):
         event_id = data.get('event_id')
         if not isinstance(event_id, str) or not attribution.EVENT.fullmatch(event_id):

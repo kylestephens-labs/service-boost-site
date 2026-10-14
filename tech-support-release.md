@@ -1,5 +1,8 @@
 # Tech support homepage release
 
+Historical contract: email-only service dialogs were superseded by tech-help-release.md.
+The current business contact is kyle@serviceboost.co; notify remains a receiving alias.
+
 ## Contract
 
 Replace the homepage with the approved blue six-service design: Wi-Fi,
