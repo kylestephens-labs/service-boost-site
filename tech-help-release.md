@@ -36,6 +36,13 @@ handoff on a physical phone, availability and service outcomes remain NOT_PROVEN
 
 This contract supersedes the email-only interaction in tech-support-release.md.
 
+The same release refines homepage typography: service descriptions sit below
+their titles, desktop supporting text uses a shared fluid 22–26px scale and
+service titles 28–34px, with 24px/20px service text on mobile. The founder block
+is larger and the closing action has a full-width blue background. Brief hero
+entrances and hover feedback respect reduced-motion preferences. The sticky
+header, six services, existing imagery and intake behavior remain intact.
+
 Local evidence: all six service rows and the header CTA preselect correctly;
 Escape restores trigger focus; the 390px mobile dialog scrolls without horizontal
 overflow and keeps Close accessible. Synthetic local responses exercised 502
