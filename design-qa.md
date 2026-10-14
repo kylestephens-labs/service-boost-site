@@ -1,3 +1,42 @@
+# Homepage pricing visual QA — 2026-10-14
+
+final result: passed
+
+Source: selected second displayed pricing mock, exec-75b7151d-9e78-41f6-a2a1-084ccd5c8387.png
+under /Users/kylestephens/.codex/generated_images/01a13831-9c9b-7863-a02d-85f85f22f3a7/.
+User changes: retain the Not sure link below services; use $149 per hour on site,
+one-hour minimum. No illustrative-price note in the implementation.
+
+Evidence: ../../outputs/pricing-desktop.png (full page),
+../../outputs/pricing-section-desktop.png (pricing focus),
+../../outputs/pricing-mobile.png (390px viewport).
+Source 1374x1145; implementation CSS viewport 1440x1200, screenshot excludes
+scrollbars. Compared source and settled desktop focus in one image inspection.
+The reference compresses the entire service menu; existing service sizing is
+intentionally retained to limit this change to adding the selected pricing
+section. Therefore pricing appears further down the actual page. Comparison
+is by the pricing region, not a claim of whole-page pixel equivalence.
+
+Fonts: existing locally hosted DM Sans, 700-weight headings, readable 18px terms.
+Spacing: open two-column white section with top and center divider; stacked
+on mobile. Price is prominent and adjacent to hourly/minimum qualifiers.
+Colors: existing blue, navy and muted tokens reused. Assets: existing logo,
+service icons and workspace photo preserved; no new image assets required.
+Copy: user-confirmed hourly rate and minimum are consistent with FAQ. Scope
+and total price still confirmed before booking, extras require approval.
+
+No actionable P0/P1/P2 visual mismatch in the new section. The first screenshot
+was captured during page settling and replaced before assessment. Desktop
+1440px and mobile 390px visually inspected; 320px and 390px document widths
+equal scroll widths. Pricing CTA and preserved Not sure link both reach the
+generic request form; FAQ expands with matching rate. Browser error log empty.
+No customer submission was sent. Backend, billing and persistence unchanged.
+
+Checklist complete: responsive section, preserved link, matching FAQ,
+working CTA, existing assets, and screenshot comparison.
+
+---
+
 # Request confirmation visual QA — 2026-10-14
 
 final result: passed
