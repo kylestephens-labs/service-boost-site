@@ -76,6 +76,15 @@ nav a:hover { color:var(--blue); }
 .site-footer { display:flex; flex-direction:column; align-items:center; gap:8px; padding:32px 24px; color:var(--muted); font-size:20px; text-align:center; }
 .site-footer p { margin:0; }
 .site-footer a { text-underline-offset:4px; }
+.tech-faq { max-width:1120px; margin:0 auto; padding:80px 48px; }
+.tech-faq h2 { margin:0 0 32px; font-size:clamp(34px,3.2vw,52px); line-height:1.15; letter-spacing:-.035em; }
+.tech-faq details { border-bottom:1px solid var(--line); }
+.tech-faq summary { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:24px 0; cursor:pointer; list-style:none; font-size:var(--body-size); font-weight:600; line-height:1.4; }
+.tech-faq summary::-webkit-details-marker { display:none; }
+.tech-faq summary::after { content:'+'; flex-shrink:0; color:var(--blue); font-size:28px; font-weight:400; }
+.tech-faq details[open] summary::after { content:'−'; }
+.tech-faq summary:focus-visible { outline:3px solid var(--blue); outline-offset:5px; }
+.tech-faq p { max-width:65ch; margin:0 40px 24px 0; color:var(--muted); font-size:var(--body-size); line-height:1.6; }
 .no-script { padding:20px; text-align:center; }
 
 dialog { width:min(680px,calc(100% - 32px)); max-height:calc(100dvh - 40px); border:0; border-radius:20px; padding:30px; color:var(--ink); box-shadow:0 24px 100px #10163833; overscroll-behavior:contain; }
@@ -158,6 +167,10 @@ dialog [hidden] { display:none; }
   .closing-cta { padding:56px 24px; }
   .closing-cta .cta-action { font-size:22px; }
   .site-footer { font-size:18px; }
+  .tech-faq { padding:48px 24px; }
+  .tech-faq summary,.tech-faq p { font-size:20px; }
+  .tech-faq summary { gap:16px; padding:22px 0; }
+  .tech-faq p { margin-right:0; }
   .founder-desktop-break { display:none; }
   dialog { padding:24px; font-size:17px; }
   dialog h2 { font-size:30px; }

@@ -43,6 +43,12 @@ is larger and the closing action has a full-width blue background. Brief hero
 entrances and hover feedback respect reduced-motion preferences. The sticky
 header, six services, existing imagery and intake behavior remain intact.
 
+An eight-question native disclosure FAQ sits between the founder section and
+closing CTA. It covers IT services, customer types, scope-based pricing,
+remote/on-site suitability, scheduling, equipment, credentials, and specialist
+boundaries. It promises no fixed rate, response time, coverage radius or fix.
+Use tech-faq as the new anchor; legacy #faq still routes to website design.
+
 Local evidence: all six service rows and the header CTA preselect correctly;
 Escape restores trigger focus; the 390px mobile dialog scrolls without horizontal
 overflow and keeps Close accessible. Synthetic local responses exercised 502
