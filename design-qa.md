@@ -14,6 +14,42 @@ Implementation checklist: visual comparison complete; responsive correction veri
 
 final result: passed
 
+## Tech support homepage — October 2026
+
+Compared the approved six-service blue mockup and the actual 1137px desktop
+render together. The implementation retains the centered headline, six-row
+service menu, workspace photograph and three-step process. The location
+eyebrow and bottom setup/disclosure labels are intentionally removed. A small
+email/website-design footer provides navigation to the preserved offering.
+The generated workspace asset has a slightly different crop and object placement;
+native icons and actual typography are not claimed to be pixel-identical.
+The headline blue is #104afc, sampled from the approved mockup.
+
+Browser checks on the built public-site output:
+- 320px, 390px, 768px and 1137px viewports: no horizontal overflow. Narrow
+  navigation stays on one row; service descriptions stack below their titles.
+- All six service dialogs, generic help and About open with the correct content
+  and email target. Escape dismisses each and returns focus to its trigger.
+- The narrow mobile dialog scrolls vertically within the viewport.
+- Legacy /#request reaches /web-design#request and opens the existing intake.
+- Landscape concept handoff reaches /web-design?concept=landscape#request,
+  displays the selected concept, and carries no demo form data.
+- Browser console error log is empty. No production inquiry was submitted.
+
+The implementation reuses native dialogs, existing brand/icons, and the original
+website intake. New styles and dialog behavior have one dedicated owner each;
+there is no new dependency or duplicate delivery system. Static tests cover the
+email-only boundary and public assets; routing tests cover allowlisted concepts,
+validated refs, malformed input and legacy fragments. Existing delivery failure,
+retry and attribution tests remain in place.
+
+Local validation: 17 backend tests, 18 JavaScript tests, 14 site tests,
+JavaScript syntax checks and static build passed. Docker daemon is unavailable
+locally; exact-head GitHub Validate must pass its Docker build and smoke check
+before merge. Independent review and live deployment are separate PR gates.
+
+Tech homepage design QA final result: passed.
+
 ---
 
 # Service offer hierarchy QA — October 10, 2026

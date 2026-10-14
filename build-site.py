@@ -8,10 +8,10 @@ output = root / 'public-site'
 if output.exists():
     shutil.rmtree(output)
 output.mkdir()
-for name in ('index.html', 'landscape.html', 'salon.html', 'auto-repair.html',
+for name in ('index.html', 'web-design.html', 'landscape.html', 'salon.html', 'auto-repair.html',
              'restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html',
              'style.css', 'homepage.css', 'concepts.css', 'auto-repair.css', 'industry-concepts.css', 'portfolio.css',
-             'app.js', 'site-ui.js', 'config.js', 'favicon.svg'):
+             'tech-support.css', 'tech-support.js', 'app.js', 'site-ui.js', 'config.js', 'favicon.svg'):
     shutil.copyfile(root / name, output / name)
 shutil.copytree(root / 'assets', output / 'assets')
 shutil.copytree(root / 'auto-repair', output / 'auto-repair')
@@ -38,8 +38,8 @@ for name in ('landscape.html', 'salon.html', 'auto-repair.html',
              'restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html'):
     key = name.split('/')[0].removesuffix('.html')
     title, explanation = concepts[key]
-    destination = f'/?concept={key}#request'
-    bar = '''<div class="portfolio-bar"><a href="/#examples" data-preserve-ref>← Portfolio</a>
+    destination = f'/web-design?concept={key}#request'
+    bar = '''<div class="portfolio-bar"><a href="/web-design#examples" data-preserve-ref>← Portfolio</a>
 <span>Fictional concept</span><button type="button" data-open-panel="design-details">About this design ↗</button></div>'''
     context = f'''<aside class="portfolio-handoff" aria-label="Service Boost redesign">
 <span>Like this approach for your website?</span><a href="{destination}" data-preserve-ref>Start your redesign ↗</a></aside>

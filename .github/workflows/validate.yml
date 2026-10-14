@@ -11,6 +11,7 @@ jobs:
       - run: node --check app.js
       - run: node --check config.js
       - run: node --check site-ui.js
+      - run: node --check tech-support.js
       - run: node --test test-attribution.mjs
       - run: python3 -m unittest test_site.py
       - run: python3 build-site.py

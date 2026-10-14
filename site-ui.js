@@ -11,7 +11,7 @@ if (/^[A-Za-z0-9_-]{32}$/.test(navigationRef || '')) {
     const concept = target.searchParams.get('concept');
     target.search = '';
     if (['maintenance', 'diagnostics', 'repair'].includes(service)) target.searchParams.set('service', service);
-    if (['landscape', 'salon', 'auto-repair', 'restaurant', 'dental', 'contractor', 'real-estate'].includes(concept) && target.pathname === '/') target.searchParams.set('concept', concept);
+    if (['landscape', 'salon', 'auto-repair', 'restaurant', 'dental', 'contractor', 'real-estate'].includes(concept) && ['/', '/web-design'].includes(target.pathname)) target.searchParams.set('concept', concept);
     target.searchParams.set('ref', navigationRef);
     link.href = target.pathname + target.search + target.hash;
   });
