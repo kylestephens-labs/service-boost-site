@@ -12,12 +12,6 @@ function routeLegacy() {
   return true;
 }
 routeLegacy();
-const reference = new URLSearchParams(location.search).get('ref');
-if (/^[A-Za-z0-9_-]{32}$/.test(reference || '')) {
-  document.querySelectorAll('[data-web-design]').forEach(link => {
-    link.href = '/web-design?ref=' + encodeURIComponent(reference);
-  });
-}
 let returnFocus = null;
 function openDialog(id, trigger) {
   const dialog = document.getElementById(id);
