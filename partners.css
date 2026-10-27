@@ -1,4 +1,4 @@
-/* Shared typography, brand and Call/Text links come from tech-support.css. */
+/* Shared body typography comes from tech-support.css; site-header.css owns navigation. */
 .partner-layout,.partner-footer { max-width:1440px; margin:auto; padding:0 48px; }
 .partner-hero { display:grid; grid-template-columns:minmax(0,1.48fr) minmax(0,1fr); gap:40px; align-items:center; padding:56px 0 40px; }
 .partner-intro h1 { font-size:clamp(44px,4.65vw,70px); line-height:1.1; letter-spacing:-.045em; margin:0 0 28px; }
@@ -25,7 +25,6 @@
 .partner-contact-links a:hover { text-decoration:underline; }
 .partner-footer { display:flex; justify-content:space-between; gap:20px; padding-top:22px; padding-bottom:24px; border-top:1px solid var(--line); font-size:16px; color:var(--muted); }
 .partner-footer span:first-child { color:var(--ink); font-weight:700; }
-.partner-nav[aria-current="page"] { color:var(--blue); text-decoration:underline; text-underline-offset:8px; }
 .partners-page [hidden] { display:none; }
 .partner-dialog { border:1px solid var(--line); border-radius:16px; padding:28px 32px; width:min(720px,calc(100% - 32px)); max-height:calc(100dvh - 32px); overflow:auto; color:var(--ink); }
 .partner-dialog::backdrop { background:rgba(16,22,56,.55); }
@@ -64,7 +63,6 @@ body:has(.partner-dialog[open]) { overflow:hidden; }
   .coverage-list dd { font-size:19px; }
 }
 @media(max-width:760px) {
-  .partners-page .site-header nav { flex-wrap:wrap; gap:6px 20px; justify-content:flex-start; }
   .partner-layout,.partner-footer { padding-left:20px; padding-right:20px; }
   .partner-hero { grid-template-columns:minmax(0,1fr); padding-top:32px; gap:32px; }
   .partner-intro h1 { font-size:clamp(36px,7vw,52px); margin-bottom:22px; }

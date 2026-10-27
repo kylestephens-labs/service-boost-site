@@ -1,0 +1,45 @@
+/* One header owner across all Service Boost pages; fictional concepts stay separate. */
+@font-face { font-family:"Service Boost Nav"; src:url('/assets/fonts/dm-sans-600.ttf') format('truetype'); font-weight:600; font-display:swap; }
+@font-face { font-family:"Service Boost Nav"; src:url('/assets/fonts/dm-sans-700.ttf') format('truetype'); font-weight:700; font-display:swap; }
+header.global-header {
+  position:sticky; top:0; z-index:20; display:flex; align-items:center;
+  justify-content:space-between; flex-wrap:nowrap; gap:24px;
+  width:100%; padding:18px 24px; border-bottom:1px solid #dce5f8;
+  background:#fff; color:#101638; font-family:"Service Boost Nav",Arial,sans-serif;
+  font-size:20px; line-height:1.5; font-weight:600;
+}
+.global-header .global-brand {
+  display:flex; align-items:center; flex:none; gap:14px; color:#101638;
+  font:700 28px/1.2 "Service Boost Nav",Arial,sans-serif;
+  text-decoration:none; white-space:nowrap;
+}
+.global-header .global-brand img { display:block; width:52px; height:52px; filter:brightness(1.2) saturate(1.8); }
+.global-header .global-nav { display:flex; align-items:center; justify-content:flex-end; flex-wrap:nowrap; gap:24px; width:auto; order:0; }
+.global-header .global-nav a {
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  min-height:44px; padding:0; font:600 20px/1.5 "Service Boost Nav",Arial,sans-serif;
+  color:#101638; text-decoration:none; white-space:nowrap;
+}
+.global-header .global-nav .global-contact { color:#104afc; }
+.global-header .global-contact img {
+  display:block; width:22px; height:22px; flex:none;
+  filter:brightness(0) invert(25%) sepia(98%) saturate(3191%) hue-rotate(227deg) brightness(93%) contrast(94%);
+}
+.global-header .global-nav .global-help { background:#104afc; color:#fff; border-radius:12px; padding:12px 20px; }
+.global-header .global-nav a[aria-current="page"]:not(.global-help) { color:#104afc; text-decoration:underline; text-underline-offset:8px; }
+.global-header .global-nav a:hover { color:#104afc; text-decoration:underline; text-underline-offset:5px; }
+.global-header .global-nav .global-help:hover { background:#203bc5; color:#fff; text-decoration:none; }
+.global-header a:focus-visible { outline:3px solid #104afc; outline-offset:5px; }
+@media(max-width:1100px) {
+  header.global-header { flex-wrap:wrap; gap:12px; }
+  .global-header .global-nav { width:100%; justify-content:flex-start; flex-wrap:wrap; gap:8px 24px; }
+}
+@media(max-width:760px) {
+  header.global-header { position:relative; padding:14px 16px; }
+  .global-header .global-brand { font-size:22px; gap:10px; }
+  .global-header .global-brand img { width:44px; height:44px; }
+  .global-header .global-nav { gap:8px 20px; }
+  .global-header .global-nav a { font-size:16px; gap:8px; }
+  .global-header .global-contact img { width:20px; height:20px; }
+  .global-header .global-nav .global-help { padding:10px 16px; }
+}
