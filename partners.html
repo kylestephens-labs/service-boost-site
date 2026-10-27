@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer">
+  <title>Local coverage for IT providers | Service Boost</title>
+  <meta name="description" content="Scheduled onsite support for MSPs and IT providers in Walnut Creek and nearby Contra Costa communities. Work directly with Kyle.">
+  <link rel="canonical" href="https://www.serviceboost.co/partners">
+  <meta property="og:type" content="website"><meta property="og:site_name" content="Service Boost">
+  <meta property="og:url" content="https://www.serviceboost.co/partners">
+  <meta property="og:title" content="Local coverage for IT providers | Service Boost">
+  <meta property="og:description" content="Scheduled onsite support for MSPs and IT providers. Scope, timing and dispatch price agreed before booking.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="tech-support.css"><link rel="stylesheet" href="partners.css">
+  <script src="config.js" defer></script><script src="partners.js" defer></script>
+</head>
+<body class="partners-page">
+  <a class="skip" href="#partner-main">Skip to partner coverage</a>
+  <!-- site-header -->
+  <main id="partner-main" class="partner-layout">
+    <section class="partner-hero" aria-labelledby="partner-title">
+      <div class="partner-intro">
+        <h1 id="partner-title">Your local hands.<br>Your team’s standards.</h1>
+        <p class="partner-subtitle">Scheduled onsite support for MSPs and IT providers.</p>
+        <p class="partner-area">Walnut Creek &amp; nearby Contra Costa communities.</p>
+        <button class="cta-action partner-cta" type="button" data-open-dialog="partner-inquiry" disabled>Discuss coverage <img src="assets/icons/arrow-right.svg" width="28" height="28" alt=""></button>
+        <noscript><p>Email <a href="mailto:kyle@serviceboost.co">kyle@serviceboost.co</a> to discuss coverage. Scope, availability and dispatch price are agreed before booking.</p></noscript>
+      </div>
+      <aside class="coverage" aria-labelledby="coverage-title">
+        <div class="coverage-icons" aria-hidden="true">
+          <img src="assets/icons/device-laptop.svg" width="72" height="72" alt="">
+          <img src="assets/icons/printer.svg" width="72" height="72" alt="">
+          <img src="assets/icons/wifi.svg" width="72" height="72" alt="">
+        </div>
+        <h2 id="coverage-title">Onsite coverage</h2>
+        <dl class="coverage-list">
+          <div><dt>Setup</dt><dd>Computers, workstations &amp; peripherals</dd></div>
+          <div><dt>Troubleshooting</dt><dd>Wi-Fi, computers &amp; printers</dd></div>
+        </dl>
+        <a class="report-link" href="/partner-report" data-open-dialog="sample-report">View Report <img src="assets/icons/arrow-right.svg" width="22" height="22" alt=""></a>
+        <p class="sample-label">Illustrative sample</p>
+      </aside>
+    </section>
+    <section class="partner-contact" aria-labelledby="partner-contact-title">
+      <div><h2 id="partner-contact-title">Work directly with Kyle.</h2><p>Coordinating with your remote IT team.</p></div>
+      <div class="partner-contact-links"><a href="mailto:kyle@serviceboost.co">kyle@serviceboost.co</a><a href="tel:+19282257944">(928) 225-7944</a></div>
+    </section>
+  </main>
+  <footer class="partner-footer"><span>Service Boost</span><span>Walnut Creek, CA</span></footer>
+  <dialog id="partner-inquiry" class="partner-dialog" aria-labelledby="inquiry-title">
+    <form method="dialog" class="dialog-close"><button aria-label="Close inquiry">Close</button></form>
+    <h2 id="inquiry-title">Discuss coverage</h2>
+    <div id="inquiry-content">
+      <p class="dialog-intro">Have a dispatch in mind or exploring local coverage?</p>
+      <p class="dispatch-terms">We confirm task fit, availability, scope and dispatch price before booking. Additional work requires approval.</p>
+      <form id="partner-form" method="dialog">
+        <fieldset id="partner-fields" disabled>
+          <legend class="visually-hidden">Company and coverage details</legend>
+          <div class="inquiry-grid">
+            <label>Company<input name="business" autocomplete="organization" required maxlength="200"></label>
+            <label>Contact name<input name="name" autocomplete="name" required maxlength="120"></label>
+            <label>Email<input name="email" type="email" autocomplete="email" required maxlength="254"></label>
+            <label>Phone <span>(optional)</span><input name="phone" type="tel" autocomplete="tel" maxlength="40" pattern="[+0-9(). \-]{7,40}"></label>
+            <label>Site city or ZIP<input name="location" required maxlength="120"></label>
+            <label>Desired date <span>(optional)</span><input name="desired_date" type="date"></label>
+            <label class="wide">Task or coverage needed<textarea name="task" required minlength="10" maxlength="3500" rows="3"></textarea></label>
+            <label class="wide">Remote engineer available? <span>(optional)</span><select name="remote_engineer"><option value="">Not specified</option><option value="yes">Yes</option><option value="no">No</option><option value="not-sure">Not sure</option></select></label>
+          </div>
+          <div class="honeypot" aria-hidden="true"><label>Leave empty<input name="company" tabindex="-1" autocomplete="off"></label></div>
+          <button type="submit" class="cta-action" id="partner-submit" disabled>Send inquiry</button>
+        </fieldset>
+        <p id="partner-status" role="status" aria-live="polite"></p>
+        <button id="partner-retry" class="text-button" type="button" hidden>Check availability again</button>
+      </form>
+      <p class="form-note">Equipment details can follow. Please don’t include passwords.</p>
+      <details class="partner-privacy"><summary>Privacy notice</summary><p>Your details are emailed to Service Boost through Google Workspace to respond to your inquiry. Messages remain in the business mailbox; this form does not save your inquiry in a website database. Contact <a href="mailto:kyle@serviceboost.co">kyle@serviceboost.co</a> about your information.</p></details>
+    </div>
+    <section id="partner-confirmation" hidden aria-labelledby="partner-confirmation-title">
+      <h3 id="partner-confirmation-title" tabindex="-1">Your inquiry has been sent.</h3>
+      <p>Kyle will follow up by email to discuss fit, scope, availability and dispatch price.</p>
+      <p>No appointment is booked yet.</p>
+    </section>
+  </dialog>
+  <dialog id="sample-report" class="partner-dialog report-dialog" aria-labelledby="sample-title">
+    <form method="dialog" class="dialog-close"><button aria-label="Close sample report">Close</button></form>
+    <!-- partner-report-content -->
+  </dialog>
+</body>
+</html>

@@ -14,19 +14,26 @@ AUTO_CONCEPTS = ['auto-repair.html', 'auto-repair/services.html',
                  'auto-repair/about.html', 'auto-repair/contact.html']
 INDUSTRY_CONCEPTS = ['restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html']
 CONCEPTS = ['landscape.html', 'salon.html'] + AUTO_CONCEPTS + INDUSTRY_CONCEPTS
+PRODUCTION = ['index.html', 'request-help.html', 'web-design.html', 'partners.html', 'partner-report.html']
 
 
 class Page(HTMLParser):
     def __init__(self, filename):
         super().__init__()
         self.nodes = []
-        self.feed((ROOT / filename).read_text())
+        # Production pages contain build-time shared markup; inspect shipped HTML.
+        path = ROOT / 'public-site' / filename if filename in PRODUCTION else ROOT / filename
+        self.feed(path.read_text())
 
     def handle_starttag(self, tag, attrs):
         self.nodes.append((tag, dict(attrs)))
 
 
 class SiteContracts(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
+
     def test_tech_home_links_to_dedicated_intake_and_direct_contact(self):
         page = Page('index.html')
         services = ['computer', 'mobile', 'smart-home', 'wifi', 'workspace', 'printer']
@@ -50,10 +57,12 @@ class SiteContracts(unittest.TestCase):
         subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
         for filename, url in [('index.html', 'https://www.serviceboost.co/'),
                               ('request-help.html', 'https://www.serviceboost.co/request-help'),
-                              ('web-design.html', 'https://www.serviceboost.co/web-design')]:
+                              ('web-design.html', 'https://www.serviceboost.co/web-design'),
+                              ('partners.html', 'https://www.serviceboost.co/partners')]:
             page = Page('public-site/' + filename)
             self.assertEqual([a['href'] for t, a in page.nodes if a.get('rel') == 'canonical'], [url])
-        for name in ['tech-support.css', 'tech-request.css', 'tech-support.js', 'assets/tech-workspace.webp']:
+        for name in ['tech-support.css', 'tech-request.css', 'tech-support.js', 'assets/tech-workspace.webp',
+                     'partners.css', 'partners.js', 'partner-report.html']:
             self.assertTrue((ROOT / 'public-site' / name).is_file())
         self.assertFalse((ROOT / 'public-site/backend').exists())
 
@@ -68,7 +77,8 @@ class SiteContracts(unittest.TestCase):
                 self.assertTrue(robots.can_fetch(bot, 'https://www.serviceboost.co' + path))
         sitemap = ElementTree.parse(public / 'sitemap.xml')
         urls = [node.text for node in sitemap.findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
-        self.assertEqual(urls, ['https://www.serviceboost.co/', 'https://www.serviceboost.co/web-design'])
+        self.assertEqual(urls, ['https://www.serviceboost.co/', 'https://www.serviceboost.co/web-design',
+                                'https://www.serviceboost.co/partners'])
         for filename in ['index.html', 'web-design.html']:
             self.assertFalse(any(a.get('name') == 'robots' and 'noindex' in a.get('content', '')
                                  for _, a in Page('public-site/' + filename).nodes))
@@ -78,7 +88,7 @@ class SiteContracts(unittest.TestCase):
                                 for _, a in Page('public-site/' + filename).nodes))
 
     def test_business_identity_markup_matches_public_contact(self):
-        source = (ROOT / 'index.html').read_text()
+        source = (ROOT / 'public-site/index.html').read_text()
         match = re.search(r'<script type="application/ld\+json">(.*?)</script>', source, re.S)
         self.assertIsNotNone(match)
         graph = json.loads(match.group(1))['@graph']
@@ -96,7 +106,7 @@ class SiteContracts(unittest.TestCase):
         self.assertNotIn('aggregateRating', organization)
 
     def test_public_contact_links_use_current_business_mailbox(self):
-        for filename in ('index.html', 'request-help.html', 'web-design.html'):
+        for filename in ('index.html', 'request-help.html', 'web-design.html', 'partners.html'):
             with self.subTest(filename=filename):
                 links = [a['href'] for t, a in Page(filename).nodes
                          if t == 'a' and a.get('href', '').startswith('mailto:')]
@@ -183,7 +193,7 @@ class SiteContracts(unittest.TestCase):
         text = (ROOT / 'web-design.html').read_text()
         self.assertIn('Privacy notice', text)
         self.assertNotIn('Form does not submit', text)
-        self.assertEqual(text.count('data-open-quote'), 5)
+        self.assertEqual(text.count('data-open-quote'), 4)
 
     def test_redesign_offer_order_and_unpublished_testimonials(self):
         page = Page('web-design.html')
@@ -205,7 +215,7 @@ class SiteContracts(unittest.TestCase):
         choices = [a.get('value') for t, a in page.nodes if t == 'option']
         self.assertEqual(choices, ['redesign', 'updates'])
         triggers = [a.get('data-quote-service') for _, a in page.nodes if 'data-open-quote' in a]
-        self.assertEqual(triggers.count('redesign'), 4)
+        self.assertEqual(triggers.count('redesign'), 3)
         self.assertEqual(triggers.count('updates'), 1)
         source = (ROOT / 'web-design.html').read_text()
         dialog = source.split('<dialog id="request"', 1)[1].split('</dialog>', 1)[0]
@@ -233,7 +243,7 @@ class SiteContracts(unittest.TestCase):
             self.assertIn('Nothing will be sent, saved or booked.', (ROOT / filename).read_text())
 
     def test_local_assets_and_section_links_resolve(self):
-        for filename in ['index.html', 'request-help.html', 'web-design.html'] + CONCEPTS:
+        for filename in ['index.html', 'request-help.html', 'web-design.html', 'partner-report.html'] + CONCEPTS:
             page = Page(filename)
             ids = {attrs.get('id') for _, attrs in page.nodes}
             all_ids = [attrs['id'] for _, attrs in page.nodes if 'id' in attrs]
@@ -251,7 +261,7 @@ class SiteContracts(unittest.TestCase):
                     route = href.split('?')[0].split('#')[0]
                     target = ROOT / ('index.html' if route == '/' else route.lstrip('/') + '.html')
                     self.assertTrue(target.is_file(), f'{filename}: {href}')
-                    if filename not in ('index.html', 'request-help.html'):
+                    if filename not in PRODUCTION:
                         self.assertIn('data-preserve-ref', attrs)
                 if tag == 'img':
                     self.assertIn('alt', attrs)
@@ -263,7 +273,7 @@ class SiteContracts(unittest.TestCase):
                     continue
                 if 'brand' in attrs.get('class', '').split():
                     self.assertEqual(attrs['href'], '#home')
-                if attrs.get('href') in ['/', '/landscape', '/salon']:
+                if 'global-brand' not in attrs.get('class', '').split() and not (filename in PRODUCTION and attrs.get('href') == '/') and attrs.get('href') in ['/', '/landscape', '/salon']:
                     self.assertIn('data-preserve-ref', attrs)
 
     def test_auto_pages_have_one_current_page_and_coherent_navigation(self):
@@ -274,6 +284,53 @@ class SiteContracts(unittest.TestCase):
             self.assertEqual(len(current), 1)
             expected = '/' + filename.removesuffix('.html')
             self.assertEqual(current[0]['href'], expected)
+
+    def test_partner_build_report_and_inquiry_contract(self):
+        subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
+        page = Page('public-site/partners.html')
+        ids = [a['id'] for _, a in page.nodes if 'id' in a]
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertEqual(sum(t == 'h1' for t, _ in page.nodes), 1)
+        self.assertEqual([a['src'] for t, a in page.nodes if t == 'script'], ['config.js', 'partners.js'])
+        self.assertEqual(sum(a.get('id') == 'sample-title' for _, a in page.nodes), 1)
+        for t, a in page.nodes:
+            if a.get('src'):
+                self.assertTrue((ROOT / 'public-site' / a['src'].lstrip('/')).is_file())
+            if a.get('name') in ('desired_date', 'remote_engineer', 'phone'):
+                self.assertNotIn('required', a)
+        required = {a.get('name') for _, a in page.nodes if 'required' in a}
+        self.assertEqual(required, {'business', 'name', 'email', 'location', 'task'})
+        fields = next(a for _, a in page.nodes if a.get('id') == 'partner-fields')
+        self.assertIn('disabled', fields)
+        self.assertTrue(all(a.get('method') == 'dialog' for t, a in page.nodes if t == 'form'))
+        self.assertIn('company', {a.get('name') for _, a in page.nodes})
+        # The same contact markup/style is used on both home and partner pages.
+        contacts = lambda filename: [a for t, a in Page(filename).nodes if a.get('class') == 'global-contact']
+        self.assertEqual(contacts('index.html'), contacts('partners.html'))
+        self.assertIn('/partners', [a.get('href') for _, a in Page('index.html').nodes])
+        source = (ROOT / 'public-site/partners.html').read_text()
+        self.assertIn('Illustrative example — not a completed customer job', source)
+        self.assertIn('Completion acknowledgment', source)
+        self.assertIn('Time onsite', source)
+        self.assertIn('dispatch price', source)
+        self.assertIn('noindex', (ROOT / 'public-site/partner-report.html').read_text())
+
+    def test_global_navigation_is_one_shared_header_on_every_real_page(self):
+        headers = []
+        for filename in PRODUCTION:
+            source = (ROOT / 'public-site' / filename).read_text()
+            self.assertEqual(source.count('<header'), 1, filename)
+            self.assertIn('<link rel="stylesheet" href="/site-header.css">', source)
+            header = re.search(r'<header.*?</header>', source, re.S).group(0)
+            headers.append(re.sub(r' aria-current="page"', '', header))
+            self.assertIn('/assets/icons/phone.svg', header)
+            self.assertIn('/assets/icons/message-circle.svg', header)
+            self.assertIn('Request help', header)
+            for name in ['Home', 'For IT providers', 'Call Kyle', 'Text Kyle']:
+                self.assertIn(name, header)
+        self.assertTrue(all(header == headers[0] for header in headers))
+        for filename in CONCEPTS:
+            self.assertNotIn('global-header', (ROOT / 'public-site' / filename).read_text())
 
 
 if __name__ == '__main__':

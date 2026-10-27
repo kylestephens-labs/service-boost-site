@@ -11,10 +11,31 @@ output.mkdir()
 for name in ('robots.txt', 'sitemap.xml', 'index.html', 'request-help.html', 'web-design.html', 'landscape.html', 'salon.html', 'auto-repair.html',
              'restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html',
              'style.css', 'homepage.css', 'concepts.css', 'auto-repair.css', 'industry-concepts.css', 'portfolio.css',
-             'tech-support.css', 'tech-request.css', 'tech-support.js', 'app.js', 'site-ui.js', 'config.js', 'favicon.svg'):
+             'tech-support.css', 'tech-request.css', 'tech-support.js', 'partners.html', 'partner-report.html',
+             'partners.css', 'partners.js', 'site-header.css', 'app.js', 'site-ui.js', 'config.js', 'favicon.svg'):
     shutil.copyfile(root / name, output / name)
 shutil.copytree(root / 'assets', output / 'assets')
 shutil.copytree(root / 'auto-repair', output / 'auto-repair')
+
+# Shared markup and styles keep contact controls identical on every real offering.
+header = (root / 'site-header.html').read_text()
+for name, route in [('index.html', '/'), ('request-help.html', '/request-help'),
+                    ('web-design.html', '/web-design'), ('partners.html', '/partners'),
+                    ('partner-report.html', '/partner-report')]:
+    page = output / name
+    source = page.read_text()
+    assert source.count('<!-- site-header -->') == 1, name
+    current_header = header.replace(f'href="{route}">', f'href="{route}" aria-current="page">')
+    source = source.replace('<!-- site-header -->', current_header)
+    source = source.replace('</head>', '<link rel="stylesheet" href="/site-header.css">\n</head>')
+    page.write_text(source)
+
+# One authoritative illustrative report, usable with or without JavaScript.
+report = (root / 'partner-report.html').read_text()
+report_content = report.split('<!-- report-content-start -->', 1)[1].split('<!-- report-content-end -->', 1)[0]
+partners = output / 'partners.html'
+partners.write_text(partners.read_text().replace('<!-- partner-report-content -->',
+                                               report_content.replace('<h1 ', '<h2 ').replace('</h1>', '</h2>')))
 
 # Keep one authoritative Juniper request dialog; include it on every entry page.
 contact = (root / 'auto-repair/contact.html').read_text()
