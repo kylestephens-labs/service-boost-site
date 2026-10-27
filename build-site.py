@@ -11,10 +11,18 @@ output.mkdir()
 for name in ('robots.txt', 'sitemap.xml', 'index.html', 'request-help.html', 'web-design.html', 'landscape.html', 'salon.html', 'auto-repair.html',
              'restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html',
              'style.css', 'homepage.css', 'concepts.css', 'auto-repair.css', 'industry-concepts.css', 'portfolio.css',
-             'tech-support.css', 'tech-request.css', 'tech-support.js', 'app.js', 'site-ui.js', 'config.js', 'favicon.svg'):
+             'tech-support.css', 'tech-request.css', 'tech-support.js', 'partners.html', 'partner-report.html',
+             'partners.css', 'partners.js', 'app.js', 'site-ui.js', 'config.js', 'favicon.svg'):
     shutil.copyfile(root / name, output / name)
 shutil.copytree(root / 'assets', output / 'assets')
 shutil.copytree(root / 'auto-repair', output / 'auto-repair')
+
+# One authoritative illustrative report, usable with or without JavaScript.
+report = (root / 'partner-report.html').read_text()
+report_content = report.split('<!-- report-content-start -->', 1)[1].split('<!-- report-content-end -->', 1)[0]
+partners = output / 'partners.html'
+partners.write_text(partners.read_text().replace('<!-- partner-report-content -->',
+                                               report_content.replace('<h1 ', '<h2 ').replace('</h1>', '</h2>')))
 
 # Keep one authoritative Juniper request dialog; include it on every entry page.
 contact = (root / 'auto-repair/contact.html').read_text()
