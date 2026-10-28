@@ -443,3 +443,38 @@ the new homepage presentation in homepage.css, preserving concept-page rules.
 No schema or backend migration. Rollback is a revert of this frontend change.
 
 final result: passed
+
+
+## Partner inquiry page — 27 October 2026
+
+Source: selected option 2, /Users/kylestephens/.codex/generated_images/01a093d4-f7dc-7413-8dc8-fe858777f181/exec-ebc873ab-6cff-485a-8223-f5886d3744f5.png.
+Implementation: /Users/kylestephens/Documents/Codex/2026-09-11/what-is-x20/output/pr49-desktop.png and pr49-mobile.png in the same output folder.
+
+Compared the source and rendered screenshot together in one image inspection.
+Desktop source and capture: 1487 x 1058 pixels, 1487 x 1058 CSS viewport, DPR 1;
+no density scaling. Empty ready form, white theme. Mobile: 390 x 844 CSS viewport,
+full-page capture. Full-view comparison covered all content; separate region
+crops were unnecessary because labels and controls were legible at this scale.
+
+Findings: no actionable P0/P1/P2 mismatch. Split hierarchy, paired company/name
+and email/location, full-width message and submit match the selected direction.
+DM Sans, navy headings, blue CTA and thin input borders reuse existing tokens.
+Existing shared header/assets deliberately retain production dimensions rather
+than reproducing minor generated-image differences. Main gutters are slightly
+wider and vertical spacing slightly tighter than the mock (P3); no content is
+lost or clipped. Logo and Tabler icons are original assets, not approximations.
+Copy matches the selected design. Mobile stacks all fields with readable labels,
+full-width controls and normal document scrolling.
+
+Interaction checks: readiness failure disables send with retry; isolated local
+synthetic 502 retains entered details; synthetic success clears fields, displays
+confirmation and focuses its heading. Browser console error query returned none
+in the synthetic flow. Behavior tests cover invalid inputs, maximum-length backend
+payload, honeypot, unavailable backend, duplicate sends and uncertain responses.
+No live inquiry was submitted. Inbox receipt remains NOT_PROVEN.
+
+Comparison history: first ready-state comparison passed; no visual correction
+iteration was needed. Removed an unused mobile pseudo-element afterward; visible
+space is supplied by the heading text. Existing shared header unchanged.
+
+final result: passed

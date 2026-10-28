@@ -12,7 +12,7 @@ for name in ('robots.txt', 'sitemap.xml', 'index.html', 'request-help.html', 'we
              'restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html',
              'style.css', 'homepage.css', 'concepts.css', 'auto-repair.css', 'industry-concepts.css', 'portfolio.css',
              'tech-support.css', 'tech-request.css', 'tech-support.js', 'partners.html', 'partner-report.html',
-             'partners.css', 'partners.js', 'site-header.css', 'app.js', 'site-ui.js', 'config.js', 'favicon.svg'):
+             'partners.css', 'partners.js', 'partner-inquiry.html', 'partner-inquiry.css', 'partner-inquiry.js', 'site-header.css', 'app.js', 'site-ui.js', 'config.js', 'favicon.svg'):
     shutil.copyfile(root / name, output / name)
 shutil.copytree(root / 'assets', output / 'assets')
 shutil.copytree(root / 'auto-repair', output / 'auto-repair')
@@ -21,7 +21,7 @@ shutil.copytree(root / 'auto-repair', output / 'auto-repair')
 header = (root / 'site-header.html').read_text()
 for name, route in [('index.html', '/'), ('request-help.html', '/request-help'),
                     ('web-design.html', '/web-design'), ('partners.html', '/partners'),
-                    ('partner-report.html', '/partner-report')]:
+                    ('partner-report.html', '/partner-report'), ('partner-inquiry.html', '/partners')]:
     page = output / name
     source = page.read_text()
     assert source.count('<!-- site-header -->') == 1, name

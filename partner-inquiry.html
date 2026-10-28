@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer">
+  <title>Discuss coverage | Service Boost</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="tech-support.css"><link rel="stylesheet" href="partners.css"><link rel="stylesheet" href="partner-inquiry.css">
+  <script src="config.js" defer></script><script src="partner-inquiry.js" defer></script>
+</head>
+<body class="partners-page inquiry-page">
+  <a class="skip" href="#partner-form">Skip to inquiry form</a>
+  <!-- site-header -->
+  <main class="inquiry-layout">
+    <section class="inquiry-intro" aria-labelledby="inquiry-title">
+      <a class="back-coverage" href="/partners"><img src="assets/icons/arrow-right.svg" width="20" height="20" alt="">Back to partner coverage</a>
+      <h1 id="inquiry-title">Discuss<br> coverage</h1>
+      <p>Tell me where you need help and what you have in mind.</p>
+    </section>
+    <section class="inquiry-panel" aria-label="Coverage inquiry">
+      <div id="inquiry-content">
+        <noscript><p>Please <a href="mailto:kyle@serviceboost.co">email Kyle</a> or call <a href="tel:+19282257944">(928) 225-7944</a> to discuss coverage. JavaScript is required to send this form.</p></noscript>
+        <form id="partner-form">
+          <fieldset id="partner-fields" disabled>
+            <legend class="visually-hidden">Company and coverage details</legend>
+            <div class="inquiry-grid">
+              <label>Company<input name="business" autocomplete="organization" required maxlength="200"></label>
+              <label>Name<input name="name" autocomplete="name" required maxlength="120"></label>
+              <label>Email<input name="email" type="email" autocomplete="email" required maxlength="254"></label>
+              <label>City or service area<input name="location" required maxlength="120"></label>
+              <label class="wide">How can I help?<textarea name="task" required minlength="10" maxlength="3500" rows="4" aria-describedby="password-note"></textarea></label>
+            </div>
+            <p id="password-note" class="form-note">Please don’t include passwords.</p>
+            <div class="honeypot" aria-hidden="true"><label>Leave empty<input name="company" tabindex="-1" autocomplete="off"></label></div>
+            <button type="submit" class="cta-action" id="partner-submit" disabled>Send inquiry</button>
+          </fieldset>
+          <p id="partner-status" role="status" aria-live="polite"></p>
+          <button id="partner-retry" class="text-button" type="button" hidden>Check availability again</button>
+        </form>
+        <p class="form-note booking-note">We’ll agree on scope, timing and price before booking.</p>
+        <details class="partner-privacy"><summary>Privacy notice</summary><p>Your details are emailed to Service Boost through Google Workspace to respond to your inquiry. Messages remain in the business mailbox; this form does not save your inquiry in a website database. Contact <a href="mailto:kyle@serviceboost.co">kyle@serviceboost.co</a> about your information.</p></details>
+      </div>
+      <section id="partner-confirmation" hidden aria-labelledby="partner-confirmation-title">
+        <h2 id="partner-confirmation-title" tabindex="-1">Your inquiry has been sent.</h2>
+        <p>Kyle will follow up by email to discuss fit, scope, availability and price.</p>
+        <p>No appointment is booked yet.</p>
+        <a href="/partners">Back to partner coverage</a>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

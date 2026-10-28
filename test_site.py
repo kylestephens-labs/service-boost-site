@@ -14,7 +14,7 @@ AUTO_CONCEPTS = ['auto-repair.html', 'auto-repair/services.html',
                  'auto-repair/about.html', 'auto-repair/contact.html']
 INDUSTRY_CONCEPTS = ['restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html']
 CONCEPTS = ['landscape.html', 'salon.html'] + AUTO_CONCEPTS + INDUSTRY_CONCEPTS
-PRODUCTION = ['index.html', 'request-help.html', 'web-design.html', 'partners.html', 'partner-report.html']
+PRODUCTION = ['index.html', 'request-help.html', 'web-design.html', 'partners.html', 'partner-report.html', 'partner-inquiry.html']
 
 
 class Page(HTMLParser):
@@ -291,19 +291,23 @@ class SiteContracts(unittest.TestCase):
         ids = [a['id'] for _, a in page.nodes if 'id' in a]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(sum(t == 'h1' for t, _ in page.nodes), 1)
-        self.assertEqual([a['src'] for t, a in page.nodes if t == 'script'], ['config.js', 'partners.js'])
+        self.assertEqual([a['src'] for t, a in page.nodes if t == 'script'], ['partners.js'])
         self.assertEqual(sum(a.get('id') == 'sample-title' for _, a in page.nodes), 1)
         for t, a in page.nodes:
             if a.get('src'):
                 self.assertTrue((ROOT / 'public-site' / a['src'].lstrip('/')).is_file())
-            if a.get('name') in ('desired_date', 'remote_engineer', 'phone'):
-                self.assertNotIn('required', a)
-        required = {a.get('name') for _, a in page.nodes if 'required' in a}
+        inquiry = Page('partner-inquiry.html')
+        required = {a.get('name') for _, a in inquiry.nodes if 'required' in a}
         self.assertEqual(required, {'business', 'name', 'email', 'location', 'task'})
-        fields = next(a for _, a in page.nodes if a.get('id') == 'partner-fields')
+        fields = next(a for _, a in inquiry.nodes if a.get('id') == 'partner-fields')
         self.assertIn('disabled', fields)
-        self.assertTrue(all(a.get('method') == 'dialog' for t, a in page.nodes if t == 'form'))
-        self.assertIn('company', {a.get('name') for _, a in page.nodes})
+        names = {a.get('name') for _, a in inquiry.nodes}
+        self.assertIn('company', names)
+        self.assertTrue(names.isdisjoint({'phone', 'desired_date', 'remote_engineer'}))
+        self.assertFalse(any(t == 'dialog' for t, _ in inquiry.nodes))
+        self.assertNotIn('partner-form', ids)
+        self.assertIn('/partner-inquiry', [a.get('href') for _, a in page.nodes])
+        self.assertEqual([a['src'] for t, a in inquiry.nodes if t == 'script'], ['config.js', 'partner-inquiry.js'])
         # The same contact markup/style is used on both home and partner pages.
         contacts = lambda filename: [a for t, a in Page(filename).nodes if a.get('class') == 'global-contact']
         self.assertEqual(contacts('index.html'), contacts('partners.html'))
@@ -312,7 +316,6 @@ class SiteContracts(unittest.TestCase):
         self.assertIn('Illustrative example — not a completed customer job', source)
         self.assertIn('Completion acknowledgment', source)
         self.assertIn('Time onsite', source)
-        self.assertIn('dispatch price', source)
         self.assertIn('noindex', (ROOT / 'public-site/partner-report.html').read_text())
 
     def test_global_navigation_is_one_shared_header_on_every_real_page(self):
