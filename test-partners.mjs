@@ -17,9 +17,9 @@ function page({readiness, response = async () => ({ok:true, json:async () => ({m
   const nodes = {}, requests = [];
   for (const id of ['partner-form','partner-fields','partner-submit',
     'partner-status','partner-retry','inquiry-content','partner-confirmation','partner-confirmation-title']) {
-    nodes[id] = {handlers:{}, hidden:id === 'partner-confirmation', open:false,
+    nodes[id] = {handlers:{}, hidden:id === 'partner-confirmation',
       addEventListener(event, fn) {this.handlers[event] = fn;},
-      showModal() {this.open = true;}, focus() {this.focused = true;}};
+      focus() {this.focused = true;}};
   }
   const form = nodes['partner-form'];
   form.values = {...values};
@@ -28,7 +28,7 @@ function page({readiness, response = async () => ({ok:true, json:async () => ({m
   const context = vm.createContext({
     URL, AbortSignal,
     window:{SERVICE_BOOST_QUOTE_ENDPOINT:'https://quotes.serviceboost.co/quote'},
-    document:{getElementById:id => nodes[id], querySelectorAll:() => []},
+    document:{getElementById:id => nodes[id]},
     FormData:class {constructor(form) {this.values = form.values;} *[Symbol.iterator]() {yield* Object.entries(this.values);}},
     fetch:async (url, options) => {
       requests.push({url:String(url), options});
@@ -74,8 +74,7 @@ test('five-field inquiry preserves existing backend contract', () => {
   assert.equal(payload.service, 'help');
   assert.equal(payload.ref, undefined);
   // Validate real generated payloads against the unchanged production validator.
-  for (const input of [payload, page().payload({...values, business:'B'.repeat(200), task:'T'.repeat(3500),
-    phone:undefined})]) {
+  for (const input of [payload, page().payload({...values, business:'B'.repeat(200), task:'T'.repeat(3500)})]) {
     assert.ok(input.problem.length <= 4000);
     const result = spawnSync('python3', ['-c',
       'import json, sys; from backend.app import validate; print(json.dumps(validate(json.load(sys.stdin))))'],

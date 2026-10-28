@@ -26,7 +26,6 @@
   .back-coverage { font-size:16px; }
   .inquiry-intro h1 { font-size:44px; line-height:1.1; margin:20px 0 16px; }
   .inquiry-intro h1 br { display:none; }
-  .inquiry-intro h1 br::after { content:" "; }
   .inquiry-intro p { font-size:20px; }
   .inquiry-panel { padding-top:30px; }
   .inquiry-page .inquiry-grid { gap:20px; }

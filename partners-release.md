@@ -1,14 +1,17 @@
 # Partner coverage release
 
 Adds `/partners` with scheduled onsite setup/troubleshooting coverage, an
-illustrative completion report and a coverage inquiry dialog. The report also
+illustrative completion report and a dedicated `/partner-inquiry` page. The report also
 has a standalone no-JavaScript route. Inquiry details reuse the existing
 `tech_support` contract; the real company name stays separate from the honeypot.
 
-The five real offering/intake/report pages share one build-time header and
+The six real offering/intake/report pages share one build-time header and
 stylesheet, including Home, For IT providers, Call/Text icons and Request help.
 Fictional portfolio navigation remains separate. Consumer services, pricing,
-intake and website-design body content remain protected. The website-design
+intake and website-design body content remain protected. The inquiry uses the
+selected split layout with five fields: company, name, email, city/service area
+and message. Phone, desired date and remote-engineer questions are deferred
+to follow-up. The website-design
 page retains its body redesign buttons and direct `#request` dialog entry.
 
 Validation: 19 static integration tests and 33 JavaScript behavior tests pass.
