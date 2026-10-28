@@ -1,0 +1,37 @@
+/* Dedicated coverage inquiry: selected split-layout design. */
+.inquiry-layout { max-width:1440px; margin:0 auto; padding:70px 48px; display:grid; grid-template-columns:minmax(0, .62fr) minmax(0, 1fr); gap:64px; }
+.back-coverage { display:inline-flex; align-items:center; gap:12px; color:var(--blue); text-decoration:none; font-size:20px; min-height:44px; }
+.back-coverage img { transform:rotate(180deg); filter:var(--icon-filter); }
+.inquiry-intro h1 { font-size:clamp(60px,6.6vw,94px); line-height:1.17; letter-spacing:-.055em; margin:30px 0; }
+.inquiry-intro p { font-size:27px; line-height:1.45; color:var(--muted); margin:0; max-width:470px; }
+.inquiry-panel { padding-top:46px; min-width:0; }
+.inquiry-page .inquiry-grid { gap:30px 24px; }
+.inquiry-page .inquiry-grid label { font-size:22px; }
+.inquiry-page .inquiry-grid input { min-height:68px; margin-top:12px; }
+.inquiry-page .inquiry-grid textarea { min-height:150px; margin-top:12px; }
+.inquiry-page .form-note,.inquiry-page .partner-privacy { font-size:18px; }
+.inquiry-page #password-note { margin:12px 0 24px; }
+.inquiry-page #partner-submit { margin:0; min-height:72px; font-size:25px; border-radius:10px; }
+.inquiry-page .booking-note { margin:20px 0 24px; }
+.inquiry-page :focus-visible { outline:3px solid var(--blue); outline-offset:3px; }
+.inquiry-page button:disabled { opacity:.6; cursor:not-allowed; }
+@media(max-width:1000px) {
+  .inquiry-layout { padding:40px 28px; gap:36px; grid-template-columns:minmax(0,.65fr) minmax(0,1fr); }
+  .inquiry-intro h1 { font-size:60px; }
+  .inquiry-intro p { font-size:22px; }
+  .inquiry-page .inquiry-grid label { font-size:18px; }
+}
+@media(max-width:760px) {
+  .inquiry-layout { display:block; padding:24px 20px 40px; }
+  .back-coverage { font-size:16px; }
+  .inquiry-intro h1 { font-size:44px; line-height:1.1; margin:20px 0 16px; }
+  .inquiry-intro h1 br { display:none; }
+  .inquiry-intro h1 br::after { content:" "; }
+  .inquiry-intro p { font-size:20px; }
+  .inquiry-panel { padding-top:30px; }
+  .inquiry-page .inquiry-grid { gap:20px; }
+  .inquiry-page .inquiry-grid input { min-height:52px; margin-top:6px; }
+  .inquiry-page .inquiry-grid textarea { min-height:130px; margin-top:6px; }
+  .inquiry-page #partner-submit { min-height:56px; font-size:22px; }
+  .inquiry-page .form-note,.inquiry-page .partner-privacy { font-size:16px; }
+}
