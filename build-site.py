@@ -25,8 +25,11 @@ shutil.copytree(root / 'auto-repair', output / 'auto-repair')
 header = (root / 'site-header.html').read_text()
 if review_visits:
     (output / 'config.js').write_text("window.SERVICE_BOOST_QUOTE_ENDPOINT = '';\n")
-    for asset in ('index.html', 'visit.css', 'intake.js', 'visit.js'):
-        shutil.copyfile(root / 'visit-planner' / asset, output / asset)
+    home = output / 'index.html'
+    home.write_text(home.read_text().replace('<div>Fixed visit prices', '<div>Review preview · Fixed visit prices')
+                    .replace('</head>', '<meta name="robots" content="noindex"></head>'))
+for asset in ('visit.css', 'intake.js', 'visit.js'):
+    shutil.copyfile(root / 'visit-planner' / asset, output / asset)
 for name, route in [('index.html', '/'), ('request-help.html', '/request-help'),
                     ('web-design.html', '/web-design'), ('partners.html', '/partners'),
                     ('partner-report.html', '/partner-report'), ('partner-inquiry.html', '/partners')]:

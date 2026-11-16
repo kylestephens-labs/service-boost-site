@@ -81,6 +81,7 @@ tasks[0].push(
 let category = 0,
   task = 0;
 const contact = {
+  method: "email",
   person: "",
   email: "",
   street: "",
@@ -88,11 +89,7 @@ const contact = {
   phone: "",
   arrival: "",
 };
-const coverage = new Set(
-  "94595 94596 94597 94598 94523 94518 94519 94520 94521 94549 94563 94556 94507 94506 94526 94553 94517 94582 94583".split(
-    " ",
-  ),
-);
+
 function esc(s) {
   return s.replace(
     /[&<>"']/g,
@@ -102,28 +99,6 @@ function esc(s) {
       ],
   );
 }
-const towns = [
-  "Walnut Creek",
-  "Walnut Creek",
-  "Walnut Creek",
-  "Walnut Creek",
-  "Pleasant Hill",
-  "Concord",
-  "Concord",
-  "Concord",
-  "Concord",
-  "Lafayette",
-  "Orinda",
-  "Moraga",
-  "Alamo",
-  "Danville",
-  "Danville",
-  "Martinez",
-  "Clayton",
-  "San Ramon",
-  "San Ramon",
-];
-const townFor = Object.fromEntries([...coverage].map((z, j) => [z, towns[j]]));
 const prep = [
   [
     "Check that the computer starts and that you can sign into your account.",
@@ -143,32 +118,26 @@ const prep = [
 function zipError() {
   return !/^\d{5}$/.test(city)
     ? "Enter a five-digit visit ZIP."
-    : !coverage.has(city)
-      ? "Outside the sample coverage area. Check the ZIP or return to the service choices. Enter your timing preference again after correcting the ZIP."
-      : "";
+    : "";
 }
 function errors() {
   return {
     person: contact.person.trim() ? "" : "Enter a name for the visit.",
-    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email)
+    email: (!contact.email && contact.method !== "email") || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email)
       ? ""
-      : "Enter an email such as avery@example.invalid.",
+      : "Enter a valid email address.",
     street:
       /^(?=.*[0-9])(?=.*[a-z]).{4,}$/i.test(contact.street.trim()) &&
       !/^(p\.?\s*o\.?\s*box|post office box)/i.test(contact.street.trim())
         ? ""
         : "Enter the visit street number and street name. A PO box cannot identify a visit address.",
     town:
-      contact.town.trim().toLowerCase() === townFor[city]?.toLowerCase()
-        ? ""
-        : "For this sample ZIP, enter " +
-          (townFor[city] || "a covered city") +
-          " or edit the visit ZIP.",
+      contact.town.trim() ? "" : "Enter the city for the visit address.",
     phone:
-      !contact.phone ||
+      (!contact.phone && contact.method === "email") ||
       /^\+?1?\d{10}$/.test(contact.phone.replace(/[\s().-]/g, ""))
         ? ""
-        : "Use a ten-digit US phone number or leave it blank.",
+        : "Enter a valid US phone number.",
   };
 }
 function hasContact() {
@@ -280,7 +249,8 @@ function options(a, v) {
     )
     .join("");
 }
-const intake = createVisitIntake(null);
+const live = typeof window !== "undefined" && ["https://www.serviceboost.co", "https://serviceboost.co"].includes(location.origin) && window.SERVICE_BOOST_QUOTE_ENDPOINT === "https://quotes.serviceboost.co/quote";
+const intake = createVisitIntake(live ? window.SERVICE_BOOST_QUOTE_ENDPOINT : null, live ? window.fetch.bind(window) : null);
 function visitDuration() {
   if (category === 0 && task === 2) return "up to 60 minutes";
   if (category === 2 || (category === 0 && task === 0)) return "60–75 minutes";
@@ -291,7 +261,7 @@ function visitPayload() {
   const service = category === 0 ? (task === 1 ? "printer" : "computer")
     : ["", "smart-home", "wifi", "mobile"][category];
   return {
-    project_type: "tech_support", service, reply_method: "email",
+    project_type: "tech_support", service, reply_method: contact.method,
     name: contact.person.trim(), email: contact.email.trim(), phone: contact.phone.trim(),
     location: contact.town.trim() + ", CA " + city,
     problem: [
@@ -304,16 +274,21 @@ function visitPayload() {
   };
 }
 async function finishVisit() {
-  if (!coverage.has(city) || fit !== "Yes" || !hasContact() || !slot) return render();
+  if (zipError() || fit !== "Yes" || !hasContact() || !slot) return render();
   const status = document.querySelector("#delivery-status");
+  const submit = document.querySelector("#finish-visit");
+  if (submit.disabled) return;
+  submit.disabled = true;
+  status.textContent = live ? "Sending request…" : "";
   const result = await intake.submit(visitPayload());
   if (result === "disabled") go("done");
-  else if (result === "unconfirmed") {
+  else if (result === "unconfirmed" || result === "sending") {
+    submit.disabled = false;
     status.textContent =
       "Delivery could not be confirmed. Your details are still here. Check with Kyle before retrying.";
   } else if (result === "accepted") {
-    status.textContent =
-      "Request received for follow-up. Your appointment is pending manual confirmation.";
+    submit.textContent = "Request sent";
+    status.textContent = "Request sent. Kyle will confirm your date and arrival window separately. Your visit is pending until Kyle accepts it.";
   }
 }
 function render() {
@@ -327,7 +302,7 @@ function render() {
   if (t !== undefined && t !== "guide") restore(category, task);
   if (
     ["time", "contact", "checkout", "done"].includes(page) &&
-    (!coverage.has(city) || fit !== "Yes")
+    (zipError() || fit !== "Yes")
   )
     page = "fit";
   if (["time", "checkout", "done"].includes(page) && !hasContact())
@@ -391,16 +366,16 @@ function render() {
     return;
   }
   if (page === "fit") {
-    body = `<p class="kicker">Step 1 of 4 · Visit fit</p><h1>Check your setup</h1><label for="zip">Visit ZIP code</label><input class="entry" id="zip" name="zip" autocomplete="postal-code" aria-describedby="outside" inputmode="numeric" maxlength="5" value="${esc(city)}" oninput="zipChanged(this)"><p class="feedback" id="outside" role="status">${city ? zipError() : ""}</p><label for="fit">${q}</label><select id="fit" onchange="fit=this.value;if(fit!=='Yes')slot='';render()"><option value="">Choose an answer</option>${options(["Yes", "Not sure", "No"], fit)}</select>${fit && fit !== "Yes" ? `<p>${prep[category][task]} <a href="#services/${category}/guide">See setup guidance</a> or return to the choices.</p>` : ""}<p class="feedback" id="fit-error" role="status"></p><div class="actions"><button class="secondary" onclick="location.hash='services/'+category+'/'+task">Back</button><button id="nexttime" onclick="advanceFit()">Contact and visit address →</button></div>`;
+    body = `<p class="kicker">Step 1 of 4 · Visit fit</p><h1>Check your setup</h1><p>Serving ${cities.join(", ")}. Kyle will confirm coverage using your full address.</p><label for="zip">Visit ZIP code</label><input class="entry" id="zip" name="zip" autocomplete="postal-code" aria-describedby="outside" inputmode="numeric" maxlength="5" value="${esc(city)}" oninput="zipChanged(this)"><p class="feedback" id="outside" role="status">${city ? zipError() : ""}</p><label for="fit">${q}</label><select id="fit" onchange="fit=this.value;if(fit!=='Yes')slot='';render()"><option value="">Choose an answer</option>${options(["Yes", "Not sure", "No"], fit)}</select>${fit && fit !== "Yes" ? `<p>${prep[category][task]} <a href="#services/${category}/guide">See setup guidance</a> or return to the choices.</p>` : ""}<p class="feedback" id="fit-error" role="status"></p><div class="actions"><button class="secondary" onclick="location.hash='services/'+category+'/'+task">Back</button><button id="nexttime" onclick="advanceFit()">Contact and visit address →</button></div>`;
   }
   if (page === "time") {
     body = `<p class="kicker">Step 3 of 4 · Visit preference</p><h1>Describe your preferred timing</h1><p>Kyle will confirm availability separately. Visit duration: ${duration}.</p><label for="timing">Timing preference (Pacific time)</label><input id="timing" class="entry" maxlength="160" value="${esc(slot)}" oninput="timingChanged(this.value)"><button class="secondary" onclick="useFlexibleTime()">Ask Kyle to suggest a time</button><p id="time-error" role="status" class="feedback"></p><div class="actions"><button class="secondary" onclick="go('contact')">Back</button><button onclick="contactNext()">Review visit →</button></div>`;
   }
   if (page === "contact") {
-    body = `<p class="kicker">Step 2 of 4 · Visit details</p><h1>Contact &amp; address</h1><p>Use fictional details for this preview.</p><div class="pair"><div>${field("person", "Name")}</div><div>${field("email", "Email", "email")}</div></div>${field("phone", "Phone (optional)", "tel")}${field("street", "Street address, including unit")}<div class="pair"><div>${field("town", "City")}</div><div><label>Visit ZIP code</label><p>${esc(city)}</p></div></div><a href="#fit/${category}/${task}">Edit visit ZIP</a>${field("arrival", "Arrival notes (optional)")}<div class="actions"><button class="secondary" onclick="go('fit')">Back</button><button id="review" onclick="validateContact()">Enter a timing preference →</button></div>`;
+    body = `<p class="kicker">Step 2 of 4 · Visit details</p><h1>Contact &amp; address</h1><p>${live ? "Kyle will check your full address and confirm coverage." : "Use fictional details for this preview."}</p><div class="pair"><div>${field("person", "Name")}</div><div>${field("email", contact.method === "email" ? "Email" : "Email (optional)", "email")}</div></div><label for="method">How should Kyle confirm the visit?</label><select id="method" onchange="contact.method=this.value;render()">${["email","call","text"].map(m => `<option value="${m}" ${m === contact.method ? "selected" : ""}>${{email:"Email",call:"Phone call",text:"Text message"}[m]}</option>`).join("")}</select>${field("phone", contact.method === "email" ? "Phone (optional)" : "Phone", "tel")}${field("street", "Street address, including unit")}<div class="pair"><div>${field("town", "City")}</div><div><label>Visit ZIP code</label><p>${esc(city)}</p></div></div><a href="#fit/${category}/${task}">Edit visit ZIP</a>${field("arrival", "Arrival notes (optional)")}<div class="actions"><button class="secondary" onclick="go('fit')">Back</button><button id="review" onclick="validateContact()">Enter a timing preference →</button></div>`;
   }
   if (page === "checkout") {
-    body = `<p class="kicker">Step 4 of 4 · Request review</p><h1>Review your visit</h1><h3>${name}</h3><p>${desc}</p><p>Visit duration: ${duration}.</p><p><b>Included</b> · ${inc.split("|").join(" · ")}</p><p><b>Outside scope</b> · ${exc}</p><div class="rule"></div><h3>Preferred arrival window</h3><p>${esc(slot)}, Pacific<br>${esc(contact.person)} · ${esc(contact.email)}<br>${esc(contact.street)}, ${esc(contact.town)}, CA ${esc(city)}</p><p><strong>Fixed visit price · $${total}</strong></p><p>Payment is due after the visit. Kyle will confirm accepted payment methods before you agree to the work.<br>Cancellation terms · Pending decision</p>${contact.phone ? "<p>Phone · " + esc(contact.phone) + "</p>" : ""}${contact.arrival ? "<p>Arrival · " + esc(contact.arrival) + "</p>" : ""}<div class="editlinks">${[
+    body = `<p class="kicker">Step 4 of 4 · Request review</p><h1>Review your visit</h1><h3>${name}</h3><p>${desc}</p><p>Visit duration: ${duration}.</p><p><b>Included</b> · ${inc.split("|").join(" · ")}</p><p><b>Outside scope</b> · ${exc}</p><div class="rule"></div><h3>Preferred arrival window</h3><p>${esc(slot)}, Pacific<br>${esc(contact.person)} · ${esc(contact.email)}<br>${esc(contact.street)}, ${esc(contact.town)}, CA ${esc(city)}</p><p><strong>Fixed visit price · $${total}</strong></p><p>Payment is due after the visit. Kyle will confirm payment options before the visit.<br>To cancel or reschedule, notify Kyle as soon as possible. There is no fee.<br>Kyle will confirm the date and arrival window by ${contact.method}. Your request is pending until Kyle accepts it.</p>${contact.phone ? "<p>Phone · " + esc(contact.phone) + "</p>" : ""}${contact.arrival ? "<p>Arrival · " + esc(contact.arrival) + "</p>" : ""}<div class="editlinks">${[
       ["services", "Edit service"],
       ["fit", "Edit ZIP / fit"],
       ["time", "Edit time"],
@@ -420,8 +395,9 @@ function render() {
       )
       .join(
         "",
-      )}</div><div class="actions"><button class="secondary" onclick="go('time')">Back</button><button onclick="finishVisit()">Finish request preview</button></div><p id="delivery-status" role="status"></p>`;
+      )}</div><div class="actions"><button class="secondary" onclick="go('time')">Back</button><button id="finish-visit" onclick="finishVisit()">${live ? "Send visit request" : "Finish request preview"}</button></div><p id="delivery-status" role="status"></p>`;
   }
+  if (page === "done" && live) { go("checkout"); return; }
   if (page === "done") {
     body =
       `<h1>Preview complete</h1><p>Sending is disabled. No appointment has been reserved or payment collected.</p><h2>Prepared inquiry</h2><p>${esc(contact.person)} · ${esc(contact.email)}</p><p>${esc(visitPayload().problem).replaceAll("\n", "<br>")}</p><a href="#checkout/${category}/${task}">Return to review</a>`;

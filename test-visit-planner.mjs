@@ -9,7 +9,7 @@ function planner(globals = {}) {
   const main = { innerHTML: "" };
   const ctx = vm.createContext({
     AbortSignal, ...globals,
-    location: { hash: "" },
+    location: { hash: "", origin: globals.origin || "http://localhost" },
     history: { replaceState(_state, _title, hash) { ctx.location.hash = hash; } },
     document: {
       body: { classList: { add() {} } },
@@ -28,9 +28,9 @@ test("a preference requires an eligible setup and a visit address matching the Z
   const {run,visit} = planner();
   assert.match(visit("#time/0/1"), /Check your setup/);
   assert.equal(run("location.hash"), "#fit/0/1");
-  run("city='94596'; fit='Yes'");
+  run("city='94599'; fit='Yes'");
   assert.match(visit("#time/0/1"), /Contact &amp; address/);
-  run("Object.assign(contact,{person:'Avery Example',email:'avery@example.invalid',street:'100 Example Lane',town:'Concord'})");
+  run("Object.assign(contact,{person:'Avery Example',email:'avery@example.invalid',street:'100 Example Lane',town:''})");
   assert.match(visit("#checkout/0/1"), /Contact &amp; address/);
   run("contact.town='Walnut Creek'");
   assert.match(visit("#checkout/0/1"), /Describe your preferred timing/);
@@ -44,7 +44,7 @@ test("review shows the fixed package price and ZIP edits invalidate timing", () 
   const review = visit("#checkout/0/1");
   assert.match(review, /Fixed visit price · \$129/);
   assert.match(review,/Payment is due after the visit/);
-  run("zipChanged({value:'00000'})");
+  run("zipChanged({value:'123'})");
   assert.equal(run("slot"),"");
   assert.match(visit("#checkout/0/1"),/Check your setup/);
 });
@@ -118,4 +118,29 @@ test("intake retries explicitly, retains payload and suppresses duplicate sends"
   assert.equal(await other, "accepted");
   assert.equal(await run("candidate.submit(data)"), "accepted");
   assert.equal(calls.length, 3);
+});
+test("live form submits using the chosen reply method with manual address and timing confirmation", async () => {
+  const calls = [];
+  const { run, main, visit } = planner({
+    origin: "https://www.serviceboost.co",
+    window: {
+      SERVICE_BOOST_QUOTE_ENDPOINT: "https://quotes.serviceboost.co/quote",
+      async fetch(url, options) {
+        calls.push(JSON.parse(options.body));
+        return {status:200, json:async () => ({message:"Your request has been sent. Kyle will follow up using your preferred reply method."})};
+      },
+    },
+  });
+  visit("#services/0/1");
+  run("city='94599';fit='Yes';slot='Friday afternoon';Object.assign(contact,{method:'text',person:'Example',street:'100 Example Lane',town:'Walnut Creek'})");
+  assert.equal(run("hasContact()"), false);
+  run("contact.phone='925-555-0100'");
+  const html = visit("#checkout/0/1");
+  for (const expected of ["There is no fee", "by text", "pending until Kyle accepts", "payment options before the visit","Send visit request"]) assert.ok(html.includes(expected));
+  await run("finishVisit()");
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].reply_method, "text");
+  assert.match(main.textContent, /pending until Kyle accepts/);
+  await run("finishVisit()");
+  assert.equal(calls.length, 1);
 });

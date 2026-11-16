@@ -37,10 +37,9 @@ class SiteContracts(unittest.TestCase):
     def test_tech_home_links_to_dedicated_intake_and_direct_contact(self):
         page = Page('index.html')
         services = ['computer', 'mobile', 'smart-home', 'wifi', 'workspace', 'printer']
-        destinations = [a.get('href') for _, a in page.nodes if a.get('class') == 'service-row']
-        self.assertEqual(destinations, ['/request-help?service=' + service for service in services])
-        self.assertFalse(any(t in ('dialog', 'form') for t, _ in page.nodes))
-        self.assertEqual([a['src'] for t, a in page.nodes if t == 'script' and 'src' in a], ['tech-support.js'])
+        self.assertTrue(any(a.get('id') == 'app' for _, a in page.nodes))
+        self.assertEqual([a['src'] for t, a in page.nodes if t == 'script' and 'src' in a],
+                         ['tech-support.js', '/config.js', '/intake.js', '/visit.js'])
         links = [a.get('href') for t, a in page.nodes if t == 'a']
         self.assertIn('tel:+19282257944', links)
         self.assertIn('sms:+19282257944?body=Hi%20Kyle%2C%20I%20need%20tech%20help.', links)
@@ -251,10 +250,10 @@ class SiteContracts(unittest.TestCase):
             for tag, attrs in page.nodes:
                 src = attrs.get('src', '')
                 if src and not src.startswith('https://'):
-                    self.assertTrue((ROOT / src.lstrip('/')).is_file(), src)
+                    self.assertTrue((ROOT / 'public-site' / src.lstrip('/')).is_file(), src)
                 href = attrs.get('href', '')
                 if tag == 'link' and attrs.get('rel') == 'stylesheet':
-                    self.assertTrue((ROOT / href.split('?')[0].lstrip('/')).is_file(), href)
+                    self.assertTrue((ROOT / 'public-site' / href.split('?')[0].lstrip('/')).is_file(), href)
                 if href.startswith('#'):
                     self.assertIn(href[1:], ids, f'{filename}: {href}')
                 if tag == 'a' and href.startswith('/'):

@@ -1,7 +1,9 @@
-# Fixed-price visit review
+# Fixed-price visits
 
-Run `python3 build-site.py --review-visits` and `python3 preview-site.py --review-visits --port 18786`. Open http://127.0.0.1:18786/. The review build uses the project assets and shared navigation. The normal Vercel build emits the existing public site.
+Build with `python3 build-site.py`. The production homepage submits a tech support inquiry through the configured /quote endpoint only on the two Service Boost production origins. For a non-sending review build, run `python3 build-site.py --review-visits` and `python3 preview-site.py --review-visits --port 18786`. The review build blanks the endpoint and keeps details in browser memory.
 
-The planner keeps visit details in browser memory until reload. Visitors can state a timing preference in Pacific time or ask Kyle to suggest a time. There is no reservation or payment operation. Production's /quote endpoint delivers inquiries by email and does not reserve time. The review build blanks the inquiry endpoint.
+Customers choose a package, enter the visit address, choose email, call or text, and state a Pacific timing preference. Kyle confirms coverage using the full address and manually confirms the date and arrival window. Cancel or reschedule by notifying Kyle as soon as possible, with no fee. Payment is due after the visit and Kyle confirms payment options beforehand.
 
-The six package prices, scopes, durations and diagnostic policy are approved. No priced extras are offered. The prepared inquiry includes the selected package, approved scope and exclusions, price, duration, address, Pacific timing preference and arrival notes. The adapter is constructed without an endpoint. Its contract test exercises the backend validator and email composition with SMTP mocked. A released build needs explicit wiring to the approved endpoint after readiness checks. The preview never posts this inquiry. Before releasing direct planner intake, confirm service coverage, cancellation terms, how Kyle confirms timing and what after-visit payment instructions customers should receive. Verify delivery to the intended inbox with the agreed package, address and timing preference before launch.
+The six package prices, scopes, durations and diagnostic policy are approved. Extra work requires prior approval. Ring mounting requires separate scope and pricing. No reservation or payment transaction runs on submission.
+
+Validate with `node --test test-visit-planner.mjs` and the repository Validate workflow. To roll back, revert the release PR and redeploy the prior static site. The backend contract and data schema are unchanged.
