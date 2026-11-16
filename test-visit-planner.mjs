@@ -8,6 +8,7 @@ function planner() {
   const main = { innerHTML: "" };
   const ctx = vm.createContext({
     location: { hash: "" },
+    history: { replaceState(_state, _title, hash) { ctx.location.hash = hash; } },
     document: {
       body: { classList: { add() {} } },
       querySelector: () => main,
@@ -23,12 +24,14 @@ function planner() {
 test("a preference requires an eligible setup and a visit address matching the ZIP", () => {
   const {run,visit} = planner();
   assert.match(visit("#time/0/1"), /Check your setup/);
+  assert.equal(run("location.hash"), "#fit/0/1");
   run("city='94596'; fit='Yes'");
   assert.match(visit("#time/0/1"), /Contact &amp; address/);
   run("Object.assign(contact,{person:'Avery Example',email:'avery@example.invalid',street:'100 Example Lane',town:'Concord'})");
   assert.match(visit("#checkout/0/1"), /Contact &amp; address/);
   run("contact.town='Walnut Creek'");
   assert.match(visit("#checkout/0/1"), /Choose a preferred arrival window/);
+  assert.equal(run("location.hash"), "#time/0/1");
 });
 
 test("review adds only selected extras and ZIP edits invalidate timing", () => {

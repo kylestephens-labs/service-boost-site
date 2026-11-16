@@ -319,6 +319,7 @@ function options(a, v) {
 }
 function render() {
   let [page, c, t] = location.hash.slice(1).split("/");
+  const requestedPage = page;
   if (!["services","fit","contact","time","checkout","done","detail"].includes(page) ||
       !/^\d+$/.test(c) || !tasks[Number(c)] ||
       (page !== "services" && (!/^\d+$/.test(t) || !tasks[Number(c)][Number(t)]))) page = "home";
@@ -333,6 +334,9 @@ function render() {
   if (["time", "checkout", "done"].includes(page) && !hasContact())
     page = "contact";
   if (["checkout", "done"].includes(page) && !slot) page = "time";
+  if (requestedPage !== page && page !== "home") {
+    history.replaceState(null, "", "#" + page + "/" + category + "/" + task);
+  }
   const [name, icon, base, desc, inc, exc, q, add, fee] = tasks[category][task];
   const total = base + (extra ? fee : 0);
   const cards = services
@@ -420,7 +424,7 @@ function render() {
   }
   if (page === "done") {
     body =
-      "<h1>Preview complete</h1><p>You reached the end of the sample booking. No request was sent, appointment reserved, or payment collected.</p><button onclick=\"go('home')\">Browse services</button>";
+      '<h1>Preview complete</h1><p>No request was sent, appointment reserved, or payment collected. To contact Kyle, enter your details on the live request form.</p><a href="https://www.serviceboost.co/request-help">Start a real tech help request</a>';
   }
   root.innerHTML = `<div class="path"><a href="#home">All services</a> / <a href="#services/${category}">${services[category][0]}</a> / ${name} · ${{ detail: "Scope", fit: "Visit fit", time: "Appointment", contact: "Contact and address", checkout: "Checkout", done: "Complete" }[page]}</div><div class="mobile-total"><b>${name}</b><span>$${total} sample</span></div><div class="layout"><section class="panel">${body}</section>${sum}</div>`;
 }
