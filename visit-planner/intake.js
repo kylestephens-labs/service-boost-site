@@ -2,13 +2,13 @@
 // build must explicitly bind its approved /quote endpoint after readiness.
 function createVisitIntake(endpoint, transport) {
   let state = "idle";
-  let acceptedBody;
+  const acceptedBodies = new Set();
   return {
     async submit(payload) {
       if (!endpoint) return "disabled";
       if (state === "sending") return state;
       const body = JSON.stringify(payload);
-      if (body === acceptedBody) return "accepted";
+      if (acceptedBodies.has(body)) return "accepted";
       state = "sending";
       try {
         const response = await transport(endpoint, {
@@ -23,7 +23,7 @@ function createVisitIntake(endpoint, transport) {
         state = response.status === 200 &&
           data.message === "Your request has been sent. Kyle will follow up using your preferred reply method."
           ? "accepted" : "unconfirmed";
-        if (state === "accepted") acceptedBody = body;
+        if (state === "accepted") acceptedBodies.add(body);
       } catch {
         state = "unconfirmed";
       }

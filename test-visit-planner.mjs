@@ -113,4 +113,9 @@ test("intake retries explicitly, retains payload and suppresses duplicate sends"
   assert.equal(calls.length, 2);
   assert.equal(calls[0].options.body, calls[1].options.body);
   assert.equal(calls[1].options.method, "POST");
+  const other = run("candidate.submit({problem:'Second fictional package'})");
+  release({status:200, json:async () => ({message:"Your request has been sent. Kyle will follow up using your preferred reply method."})});
+  assert.equal(await other, "accepted");
+  assert.equal(await run("candidate.submit(data)"), "accepted");
+  assert.equal(calls.length, 3);
 });
