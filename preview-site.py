@@ -25,7 +25,10 @@ class PreviewHandler(SimpleHTTPRequestHandler):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--port', type=int, default=8768)
+    parser.add_argument('--review-visits', action='store_true')
     args = parser.parse_args()
+    if args.review_visits:
+        PUBLIC = PUBLIC.parent / 'visit-preview'
     if not (PUBLIC / 'index.html').is_file():
         parser.error('Run python3 build-site.py first.')
     print(f'Portfolio preview: http://127.0.0.1:{args.port}', flush=True)

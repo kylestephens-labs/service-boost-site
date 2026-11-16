@@ -17,5 +17,7 @@ jobs:
       - run: node --test test-attribution.mjs test-tech-help.mjs test-partners.mjs
       - run: python3 -m unittest test_site.py
       - run: python3 build-site.py
+      - run: node --test test-visit-planner.mjs
+      - run: python3 build-site.py --review-visits
       - run: docker build -f backend/Dockerfile -t serviceboost-attribution-test .
       - run: python3 backend/container_smoke.py

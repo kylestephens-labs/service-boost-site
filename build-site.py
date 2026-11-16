@@ -1,10 +1,14 @@
 """Copy only public website assets into the static deployment directory."""
 from pathlib import Path
 import shutil
+import argparse
 from html import escape
 
 root = Path(__file__).resolve().parent
-output = root / 'public-site'
+parser = argparse.ArgumentParser()
+parser.add_argument('--review-visits', action='store_true', help='Build the fixed-price review site into visit-preview.')
+review_visits = parser.parse_args().review_visits
+output = root / ('visit-preview' if review_visits else 'public-site')
 if output.exists():
     shutil.rmtree(output)
 output.mkdir()
@@ -19,6 +23,13 @@ shutil.copytree(root / 'auto-repair', output / 'auto-repair')
 
 # Shared markup and styles keep contact controls identical on every real offering.
 header = (root / 'site-header.html').read_text()
+if review_visits:
+    (output / 'config.js').write_text("window.SERVICE_BOOST_QUOTE_ENDPOINT = '';\n")
+    home = output / 'index.html'
+    home.write_text(home.read_text().replace('<div>Fixed visit prices', '<div>Review preview · Fixed visit prices')
+                    .replace('</head>', '<meta name="robots" content="noindex"></head>'))
+for asset in ('visit.css', 'intake.js', 'visit.js'):
+    shutil.copyfile(root / 'visit-planner' / asset, output / asset)
 for name, route in [('index.html', '/'), ('request-help.html', '/request-help'),
                     ('web-design.html', '/web-design'), ('partners.html', '/partners'),
                     ('partner-report.html', '/partner-report'), ('partner-inquiry.html', '/partners')]:
