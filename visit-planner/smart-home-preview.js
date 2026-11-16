@@ -2,7 +2,7 @@
 function addSmartHomeSupport(packages, guidance) {
   const devices = [
     ["Video Doorbell", "one already-installed doorbell", "app, connectivity or notification issues", ""],
-    ["Smart Thermostat", "one already-installed thermostat", "app, connectivity or settings", ", HVAC or electrical repair"],
+    ["Smart Thermostat", "one already-installed thermostat", "app, connectivity or settings|Assess the thermostat and check its Wi-Fi connection|Check for app updates and troubleshoot the reported issue|Demonstrate everyday controls and answer questions about using them", ", HVAC or electrical repair"],
     ["Smart Garage Controller", "one already-installed controller", "app, connectivity or settings", ", mechanical repair or safety-system adjustments"],
     ["Smart Hub & Speaker", "one hub or speaker", "its app or connection to working Wi-Fi", ""],
   ];
@@ -23,14 +23,14 @@ function renderSmartHomePreview(selection, panel) {
       + (open ? panel : "");
   });
   const installations = [
-    ["doorbell-installation", "Video Doorbell Installation", "One compatible customer-provided doorbell in an accessible location, app and working Wi-Fi connection, and a test. Battery mounting and existing wired replacement boundaries are pending."],
-    ["thermostat-installation", "Smart Thermostat Installation", "Replacement of one compatible existing thermostat in an accessible location, configuration and testing. New wiring and HVAC repair are excluded."],
+    ["doorbell-installation", "Video Doorbell Installation", "Install one compatible customer-provided video doorbell in an accessible location, connect it to the app and existing Wi-Fi, and test operation."],
+    ["thermostat-installation", "Smart Thermostat Installation &amp; Setup", "Requires a working thermostat at the installation location.<ul><li>Assess the location and check compatibility.</li><li>Replace the existing thermostat with one compatible smart thermostat.</li><li>Connect it to existing Wi-Fi, complete initial setup and test operation.</li><li>Install and set up the mobile app.</li><li>Show how to use the everyday controls.</li></ul>New wiring and HVAC repair are excluded."],
     ["garage-installation", "Smart Garage Controller Installation", "One compatible controller on an existing working opener, app connection and an operation test. Opener replacement and mechanical repair are excluded."],
   ];
   const installationCards = installations.map(([id, title, scope]) => {
     const open = selection === id;
     return serviceCard(title, "smart-home", "$249", open, "location.hash='services/1/" + id + "'")
-      + (open ? '<section class="scope"><h2>' + title + '</h2><p>Unavailable for booking.</p><h3>Scope under review</h3><p>' + scope + '</p></section>' : "");
+      + (open ? '<section class="scope"><h2>' + title + '</h2><p>Unavailable for booking.</p><h3>Scope under review</h3><div>' + scope + '</div></section>' : "");
   });
   const group = (heading, cards) => '<section class="service-group"><h2>' + heading + '</h2><div class="picker computer-packages">' + cards.join("") + '</div></section>';
   return '<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>Smart home</h1><p>' + paymentNote + '</p>'
