@@ -5,7 +5,7 @@ function renderWifiPreview(selection, panel) {
   const proposals = [
     ["connectivity", "WiFi and Network Connectivity Support", "Investigate a connection issue between a device, the router and the internet. Diagnostic scope, device limits and visit length are pending."],
     ["extension", "WiFi Signal Extension", "Help with a weak signal is under consideration. Equipment, coverage targets and the work included have yet to be defined."],
-    ["cabling", "In-Wall Cable Running", "The proposed visit would assess a route, run cable behind a wall and test the connection. Eligibility, permit requirements, access, cable type and length, materials and wall repair must be settled before this service can be offered."],
+    ["cabling", "In-Wall Cable Running", "Assess the path between your chosen connection points. If the route is accessible and the work can be accepted, run the cable behind the wall and test the finished connection. Before accepting a job, confirm eligibility and any permit requirements, the cable type and length, who supplies materials, and whether wall repair is included."],
   ];
   const cards = proposals.map(([id, title, detail]) => {
     const open = selection === id;
