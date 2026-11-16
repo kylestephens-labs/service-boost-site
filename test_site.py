@@ -328,7 +328,8 @@ class SiteContracts(unittest.TestCase):
             self.assertIn('/assets/icons/phone.svg', header)
             self.assertIn('/assets/icons/message-circle.svg', header)
             self.assertNotIn('Request help', header)
-            self.assertIn('href="/#services" hidden>Choose a service', header)
+            self.assertNotIn('Choose a service', header)
+            self.assertEqual('class="service-shortcut"' in source, filename == 'index.html')
             for name in ['Home', 'For IT providers', 'Call Kyle', 'Text Kyle']:
                 self.assertIn(name, header)
         self.assertTrue(all(header == headers[0] for header in headers))
