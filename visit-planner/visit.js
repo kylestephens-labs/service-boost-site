@@ -1,3 +1,4 @@
+const paymentNote = "Fixed-price services · Pay after your visit";
 const services = [
   [
     "Computer and printer support",
@@ -321,8 +322,8 @@ function render() {
   const total = base;
   const cards = services
     .map(
-      ([n, ic, p, d], j) =>
-        `<button class="card" onclick="pick(${j})"><img alt="" src="assets/icons/${ic}.svg"><h3>${n}</h3><p>${j === 0 ? "Set up a computer, connect a printer or diagnose an issue." : d}</p><span class="price">${j === 0 ? "From " : ""}$${Math.min(...tasks[j].map((s) => s[2]))} <small>visit price</small> →</span></button>`,
+      ([n, ic], j) =>
+        `<button class="card" onclick="pick(${j})"><img alt="" src="assets/icons/${ic}.svg"><h3>${n}</h3><span class="category-arrow" aria-hidden="true">→</span></button>`,
     )
     .join("");
   if (page === "home") {
@@ -366,10 +367,10 @@ function render() {
               "",
             )}</ul></div><div><h3>Outside scope</h3><p>${exc}</p></div></div><button onclick="go('fit')">Continue · $${total}</button></section>`
         : "";
-    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>Select a service to see what Kyle can help with.</p><div class="picker">${cards}<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b><small>Get help choosing a visit</small></button></div>${panel}</section>`;
+    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p><div class="picker">${cards}<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b><small>Get help choosing a visit</small></button></div>${panel}</section>`;
     return;
   }
-  const sum = `<aside><div class="kicker">Visit summary</div><h3>${name}</h3><p class="row"><span>One visit</span><b>$${base}</b></p><div class="rule"></div><div class="row"><span>Visit total</span><strong>$${total}</strong></div>${city ? '<p class="zip-summary">ZIP ' + esc(city) + "</p>" : ""}<p class="slot-summary" ${slot ? "" : "hidden"}>${slot ? esc(slot) + " · Pacific" : ""}</p></aside>`;
+  const sum = `<aside><div class="kicker">Visit summary</div><h3>${name}</h3><p class="row"><span>One visit</span><b>$${base}</b></p><div class="rule"></div><div class="row"><span>Visit total</span><strong>$${total}</strong></div>${city ? '<p class="zip-summary">ZIP ' + esc(city) + "</p>" : ""}<p class="slot-summary" ${slot ? "" : "hidden"}>${slot ? esc(slot) + " · Pacific" : ""}</p><p>${paymentNote}</p></aside>`;
   let body = "";
   if (page === "detail") {
     location.replace("#services/" + category + "/" + task);
