@@ -3,7 +3,7 @@ const services = [
   [
     "Computer and printer support",
     "device-laptop",
-    149,
+    229,
     "Get one new computer ready for daily use.",
     "Set up one user profile|Connect to working Wi-Fi|Install updates and verify sign-in",
     "Data migration, hardware repair and account recovery",
@@ -13,7 +13,7 @@ const services = [
   [
     "Smart home",
     "smart-home",
-    129,
+    199,
     "Pair one compatible plug-in or battery device.",
     "Pair one supported device with its app|Connect to compatible Wi-Fi|Test one control or alert",
     "Drilling, mounting, ladders and fixed wiring. Ring mounting requires a separate scope and price agreed with Kyle.",
@@ -23,7 +23,7 @@ const services = [
   [
     "Wi-Fi &amp; network",
     "wifi",
-    149,
+    229,
     "Set up one router on your existing internet line.",
     "Configure one supported router|Connect up to two devices|Test connectivity at the router",
     "ISP repair, cable runs and whole-home coverage guarantees",
@@ -33,7 +33,7 @@ const services = [
   [
     "Mobile devices",
     "device-mobile",
-    129,
+    199,
     "Set up one device and its essential settings.",
     "Connect one phone or tablet to Wi-Fi|Set up one existing account|Check updates and notifications",
     "Carrier activation, account recovery and data transfer",
@@ -61,8 +61,8 @@ tasks[0].push(
   [
     "Printer setup or reconnection",
     "printer",
-    129,
-    "Connect one printer to an existing working network for up to two computers.",
+    199,
+    "Connect one working printer to an existing working network for up to two computers.",
     "Install its driver|Connect up to two computers|Print a test page",
     "Ink, hardware repairs and network repairs",
     "Do you have a compatible printer, ink and access to the computer?",
@@ -71,13 +71,16 @@ tasks[0].push(
   [
     "Computer or printer troubleshooting",
     "tool",
-    149,
-    "Assess one computer or printer issue. The $149 covers the diagnostic visit and time even if the issue remains unresolved. Kyle will obtain your approval before any extra work.",
+    229,
+    "Assess one computer or printer issue. The $229 covers the diagnostic visit and time even if the issue remains unresolved. Kyle will obtain your approval before any extra work.",
     "Check symptoms and settings|Try a safe adjustment if appropriate|Explain findings and next steps",
     "Parts, data recovery, additional issues or a guaranteed fix",
     "Can you show Kyle one issue on a device you can access?",
 
   ],
+  ["Install and set up software", "device-laptop", 229, "Install one licensed app on one compatible computer.", "Install the app|Apply basic settings|Check that it opens", "Custom integrations and business deployments", "Do you have the license and a compatible computer?"],
+  ["Set up or troubleshoot email", "message-circle", 229, "Connect one existing account in one mail app or investigate one sending or receiving issue.", "You sign in yourself|Check the account setup or investigate the issue", "Password recovery, mailbox migration and mail-server administration", "Can you sign in to the existing account?"],
+  ["Get a personal computer lesson", "user", 229, "Practice one everyday task on your computer.", "Practice the task together|Take away a short set of steps to repeat", "Device repair and ongoing support", "Do you have access to your computer and one task to practice?"],
 );
 let category = 0,
   task = 0;
@@ -105,6 +108,9 @@ const prep = [
     "Check that the computer starts and that you can sign into your account.",
     "Check the printer model, confirm it has ink, and have your computer ready.",
     "Write down one symptom or error message and confirm you can unlock the affected device.",
+    "Have the license ready and check the app requirements.",
+    "Confirm you can sign in to the account.",
+    "Choose one task and have your computer ready.",
   ],
   [
     "Check the model and app requirements. Confirm it can be paired without mounting or wiring.",
@@ -252,10 +258,8 @@ function options(a, v) {
 }
 const live = typeof window !== "undefined" && ["https://www.serviceboost.co", "https://serviceboost.co"].includes(location.origin) && window.SERVICE_BOOST_QUOTE_ENDPOINT === "https://quotes.serviceboost.co/quote";
 const intake = createVisitIntake(live ? window.SERVICE_BOOST_QUOTE_ENDPOINT : null, live ? window.fetch.bind(window) : null);
-function visitDuration() {
-  if (category === 0 && task === 2) return "up to 60 minutes";
-  if (category === 2 || (category === 0 && task === 0)) return "60–75 minutes";
-  return "45–60 minutes";
+function visitDuration(price = tasks[category][task][2]) {
+  return price === 199 ? "up to 45 minutes" : "up to 60 minutes";
 }
 function visitPayload() {
   const [name, , price, description, included, excluded] = tasks[category][task];
@@ -348,7 +352,10 @@ function render() {
       [
         "One new PC or Mac",
         "One printer, up to two computers",
-        "One issue, such as a stalled print queue · up to 60 minutes",
+        "One issue, such as a stalled print queue",
+        "One licensed app on one compatible computer",
+        "One existing account in one mail app",
+        "Guided practice on one everyday task",
       ],
       ["Pair one compatible device"],
       ["Set up one router"],
@@ -367,30 +374,24 @@ function render() {
     const computerTitles = ["Set up a new computer", "Set up or reconnect a printer", "Troubleshoot a computer or printer"];
     const cards = tasks[category].map(([title, icon, price], j) => {
       const open = selected && j === task;
-      return serviceCard(category === 0 ? computerTitles[j] : title, icon, brief[category][j],
+      return serviceCard(category === 0 ? (computerTitles[j] || title) : title, icon, brief[category][j] + " · " + visitDuration(price),
         "$" + price, open, "choose(" + j + ")") + (category === 0 && open ? panel : "");
     });
     const guideCard = category === 0 ? "" : `<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b><small>Get help choosing a visit</small></button>`;
-    const preview = category === 0 && document.querySelector("#proposed-computer-services");
     let picker = `<div class="picker${category === 0 ? " computer-packages" : ""}">${cards.join("")}${guideCard}</div>`;
-    if (preview) {
-      const proposedCards = Object.fromEntries(JSON.parse(preview.textContent).map(item => {
-        const open = t === item.id;
-        const card = serviceCard(item.title, item.icon, item.brief,
-          "Proposed · Price to be confirmed · Unavailable for booking", open,
-          "location.hash='services/0/" + item.id + "'");
-        const details = open ? `<section class="scope"><h2>${item.title}</h2><div class="scope-grid"><div><h3>Included</h3><p>${item.included}</p></div><div><h3>Outside scope</h3><p>${item.excluded}</p></div></div></section>` : "";
-        return [item.id, card + details];
-      }));
+    if (category === 0) {
+      const folderOpen = t === "folder";
+      const folder = serviceCard("Back up or transfer a folder", "file-text", "One selected folder to one working drive", "Request a quote", folderOpen, "location.hash='services/0/folder'")
+        + (folderOpen ? '<section class="scope"><h2>Back up or transfer a folder</h2><p>Copy one selected folder from one working computer to one accessible, working drive you provide. Open a sample of the copied files together.</p><h3>Outside scope</h3><p>Full-device migration, damaged drives and data recovery.</p><a href="/request-help">Request a quote</a></section>' : "");
       const group = (heading, entries) => `<section class="service-group"><h2>${heading}</h2><div class="picker computer-packages">${entries.join("")}</div></section>`;
-      picker = group("Setup &amp; installation", [cards[0], cards[1], proposedCards.software, proposedCards.folder])
-        + group("Help &amp; learning", [cards[2], proposedCards.email, proposedCards.lesson]);
+      picker = group("Setup &amp; installation", [cards[0], cards[1], cards[3], folder])
+        + group("Help &amp; learning", [cards[2], cards[4], cards[5]]);
     }
     const askKyle = category === 0 ? '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>' : "";
     root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p>${picker}${category !== 0 || guide ? panel : ""}${askKyle}</section>`;
     return;
   }
-  const sum = `<aside><div class="kicker">Visit summary</div><h3>${name}</h3><p class="row"><span>One visit</span><b>$${base}</b></p><div class="rule"></div><div class="row"><span>Visit total</span><strong>$${total}</strong></div>${city ? '<p class="zip-summary">ZIP ' + esc(city) + "</p>" : ""}<p class="slot-summary" ${slot ? "" : "hidden"}>${slot ? esc(slot) + " · Pacific" : ""}</p><p>${paymentNote}</p></aside>`;
+  const sum = `<aside><div class="kicker">Visit summary</div><h3>${name}</h3><p>${duration}</p><p class="row"><span>One visit</span><b>$${base}</b></p><div class="rule"></div><div class="row"><span>Visit total</span><strong>$${total}</strong></div>${city ? '<p class="zip-summary">ZIP ' + esc(city) + "</p>" : ""}<p class="slot-summary" ${slot ? "" : "hidden"}>${slot ? esc(slot) + " · Pacific" : ""}</p><p>${paymentNote}</p></aside>`;
   let body = "";
   if (page === "detail") {
     location.replace("#services/" + category + "/" + task);
