@@ -26,7 +26,9 @@ header = (root / 'site-header.html').read_text()
 if review_visits:
     (output / 'config.js').write_text("window.SERVICE_BOOST_QUOTE_ENDPOINT = '';\n")
     home = output / 'index.html'
+    shutil.copyfile(root / 'visit-planner/smart-home-preview.js', output / 'smart-home-preview.js')
     home.write_text(home.read_text().replace('<!-- preview-notice -->', '<div class="strip"><div>Review preview</div></div>')
+                    .replace('<script src="/visit.js">', '<script src="/smart-home-preview.js"></script><script src="/visit.js">')
                     .replace('</head>', '<meta name="robots" content="noindex"></head>'))
 for asset in ('visit.css', 'intake.js', 'visit.js', 'service-cta.js'):
     shutil.copyfile(root / 'visit-planner' / asset, output / asset)
