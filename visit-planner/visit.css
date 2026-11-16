@@ -779,3 +779,15 @@ body:has(#hero-service-cta) { padding-bottom: calc(80px + env(safe-area-inset-bo
     padding: 10px 16px;
   }
 }
+.computer-packages .pick {
+  grid-template-columns: 40px 1fr;
+}
+.computer-packages .pick img { width: 40px; height: 40px; }
+.computer-packages .scope { grid-column: 1 / -1; margin: 0; }
+@media (min-width: 601px) {
+  .computer-packages { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .computer-packages .scope { order: 1; }
+}
+@media (max-width: 600px) {
+  .computer-packages .pick { grid-template-columns: 40px 1fr auto; }
+}
