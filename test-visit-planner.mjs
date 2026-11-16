@@ -41,7 +41,7 @@ function planner(globals = {}) {
     history: { replaceState(_state, _title, hash) { ctx.location.hash = hash; } },
     document: {
       body: { classList: { add() {} } },
-      querySelector: () => main,
+      querySelector: selector => selector === "#proposed-computer-services" ? null : main,
       querySelectorAll: () => [],
     },
     scrollTo() {}, addEventListener() {},
@@ -70,22 +70,24 @@ test("review shows the fixed package price and ZIP edits invalidate timing", () 
   visit("#services/0/1");
   run("city='94596';fit='Yes';Object.assign(contact,{person:'Avery Example',email:'avery@example.invalid',street:'100 Example Lane',town:'Walnut Creek'});useFlexibleTime()");
   const review = visit("#checkout/0/1");
-  assert.match(review, /Fixed visit price · \$129/);
+  assert.match(review, /Fixed visit price · \$199/);
   assert.match(review,/Payment is due after the visit/);
   run("zipChanged({value:'123'})");
   assert.equal(run("slot"),"");
   assert.match(visit("#checkout/0/1"),/Check your setup/);
 });
 
-test("all six packages display approved prices and durations before continuing", () => {
-  const { visit } = planner();
+test("all nine packages display approved prices and durations before continuing", () => {
+  const { visit, run } = planner();
   for (const [path, price, minutes] of [
-    ["0/0",149,"60–75"], ["0/1",129,"45–60"], ["0/2",149,"up to 60"],
-    ["1/0",129,"45–60"], ["2/0",149,"60–75"], ["3/0",129,"45–60"],
+    ["0/0",229,"up to 60"], ["0/1",199,"up to 45"], ["0/2",229,"up to 60"],
+    ["0/3",229,"up to 60"], ["0/4",229,"up to 60"], ["0/5",229,"60"],
+    ["1/0",199,"up to 45"], ["2/0",229,"up to 60"], ["3/0",199,"up to 45"],
   ]) {
     const html = visit("#services/" + path);
     assert.ok(html.includes("Continue · $" + price + "</button>"));
     assert.ok(html.includes(minutes + " minutes"));
+    assert.ok(run("visitPayload().problem").includes("$" + price + " · " + minutes + " minutes"));
     assert.doesNotMatch(html, /type="checkbox"/);
     if (path === "0/2") assert.match(html, /even if the issue remains unresolved.*approval before any extra work/);
   }
@@ -102,7 +104,7 @@ test("preview keeps the selected package and updates timing without transmitting
   assert.equal(main.textContent, "Friday afternoon · Pacific");
   await run("finishVisit()");
   const done = visit("#done/0/2");
-  for (const expected of ["$149", "even if the issue remains unresolved", "100 Example Lane", "Friday afternoon", "TEST ONLY", "Sending is disabled"])
+  for (const expected of ["$229", "even if the issue remains unresolved", "100 Example Lane", "Friday afternoon", "TEST ONLY", "Sending is disabled"])
     assert.ok(done.includes(expected), expected);
 
   const payload = run("visitPayload()");
@@ -191,11 +193,21 @@ test("four price-free category cards lead directly to priced packages", () => {
   assert.equal((home.match(/class="card"/g) || []).length, 4);
   assert.doesNotMatch(home, /\$\d/);
   assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
-  for (const [category, prices] of [[149,129,149],[129],[149],[129]].entries()) {
+  for (const [category, prices] of [[229,199,229,229,229,229],[199],[229],[199]].entries()) {
     const choices = visit("#services/" + category);
     assert.deepEqual([...choices.matchAll(/<span>\$(\d+)<\/span>/g)].map(m => Number(m[1])), prices);
     assert.match(choices, /Fixed-price services · Pay after your visit/);
     assert.match(visit("#fit/" + category + "/0"), /Visit summary[\s\S]*Fixed-price services · Pay after your visit<\/p><\/aside>/);
     assert.doesNotMatch(choices, /<input/);
   }
+});
+
+test("folder transfer has a quote path outside the fixed-price flow", () => {
+  const {visit} = planner();
+  const html = visit("#services/0/folder");
+  assert.ok(html.includes('href="/request-help">Request a quote'));
+  assert.ok(html.includes("Full-device migration, damaged drives and data recovery"));
+  assert.doesNotMatch(html, /Continue ·/);
+  assert.ok(html.indexOf("Setup &amp; installation") < html.indexOf("Help &amp; learning"));
+  assert.ok(html.indexOf("Help &amp; learning") < html.indexOf("Not sure what you need? Ask Kyle"));
 });
