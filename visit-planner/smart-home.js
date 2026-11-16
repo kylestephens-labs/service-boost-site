@@ -1,4 +1,3 @@
-// Loaded only by the non-sending review build.
 function addSmartHomeSupport(packages, guidance) {
   const devices = [
     ["Video Doorbell", "one already-installed doorbell", "app, connectivity or notification issues", ""],
@@ -16,7 +15,7 @@ function addSmartHomeSupport(packages, guidance) {
   }
 }
 
-function renderSmartHomePreview(selection, panel) {
+function renderSmartHomeMenu(selection, panel) {
   const packages = tasks[1].map(([name, icon, price], index) => {
     const open = selection === String(index);
     return serviceCard(index === 0 ? "Smart Device App &amp; Wi-Fi Pairing" : name, icon, "$" + price, open, "choose(" + index + ")")
@@ -30,7 +29,7 @@ function renderSmartHomePreview(selection, panel) {
   const installationCards = installations.map(([id, title, scope]) => {
     const open = selection === id;
     return serviceCard(title, "smart-home", "$249", open, "location.hash='services/1/" + id + "'")
-      + (open ? '<section class="scope"><h2>' + title + '</h2><p>Unavailable for booking.</p><h3>Scope under review</h3><div>' + scope + '</div></section>' : "");
+      + (open ? '<section class="scope"><h2>' + title + '</h2><p>Unavailable for booking.</p><h3>Service details</h3><div>' + scope + '</div></section>' : "");
   });
   const group = (heading, cards) => '<section class="service-group"><h2>' + heading + '</h2><div class="picker computer-packages">' + cards.join("") + '</div></section>';
   return '<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>Smart home</h1><p>' + paymentNote + '</p>'
