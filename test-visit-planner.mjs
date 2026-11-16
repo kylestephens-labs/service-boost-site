@@ -49,6 +49,7 @@ function planner(globals = {}) {
   const run = (code) => vm.runInContext(code, ctx);
   run(readFileSync(new URL("./visit-planner/intake.js", import.meta.url), "utf8"));
   run(readFileSync(new URL("./visit-planner/smart-home.js", import.meta.url), "utf8"));
+  run(readFileSync(new URL("./visit-planner/wifi-menu.js", import.meta.url), "utf8"));
   run(readFileSync(new URL("./visit-planner/visit.js", import.meta.url), "utf8"));
   return { run, main, visit: (route) => {ctx.location.hash = route; run("render()"); return main.innerHTML;} };
 }
@@ -194,7 +195,7 @@ test("four price-free category cards lead directly to priced packages", () => {
   assert.equal((home.match(/class="card"/g) || []).length, 4);
   assert.doesNotMatch(home, /\$\d/);
   assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
-  for (const [category, prices] of [[229,199,229,229,229,229],[199,229,229,229,229,249,249,249],[229],[199]].entries()) {
+  for (const [category, prices] of [[229,199,229,229,229,229],[199,229,229,229,229,249,249,249],[229,249],[199]].entries()) {
     const choices = visit("#services/" + category);
     assert.deepEqual([...choices.matchAll(/<span>\$(\d+)<\/span>/g)].map(m => Number(m[1])), prices);
     assert.match(choices, /Fixed-price services · Pay after your visit/);
@@ -228,5 +229,15 @@ test("review smart-home support carries approved terms and installations have no
     assert.match(html, /Unavailable for booking/);
     assert.doesNotMatch(html, /Continue ·/);
     assert.doesNotMatch(visit("#fit/1/" + slug), /Check your setup/);
+  }
+});
+
+test("Wi-Fi services outside router setup have no booking route", () => {
+  const {visit} = planner();
+  for (const service of ["cabling", "connectivity", "extension"]) {
+    const html = visit("#services/2/" + service);
+    assert.match(html, /Unavailable for booking/);
+    assert.doesNotMatch(html, /Continue ·/);
+    assert.doesNotMatch(visit("#fit/2/" + service), /Check your setup/);
   }
 });
