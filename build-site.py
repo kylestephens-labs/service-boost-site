@@ -25,7 +25,7 @@ shutil.copytree(root / 'auto-repair', output / 'auto-repair')
 header = (root / 'site-header.html').read_text()
 if review_visits:
     (output / 'config.js').write_text("window.SERVICE_BOOST_QUOTE_ENDPOINT = '';\n")
-    for asset in ('index.html', 'visit.css', 'visit.js'):
+    for asset in ('index.html', 'visit.css', 'intake.js', 'visit.js'):
         shutil.copyfile(root / 'visit-planner' / asset, output / asset)
 for name, route in [('index.html', '/'), ('request-help.html', '/request-help'),
                     ('web-design.html', '/web-design'), ('partners.html', '/partners'),
