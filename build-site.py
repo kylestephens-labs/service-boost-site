@@ -27,6 +27,7 @@ if review_visits:
     (output / 'config.js').write_text("window.SERVICE_BOOST_QUOTE_ENDPOINT = '';\n")
     home = output / 'index.html'
     home.write_text(home.read_text().replace('<!-- preview-notice -->', '<div class="strip"><div>Review preview</div></div>')
+                    .replace('<main id="app">', (root / 'visit-planner/proposed-services.html').read_text() + '<main id="app">')
                     .replace('</head>', '<meta name="robots" content="noindex"></head>'))
 for asset in ('visit.css', 'intake.js', 'visit.js', 'service-cta.js'):
     shutil.copyfile(root / 'visit-planner' / asset, output / asset)

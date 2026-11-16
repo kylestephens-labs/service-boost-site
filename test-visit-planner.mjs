@@ -41,7 +41,7 @@ function planner(globals = {}) {
     history: { replaceState(_state, _title, hash) { ctx.location.hash = hash; } },
     document: {
       body: { classList: { add() {} } },
-      querySelector: () => main,
+      querySelector: selector => selector.startsWith("template") ? null : main,
       querySelectorAll: () => [],
     },
     scrollTo() {}, addEventListener() {},

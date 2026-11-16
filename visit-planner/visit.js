@@ -345,7 +345,7 @@ function render() {
       [
         "One new PC or Mac",
         "One printer, up to two computers",
-        "One issue · up to 60 minutes",
+        "One issue, such as a stalled print queue · up to 60 minutes",
       ],
       ["Pair one compatible device"],
       ["Set up one router"],
@@ -369,8 +369,9 @@ function render() {
       )
       .join("");
     const guideCard = category === 0 ? "" : `<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b><small>Get help choosing a visit</small></button>`;
+    const proposals = category === 0 ? document.querySelector("template#proposed-computer-services")?.innerHTML || "" : "";
     const askKyle = category === 0 ? '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>' : "";
-    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p><div class="picker${category === 0 ? " computer-packages" : ""}">${cards}${guideCard}</div>${category !== 0 || guide ? panel : ""}${askKyle}</section>`;
+    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p><div class="picker${category === 0 ? " computer-packages" : ""}">${cards}${guideCard}</div>${category !== 0 || guide ? panel : ""}${askKyle}${proposals}</section>`;
     return;
   }
   const sum = `<aside><div class="kicker">Visit summary</div><h3>${name}</h3><p class="row"><span>One visit</span><b>$${base}</b></p><div class="rule"></div><div class="row"><span>Visit total</span><strong>$${total}</strong></div>${city ? '<p class="zip-summary">ZIP ' + esc(city) + "</p>" : ""}<p class="slot-summary" ${slot ? "" : "hidden"}>${slot ? esc(slot) + " · Pacific" : ""}</p><p>${paymentNote}</p></aside>`;
