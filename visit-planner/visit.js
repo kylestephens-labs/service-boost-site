@@ -302,8 +302,8 @@ async function finishVisit() {
     status.textContent = "Request sent. Kyle will confirm your date and arrival window separately. Your visit is pending until Kyle accepts it.";
   }
 }
-function serviceCard(title, icon, summary, priceLabel, expanded, action) {
-  return `<button class="pick" aria-expanded="${!!expanded}" onclick="${action}"><img alt="" src="assets/icons/${icon}.svg"><b>${title}</b><small>${summary}</small><span>${priceLabel}</span></button>`;
+function serviceCard(title, icon, priceLabel, expanded, action) {
+  return `<button class="pick" aria-expanded="${!!expanded}" onclick="${action}"><img alt="" src="assets/icons/${icon}.svg"><b>${title}</b><span>${priceLabel}</span></button>`;
 }
 function render() {
   let [page, c, t] = location.hash.slice(1).split("/");
@@ -349,19 +349,6 @@ function render() {
     const guide = t === "guide",
       selected =
         page === "services" && t !== undefined && !guide && tasks[category][t];
-    const brief = [
-      [
-        "One new PC or Mac",
-        "One printer, up to two computers",
-        "One issue, such as a stalled print queue",
-        "One licensed app on one compatible computer",
-        "One existing account in one mail app",
-        "Guided practice on one everyday task",
-      ],
-      ["Pair one compatible device"],
-      ["Set up one router"],
-      ["Set up one phone or tablet"],
-    ];
     const panel = guide
       ? `<section class="scope"><h2>Find the right visit</h2><p>Compare the requirements for this category.</p>${tasks[category].map(([n, , , , , , question], j) => `<p><b>${n}</b> · ${question}<br>${prep[category][j]} <a href="#services/${category}/${j}">Review this service</a></p>`).join("")}<p></p><p><a href="https://www.serviceboost.co/request-help">Not sure? Ask Kyle</a> and agree on the scope and price before booking.</p><a href="#services/${category}">Back to choices</a></section>`
       : selected
@@ -375,14 +362,14 @@ function render() {
     const computerTitles = ["Set up a new computer", "Set up or reconnect a printer", "Troubleshoot a computer or printer"];
     const cards = tasks[category].map(([title, icon, price], j) => {
       const open = selected && j === task;
-      return serviceCard(category === 0 ? (computerTitles[j] || title) : title, icon, brief[category][j] + " · " + visitDuration(category, j),
+      return serviceCard(category === 0 ? (computerTitles[j] || title) : title, icon,
         "$" + price, open, "choose(" + j + ")") + (category === 0 && open ? panel : "");
     });
-    const guideCard = category === 0 ? "" : `<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b><small>Get help choosing a visit</small></button>`;
+    const guideCard = category === 0 ? "" : `<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b></button>`;
     let picker = `<div class="picker${category === 0 ? " computer-packages" : ""}">${cards.join("")}${guideCard}</div>`;
     if (category === 0) {
       const folderOpen = t === "folder";
-      const folder = serviceCard("Back up or transfer a folder", "file-text", "One selected folder to one working drive", "Request a quote", folderOpen, "location.hash='services/0/folder'")
+      const folder = serviceCard("Back up or transfer a folder", "file-text", "Request a quote", folderOpen, "location.hash='services/0/folder'")
         + (folderOpen ? '<section class="scope"><h2>Back up or transfer a folder</h2><p>Copy one selected folder from one working computer to one accessible, working drive you provide. Open a sample of the copied files together.</p><h3>Outside scope</h3><p>Full-device migration, damaged drives and data recovery.</p><a href="/request-help">Request a quote</a></section>' : "");
       const group = (heading, entries) => `<section class="service-group"><h2>${heading}</h2><div class="picker computer-packages">${entries.join("")}</div></section>`;
       picker = group("Setup &amp; installation", [cards[0], cards[1], cards[3], folder])
