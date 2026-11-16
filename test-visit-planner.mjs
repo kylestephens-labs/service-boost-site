@@ -81,7 +81,7 @@ test("all nine packages display approved prices and durations before continuing"
   const { visit, run } = planner();
   for (const [path, price, minutes] of [
     ["0/0",229,"up to 60"], ["0/1",199,"up to 45"], ["0/2",229,"up to 60"],
-    ["0/3",229,"up to 60"], ["0/4",229,"up to 60"], ["0/5",229,"up to 60"],
+    ["0/3",229,"up to 60"], ["0/4",229,"up to 60"], ["0/5",229,"60"],
     ["1/0",199,"up to 45"], ["2/0",229,"up to 60"], ["3/0",199,"up to 45"],
   ]) {
     const html = visit("#services/" + path);

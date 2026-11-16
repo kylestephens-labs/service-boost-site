@@ -258,8 +258,9 @@ function options(a, v) {
 }
 const live = typeof window !== "undefined" && ["https://www.serviceboost.co", "https://serviceboost.co"].includes(location.origin) && window.SERVICE_BOOST_QUOTE_ENDPOINT === "https://quotes.serviceboost.co/quote";
 const intake = createVisitIntake(live ? window.SERVICE_BOOST_QUOTE_ENDPOINT : null, live ? window.fetch.bind(window) : null);
-function visitDuration(price = tasks[category][task][2]) {
-  return price === 199 ? "up to 45 minutes" : "up to 60 minutes";
+function visitDuration(group = category, index = task) {
+  if (group === 0 && index === 5) return "60 minutes";
+  return tasks[group][index][2] === 199 ? "up to 45 minutes" : "up to 60 minutes";
 }
 function visitPayload() {
   const [name, , price, description, included, excluded] = tasks[category][task];
@@ -374,7 +375,7 @@ function render() {
     const computerTitles = ["Set up a new computer", "Set up or reconnect a printer", "Troubleshoot a computer or printer"];
     const cards = tasks[category].map(([title, icon, price], j) => {
       const open = selected && j === task;
-      return serviceCard(category === 0 ? (computerTitles[j] || title) : title, icon, brief[category][j] + " · " + visitDuration(price),
+      return serviceCard(category === 0 ? (computerTitles[j] || title) : title, icon, brief[category][j] + " · " + visitDuration(category, j),
         "$" + price, open, "choose(" + j + ")") + (category === 0 && open ? panel : "");
     });
     const guideCard = category === 0 ? "" : `<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b><small>Get help choosing a visit</small></button>`;
