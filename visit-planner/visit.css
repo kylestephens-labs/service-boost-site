@@ -67,6 +67,37 @@ nav {
 .strip div {
   padding-block: 8px;
 }
+.booking-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  list-style: none;
+  margin: 32px 0 0;
+  padding: 32px 0;
+  border-top: 1px solid #dce3f0;
+}
+.booking-steps li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 700;
+}
+.booking-steps .step-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 48px;
+  height: 48px;
+  background: #e6efff;
+  border-radius: 50%;
+}
+.booking-steps img { width: 24px; height: 24px; }
+.booking-steps .step-icon img { filter: brightness(0) saturate(100%) invert(27%) sepia(98%) saturate(3271%) hue-rotate(218deg); }
+.booking-steps .step-arrow { margin-left: auto; }
+@media (max-width: 760px) {
+  .booking-steps { grid-template-columns: 1fr; gap: 16px; padding: 24px 0; }
+  .booking-steps .step-arrow { display: none; }
+}
 main {
   min-height: 70vh;
   padding-block: 32px;
