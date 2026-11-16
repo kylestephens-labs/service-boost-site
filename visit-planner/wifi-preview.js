@@ -9,7 +9,8 @@ function renderWifiPreview(selection, panel) {
   ];
   const cards = proposals.map(([id, title, detail]) => {
     const open = selection === id;
-    return serviceCard(title, "wifi", "Price TBD", open, "location.hash='services/2/" + id + "'")
+    const priceLabel = id === "cabling" ? "$249" : "Price TBD";
+    return serviceCard(title, "wifi", priceLabel, open, "location.hash='services/2/" + id + "'")
       + (open ? '<section class="scope"><h2>' + title + '</h2><p>Draft scope · Unavailable for booking</p><p>' + detail + '</p></section>' : "");
   });
   return '<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>Wi-Fi &amp; network</h1>'
