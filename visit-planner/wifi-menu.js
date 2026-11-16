@@ -13,7 +13,7 @@ function renderWifiMenu(selection, panel) {
     return serviceCard(title, "wifi", priceLabel, open, "location.hash='services/2/" + id + "'")
       + (open ? '<section class="scope"><h2>' + title + '</h2><p>Unavailable for booking</p><p>' + detail + '</p></section>' : "");
   });
-  return '<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>Wi-Fi &amp; network</h1>'
+  return '<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>Wi-Fi &amp; network</h1><p>' + paymentNote + '</p>'
     + '<section class="service-group"><h2>Router setup</h2><div class="picker computer-packages">' + setup + '</div></section>'
     + '<section class="service-group"><h2>Unavailable for booking</h2><div class="picker computer-packages">' + cards.join("") + '</div></section>'
     + '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p></section>';
