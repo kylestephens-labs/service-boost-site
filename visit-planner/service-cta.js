@@ -1,5 +1,5 @@
 const serviceHeader = document.querySelector(".global-header");
-const serviceShortcut = serviceHeader.querySelector(".global-help");
+const serviceShortcut = document.querySelector(".service-shortcut");
 const mobileNav = matchMedia("(max-width: 760px)");
 
 function updateServiceShortcut() {
@@ -10,7 +10,7 @@ function updateServiceShortcut() {
 }
 
 document.addEventListener("click", event => {
-  if (!event.target.closest("#hero-service-cta, .global-help")) return;
+  if (!event.target.closest("#hero-service-cta, .service-shortcut")) return;
   const services = document.getElementById("services");
   if (!services) return;
   event.preventDefault();
