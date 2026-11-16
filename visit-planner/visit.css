@@ -506,7 +506,7 @@ header.global-header {
   height: auto;
 }
 .bar {
-  scroll-margin-top: 165px;
+  scroll-margin-top: calc(var(--header-offset, 165px) + 12px);
 }
 .tech-faq {
   margin: 48px auto;
@@ -772,5 +772,19 @@ body:has(.selection) .home-tail {
     padding: 10px 12px;
     border-radius: 8px;
     margin-bottom: 10px;
+  }
+}
+.assisted-link { margin-top: 16px; }
+body:has(#hero-service-cta) .global-nav .global-help[hidden] {
+  display: inline-flex;
+  visibility: hidden;
+}
+@media (max-width: 760px) {
+  body:has(#hero-service-cta) { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+  body:has(#hero-service-cta) .global-header .global-nav .global-help {
+    position: fixed;
+    inset: auto 12px calc(8px + env(safe-area-inset-bottom));
+    padding: 8px 16px;
+    box-shadow: 0 2px 10px #12204924;
   }
 }

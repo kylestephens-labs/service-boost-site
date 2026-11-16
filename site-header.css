@@ -43,3 +43,4 @@ header.global-header {
   .global-header .global-contact img { width:20px; height:20px; }
   .global-header .global-nav .global-help { padding:10px 16px; }
 }
+.global-header .global-nav .global-help[hidden] { display:none; }
