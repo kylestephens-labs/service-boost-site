@@ -19,6 +19,10 @@ function createVisitIntake(endpoint, transport) {
           body,
           signal: AbortSignal.timeout(20000),
         });
+        if (response.status === 400 || response.status === 429) {
+          state = response.status === 400 ? "invalid" : "limited";
+          return state;
+        }
         const data = await response.json();
         state = response.status === 200 &&
           data.message === "Your request has been sent. Kyle will follow up using your preferred reply method."

@@ -123,7 +123,7 @@ function zipError() {
 function errors() {
   return {
     person: contact.person.trim() ? "" : "Enter a name for the visit.",
-    email: (!contact.email && contact.method !== "email") || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email)
+    email: (!contact.email && contact.method !== "email") || /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\.[A-Za-z]{2,63}$/.test(contact.email.trim())
       ? ""
       : "Enter a valid email address.",
     street:
@@ -282,7 +282,12 @@ async function finishVisit() {
   status.textContent = live ? "Sending request…" : "";
   const result = await intake.submit(visitPayload());
   if (result === "disabled") go("done");
-  else if (result === "unconfirmed" || result === "sending") {
+  else if (result === "invalid" || result === "limited") {
+    submit.disabled = false;
+    status.textContent = result === "invalid"
+      ? "Request rejected. Check your contact details and address, then try again."
+      : "Too many requests. Please wait before retrying or contact Kyle directly.";
+  } else if (result === "unconfirmed" || result === "sending") {
     submit.disabled = false;
     status.textContent =
       "Delivery could not be confirmed. Your details are still here. Check with Kyle before retrying.";
@@ -322,8 +327,8 @@ function render() {
     .join("");
   if (page === "home") {
     root.innerHTML =
-      `<section class="hybrid-hero"><div><h1>Get your tech working <span>&amp; get back to what matters.</span></h1><p>Local onsite tech help for your home or home office.</p><button onclick="document.querySelector('.card').focus();document.querySelector('.bar').scrollIntoView()">Choose a service</button></div><div class="founder"><img src="assets/kyle-stephens.png" alt="Kyle Stephens"><div><h2>Hi, I’m Kyle.</h2><p>I’m the owner of Service Boost in Walnut Creek. You’ll work directly with me.</p></div></div></section>` +
-      `<div class="bar"><h2>Services</h2><span>Homes &amp; home offices</span></div><div class="cards">${cards}</div>`;
+      `<section class="hybrid-hero"><div><h1>Get your tech working <span>&amp; get back to what matters.</span></h1><p>Local onsite tech help for your home or home office.</p><button onclick="document.querySelector('.card').focus();document.querySelector('.bar').scrollIntoView()">Choose a service</button></div><div id="about" class="founder"><img src="assets/kyle-stephens.png" alt="Kyle Stephens"><div><h2>Hi, I’m Kyle.</h2><p>I’m the owner of Service Boost in Walnut Creek. You’ll work directly with me.</p></div></div></section>` +
+      `<div id="services" class="bar"><h2>Services</h2><span>Homes &amp; home offices</span></div><div id="pricing" class="cards">${cards}</div><p id="process">Choose a visit and request a time. Kyle will confirm the address, date and arrival window before the visit.</p>`;
     return;
   }
   if (page === "services") {
@@ -404,8 +409,14 @@ function render() {
   }
   root.innerHTML = `<div class="path"><a href="#home">All services</a> / <a href="#services/${category}">${services[category][0]}</a> / ${name} · ${{ detail: "Scope", fit: "Visit fit", time: "Appointment", contact: "Contact and address", checkout: "Checkout", done: "Complete" }[page]}</div><div class="mobile-total"><b>${name}</b><span>$${total}</span></div><div class="layout"><section class="panel">${body}</section>${sum}</div>`;
 }
-addEventListener("hashchange", () => {
+function renderRoute() {
   render();
-  scrollTo(0, 0);
-});
-render();
+  const anchor = location.hash.slice(1);
+  if (["services", "pricing", "about", "process", "tech-faq"].includes(anchor)) {
+    document.getElementById(anchor)?.scrollIntoView();
+  } else {
+    scrollTo(0, 0);
+  }
+}
+addEventListener("hashchange", renderRoute);
+renderRoute();

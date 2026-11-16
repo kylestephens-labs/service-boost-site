@@ -16,7 +16,7 @@ function planner(globals = {}) {
       querySelector: () => main,
       querySelectorAll: () => [],
     },
-    addEventListener() {},
+    scrollTo() {}, addEventListener() {},
   });
   const run = (code) => vm.runInContext(code, ctx);
   run(readFileSync(new URL("./visit-planner/intake.js", import.meta.url), "utf8"));
@@ -135,6 +135,9 @@ test("live form submits using the chosen reply method with manual address and ti
   run("city='94599';fit='Yes';slot='Friday afternoon';Object.assign(contact,{method:'text',person:'Example',street:'100 Example Lane',town:'Walnut Creek'})");
   assert.equal(run("hasContact()"), false);
   run("contact.phone='925-555-0100'");
+  run("contact.email='jane@example.c'");
+  assert.equal(run("hasContact()"), false);
+  run("contact.email=''");
   const html = visit("#checkout/0/1");
   for (const expected of ["There is no fee", "by text", "pending until Kyle accepts", "payment options before the visit","Send visit request"]) assert.ok(html.includes(expected));
   await run("finishVisit()");
@@ -143,4 +146,13 @@ test("live form submits using the chosen reply method with manual address and ti
   assert.match(main.textContent, /pending until Kyle accepts/);
   await run("finishVisit()");
   assert.equal(calls.length, 1);
+});
+test("legacy homepage sections have a rendered scroll target", () => {
+  const {run,main} = planner();
+  run("document.getElementById = id => ({scrollIntoView(){document.scrolled=id}})");
+  for (const anchor of ["services","pricing","about","process"]) {
+    run("location.hash='#" + anchor + "';renderRoute()");
+    assert.ok(main.innerHTML.includes('id="' + anchor + '"'));
+    assert.equal(run("document.scrolled"),anchor);
+  }
 });
