@@ -51,7 +51,7 @@ const tasks = services.map((s, j) => [
     [
       "New computer setup",
       "Smart-home device setup",
-      "Router / Wi-Fi setup",
+      typeof renderWifiPreview === "function" ? "New WiFi Connection Setup" : "Router / Wi-Fi setup",
       "Phone or tablet setup",
     ][j],
     ...s.slice(1),
@@ -379,6 +379,10 @@ function render() {
     }
     if (category === 1 && !guide) {
       root.innerHTML = renderSmartHomeMenu(t, panel);
+      return;
+    }
+    if (category === 2 && !guide && typeof renderWifiPreview === "function") {
+      root.innerHTML = renderWifiPreview(t, panel);
       return;
     }
     const askKyle = category === 0 ? '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>' : "";
