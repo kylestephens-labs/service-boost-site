@@ -230,6 +230,8 @@ function restore(c, t) {
   });
 }
 
+addSmartHomeSupport(tasks[1], prep[1]);
+
 let city = "",
   fit = "",
   slot = "";
@@ -374,6 +376,10 @@ function render() {
       const group = (heading, entries) => `<section class="service-group"><h2>${heading}</h2><div class="picker computer-packages">${entries.join("")}</div></section>`;
       picker = group("Setup &amp; installation", [cards[0], cards[1], cards[3], folder])
         + group("Help &amp; learning", [cards[2], cards[4], cards[5]]);
+    }
+    if (category === 1 && !guide) {
+      root.innerHTML = renderSmartHomeMenu(t, panel);
+      return;
     }
     const askKyle = category === 0 ? '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>' : "";
     root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p>${picker}${category !== 0 || guide ? panel : ""}${askKyle}</section>`;

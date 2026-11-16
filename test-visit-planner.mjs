@@ -48,6 +48,7 @@ function planner(globals = {}) {
   });
   const run = (code) => vm.runInContext(code, ctx);
   run(readFileSync(new URL("./visit-planner/intake.js", import.meta.url), "utf8"));
+  run(readFileSync(new URL("./visit-planner/smart-home.js", import.meta.url), "utf8"));
   run(readFileSync(new URL("./visit-planner/visit.js", import.meta.url), "utf8"));
   return { run, main, visit: (route) => {ctx.location.hash = route; run("render()"); return main.innerHTML;} };
 }
@@ -193,7 +194,7 @@ test("four price-free category cards lead directly to priced packages", () => {
   assert.equal((home.match(/class="card"/g) || []).length, 4);
   assert.doesNotMatch(home, /\$\d/);
   assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
-  for (const [category, prices] of [[229,199,229,229,229,229],[199],[229],[199]].entries()) {
+  for (const [category, prices] of [[229,199,229,229,229,229],[199,229,229,229,229,249,249,249],[229],[199]].entries()) {
     const choices = visit("#services/" + category);
     assert.deepEqual([...choices.matchAll(/<span>\$(\d+)<\/span>/g)].map(m => Number(m[1])), prices);
     assert.match(choices, /Fixed-price services · Pay after your visit/);
@@ -210,4 +211,22 @@ test("folder transfer has a quote path outside the fixed-price flow", () => {
   assert.doesNotMatch(html, /Continue ·/);
   assert.ok(html.indexOf("Setup &amp; installation") < html.indexOf("Help &amp; learning"));
   assert.ok(html.indexOf("Help &amp; learning") < html.indexOf("Not sure what you need? Ask Kyle"));
+});
+
+test("review smart-home support carries approved terms and installations have no booking route", () => {
+  const {visit, run} = planner();
+  for (const index of [1, 2, 3, 4]) {
+    const html = visit("#services/1/" + index);
+    assert.match(html, /Continue · \$229/);
+    const payload = run("visitPayload()");
+    assert.equal(payload.service, "smart-home");
+    for (const term of ["Support · $229 · up to 60 minutes", "remains unresolved", "extra work and price", "subscriptions and replacement parts"]) assert.ok(payload.problem.includes(term));
+    assert.match(visit("#fit/1/" + index), /Check your setup/);
+  }
+  for (const slug of ["doorbell-installation", "thermostat-installation", "garage-installation"]) {
+    const html = visit("#services/1/" + slug);
+    assert.match(html, /Unavailable for booking/);
+    assert.doesNotMatch(html, /Continue ·/);
+    assert.doesNotMatch(visit("#fit/1/" + slug), /Check your setup/);
+  }
 });
