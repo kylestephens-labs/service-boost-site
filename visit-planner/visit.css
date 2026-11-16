@@ -227,15 +227,7 @@ button,
   font-weight: 400;
   font-size: 15px;
 }
-.price {
-  margin-top: auto;
-  padding-top: 12px;
-  color: #1944ab;
-}
-.price small {
-  font-weight: 400;
-  color: #48546a;
-}
+.category-arrow { color: #1944ab; }
 .quick {
   background: #162554;
   color: white;
@@ -256,9 +248,6 @@ button,
   display: grid;
   grid-template-columns: 45px 1fr 1.2fr auto;
   align-items: center;
-}
-.menu .price {
-  padding: 0;
 }
 .path {
   font-size: 14px;
@@ -395,13 +384,10 @@ select:focus-visible {
   .menu .card p {
     grid-column: 2/-1;
   }
-  .menu .price {
+  .menu .category-arrow {
     grid-column: 3;
     grid-row: 1;
     font-size: 14px;
-  }
-  .menu .price small {
-    display: none;
   }
   .layout h1 {
     font-size: 34px;

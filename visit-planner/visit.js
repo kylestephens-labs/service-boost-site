@@ -321,14 +321,14 @@ function render() {
   const total = base;
   const cards = services
     .map(
-      ([n, ic, p, d], j) =>
-        `<button class="card" onclick="pick(${j})"><img alt="" src="assets/icons/${ic}.svg"><h3>${n}</h3><p>${j === 0 ? "Set up a computer, connect a printer or diagnose an issue." : d}</p><span class="price">${j === 0 ? "From " : ""}$${Math.min(...tasks[j].map((s) => s[2]))} <small>visit price</small> →</span></button>`,
+      ([n, ic, , d], j) =>
+        `<button class="card" onclick="pick(${j})"><img alt="" src="assets/icons/${ic}.svg"><h3>${n}</h3><p>${j === 0 ? "Set up a computer, connect a printer or diagnose an issue." : d}</p><span class="category-arrow" aria-hidden="true">→</span></button>`,
     )
     .join("");
   if (page === "home") {
     root.innerHTML =
       `<section class="hybrid-hero"><div><h1>Get your tech working <span>&amp; get back to what matters.</span></h1><p>Local onsite tech help for your home or home office.</p><button id="hero-service-cta">Choose a service</button></div><div id="about" class="founder"><img src="assets/kyle-stephens.png" alt="Kyle Stephens"><div><h2>Hi, I’m Kyle.</h2><p>I’m the owner of Service Boost in Walnut Creek. You’ll work directly with me.</p></div></div></section>` +
-      `<div id="services" class="bar"><h2 tabindex="-1">Services</h2></div><div id="pricing" class="cards">${cards}</div><p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>
+      `<div id="services" class="bar"><h2 tabindex="-1">Services</h2><p>Fixed-price services · Pay after your visit</p></div><div id="pricing" class="cards">${cards}</div><p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>
        <section id="process" aria-label="How to book a visit"><ol class="booking-steps">
          <li><span class="step-icon"><img src="assets/icons/message-circle.svg" alt=""></span>Choose a service<img class="step-arrow" src="assets/icons/arrow-right.svg" alt=""></li>
          <li><span class="step-icon"><img src="assets/icons/file-text.svg" alt=""></span>Request a time<img class="step-arrow" src="assets/icons/arrow-right.svg" alt=""></li>
