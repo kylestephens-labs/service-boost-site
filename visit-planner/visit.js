@@ -328,7 +328,12 @@ function render() {
   if (page === "home") {
     root.innerHTML =
       `<section class="hybrid-hero"><div><h1>Get your tech working <span>&amp; get back to what matters.</span></h1><p>Local onsite tech help for your home or home office.</p><button onclick="document.querySelector('.card').focus();document.querySelector('.bar').scrollIntoView()">Choose a service</button></div><div id="about" class="founder"><img src="assets/kyle-stephens.png" alt="Kyle Stephens"><div><h2>Hi, I’m Kyle.</h2><p>I’m the owner of Service Boost in Walnut Creek. You’ll work directly with me.</p></div></div></section>` +
-      `<div id="services" class="bar"><h2>Services</h2><span>Homes &amp; home offices</span></div><div id="pricing" class="cards">${cards}</div><p id="process">Choose a visit and request a time. Kyle will confirm the address, date and arrival window before the visit.</p>`;
+      `<div id="services" class="bar"><h2>Services</h2></div><div id="pricing" class="cards">${cards}</div>
+       <section id="process" aria-label="How to book a visit"><ol class="booking-steps">
+         <li><span class="step-icon"><img src="assets/icons/message-circle.svg" alt=""></span>Choose a service<img class="step-arrow" src="assets/icons/arrow-right.svg" alt=""></li>
+         <li><span class="step-icon"><img src="assets/icons/file-text.svg" alt=""></span>Request a time<img class="step-arrow" src="assets/icons/arrow-right.svg" alt=""></li>
+         <li><span class="step-icon"><img src="assets/icons/user.svg" alt=""></span>Kyle confirms your visit</li>
+       </ol></section>`;
     return;
   }
   if (page === "services") {

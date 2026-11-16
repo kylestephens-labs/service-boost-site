@@ -26,7 +26,7 @@ header = (root / 'site-header.html').read_text()
 if review_visits:
     (output / 'config.js').write_text("window.SERVICE_BOOST_QUOTE_ENDPOINT = '';\n")
     home = output / 'index.html'
-    home.write_text(home.read_text().replace('<div>Fixed visit prices', '<div>Review preview · Fixed visit prices')
+    home.write_text(home.read_text().replace('<!-- preview-notice -->', '<div class="strip"><div>Review preview</div></div>')
                     .replace('</head>', '<meta name="robots" content="noindex"></head>'))
 for asset in ('visit.css', 'intake.js', 'visit.js'):
     shutil.copyfile(root / 'visit-planner' / asset, output / asset)
