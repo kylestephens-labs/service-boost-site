@@ -10,7 +10,7 @@ function updateServiceShortcut() {
 }
 
 document.addEventListener("click", event => {
-  if (!event.target.closest("#hero-service-cta, .service-shortcut")) return;
+  if (!event.target.closest('#hero-service-cta, a[href="/#services"]')) return;
   const services = document.getElementById("services");
   if (!services) return;
   event.preventDefault();
