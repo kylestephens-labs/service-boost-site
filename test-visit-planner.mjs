@@ -4,6 +4,34 @@ import test from "node:test";
 import { spawnSync } from "node:child_process";
 import vm from "node:vm";
 
+test("service shortcut focuses the heading and honors the user's motion preference", () => {
+  let reduced = true;
+  const listeners = {};
+  const calls = [];
+  const services = {
+    querySelector: () => ({focus: options => calls.push(options.preventScroll)}),
+    scrollIntoView: options => calls.push(options.behavior),
+  };
+  const header = {offsetHeight: 90, querySelector: () => ({})};
+  const context = {
+    document: {
+      querySelector: () => header,
+      getElementById: id => id === "services" ? services : null,
+      documentElement: {style: {setProperty() {}}},
+      addEventListener: (name, handle) => { listeners[name] = handle; },
+    },
+    addEventListener() {},
+    ResizeObserver: class {observe() {}},
+    matchMedia: query => ({matches: query.includes("reduced-motion") && reduced}),
+  };
+  vm.runInNewContext(readFileSync(new URL("./visit-planner/service-cta.js", import.meta.url), "utf8"), context);
+  const click = {target: {closest: () => true}, preventDefault() {}};
+  listeners.click(click);
+  reduced = false;
+  listeners.click(click);
+  assert.deepEqual(calls, [true, "instant", true, "smooth"]);
+});
+
 // Exercise route guards with no network, storage, SMTP or payment adapter.
 function planner(globals = {}) {
   const main = { innerHTML: "" };

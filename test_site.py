@@ -39,7 +39,7 @@ class SiteContracts(unittest.TestCase):
         services = ['computer', 'mobile', 'smart-home', 'wifi', 'workspace', 'printer']
         self.assertTrue(any(a.get('id') == 'app' for _, a in page.nodes))
         self.assertEqual([a['src'] for t, a in page.nodes if t == 'script' and 'src' in a],
-                         ['tech-support.js', '/config.js', '/intake.js', '/visit.js'])
+                         ['tech-support.js', '/config.js', '/intake.js', '/visit.js', '/service-cta.js'])
         links = [a.get('href') for t, a in page.nodes if t == 'a']
         self.assertIn('tel:+19282257944', links)
         self.assertIn('sms:+19282257944?body=Hi%20Kyle%2C%20I%20need%20tech%20help.', links)
@@ -327,7 +327,8 @@ class SiteContracts(unittest.TestCase):
             headers.append(re.sub(r' aria-current="page"', '', header))
             self.assertIn('/assets/icons/phone.svg', header)
             self.assertIn('/assets/icons/message-circle.svg', header)
-            self.assertIn('Request help', header)
+            self.assertNotIn('Request help', header)
+            self.assertIn('href="/#services" hidden>Choose a service', header)
             for name in ['Home', 'For IT providers', 'Call Kyle', 'Text Kyle']:
                 self.assertIn(name, header)
         self.assertTrue(all(header == headers[0] for header in headers))
