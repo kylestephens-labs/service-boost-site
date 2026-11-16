@@ -41,7 +41,7 @@ function planner(globals = {}) {
     history: { replaceState(_state, _title, hash) { ctx.location.hash = hash; } },
     document: {
       body: { classList: { add() {} } },
-      querySelector: selector => selector.startsWith("template") ? null : main,
+      querySelector: selector => selector === "#proposed-computer-services" ? null : main,
       querySelectorAll: () => [],
     },
     scrollTo() {}, addEventListener() {},
@@ -197,5 +197,21 @@ test("four price-free category cards lead directly to priced packages", () => {
     assert.match(choices, /Fixed-price services · Pay after your visit/);
     assert.match(visit("#fit/" + category + "/0"), /Visit summary[\s\S]*Fixed-price services · Pay after your visit<\/p><\/aside>/);
     assert.doesNotMatch(choices, /<input/);
+  }
+});
+
+test("review groups mix approved and proposed cards without booking proposed work", () => {
+  const data = readFileSync(new URL("./visit-planner/proposed-services.html", import.meta.url), "utf8")
+    .match(/<script[^>]*>([\s\S]*?)<\/script>/)[1];
+  const {run, visit} = planner();
+  run("const originalQuery = document.querySelector; document.querySelector = selector => selector === '#proposed-computer-services' ? {textContent:" + JSON.stringify(data) + "} : originalQuery(selector)");
+  for (const item of JSON.parse(data)) {
+    const html = visit("#services/0/" + item.id);
+    assert.equal((html.match(/class="pick"/g) || []).length, 7);
+    assert.equal((html.match(/Proposed · Price to be confirmed · Unavailable for booking/g) || []).length, 4);
+    assert.ok(html.includes(item.excluded));
+    assert.doesNotMatch(html, /Continue ·/);
+    assert.ok(html.indexOf("Setup &amp; installation") < html.indexOf("Help &amp; learning"));
+    assert.ok(html.indexOf("Help &amp; learning") < html.indexOf("Not sure what you need? Ask Kyle"));
   }
 });

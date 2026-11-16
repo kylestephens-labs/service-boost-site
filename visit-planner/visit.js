@@ -297,6 +297,9 @@ async function finishVisit() {
     status.textContent = "Request sent. Kyle will confirm your date and arrival window separately. Your visit is pending until Kyle accepts it.";
   }
 }
+function serviceCard(title, icon, summary, priceLabel, expanded, action) {
+  return `<button class="pick" aria-expanded="${!!expanded}" onclick="${action}"><img alt="" src="assets/icons/${icon}.svg"><b>${title}</b><small>${summary}</small><span>${priceLabel}</span></button>`;
+}
 function render() {
   let [page, c, t] = location.hash.slice(1).split("/");
   const requestedPage = page;
@@ -362,16 +365,29 @@ function render() {
             )}</ul></div><div><h3>Outside scope</h3><p>${exc}</p></div></div><button onclick="go('fit')">Continue · $${total}</button></section>`
         : "";
     const computerTitles = ["Set up a new computer", "Set up or reconnect a printer", "Troubleshoot a computer or printer"];
-    const cards = tasks[category]
-      .map(
-        ([title, ic, price], j) =>
-          `<button class="pick" aria-expanded="${!!selected && j === task}" onclick="choose(${j})"><img alt="" src="assets/icons/${ic}.svg"><b>${category === 0 ? computerTitles[j] : title}</b><small>${brief[category][j]}</small><span>$${price}</span></button>${category === 0 && selected && j === task ? panel : ""}`,
-      )
-      .join("");
+    const cards = tasks[category].map(([title, icon, price], j) => {
+      const open = selected && j === task;
+      return serviceCard(category === 0 ? computerTitles[j] : title, icon, brief[category][j],
+        "$" + price, open, "choose(" + j + ")") + (category === 0 && open ? panel : "");
+    });
     const guideCard = category === 0 ? "" : `<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b><small>Get help choosing a visit</small></button>`;
-    const proposals = category === 0 ? document.querySelector("template#proposed-computer-services")?.innerHTML || "" : "";
+    const preview = category === 0 && document.querySelector("#proposed-computer-services");
+    let picker = `<div class="picker${category === 0 ? " computer-packages" : ""}">${cards.join("")}${guideCard}</div>`;
+    if (preview) {
+      const proposedCards = Object.fromEntries(JSON.parse(preview.textContent).map(item => {
+        const open = t === item.id;
+        const card = serviceCard(item.title, item.icon, item.brief,
+          "Proposed · Price to be confirmed · Unavailable for booking", open,
+          "location.hash='services/0/" + item.id + "'");
+        const details = open ? `<section class="scope"><h2>${item.title}</h2><div class="scope-grid"><div><h3>Included</h3><p>${item.included}</p></div><div><h3>Outside scope</h3><p>${item.excluded}</p></div></div></section>` : "";
+        return [item.id, card + details];
+      }));
+      const group = (heading, entries) => `<section class="service-group"><h2>${heading}</h2><div class="picker computer-packages">${entries.join("")}</div></section>`;
+      picker = group("Setup &amp; installation", [cards[0], cards[1], proposedCards.software, proposedCards.folder])
+        + group("Help &amp; learning", [cards[2], proposedCards.email, proposedCards.lesson]);
+    }
     const askKyle = category === 0 ? '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>' : "";
-    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p><div class="picker${category === 0 ? " computer-packages" : ""}">${cards}${guideCard}</div>${category !== 0 || guide ? panel : ""}${askKyle}${proposals}</section>`;
+    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p>${picker}${category !== 0 || guide ? panel : ""}${askKyle}</section>`;
     return;
   }
   const sum = `<aside><div class="kicker">Visit summary</div><h3>${name}</h3><p class="row"><span>One visit</span><b>$${base}</b></p><div class="rule"></div><div class="row"><span>Visit total</span><strong>$${total}</strong></div>${city ? '<p class="zip-summary">ZIP ' + esc(city) + "</p>" : ""}<p class="slot-summary" ${slot ? "" : "hidden"}>${slot ? esc(slot) + " · Pacific" : ""}</p><p>${paymentNote}</p></aside>`;

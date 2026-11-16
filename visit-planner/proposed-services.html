@@ -1,26 +1,28 @@
-<template id="proposed-computer-services">
-  <section class="proposed-services" aria-labelledby="proposed-heading">
-    <h2 id="proposed-heading">Proposed services</h2>
-    <p>Preview only · Prices to be confirmed · Unavailable for booking</p>
-    <div class="proposal-groups">
-      <section>
-        <h3>Setup</h3>
-        <details><summary>Install and set up software</summary>
-          <p>Install one licensed app on one compatible computer, apply its basic settings and check that it opens. You provide the license. Custom integrations and business deployments are outside scope.</p>
-        </details>
-        <details><summary>Back up or transfer files</summary>
-          <p>Copy one selected folder from one working computer to one accessible drive you provide, then open a sample of the copied files together. Excludes full-device migration, damaged drives and data recovery.</p>
-        </details>
-      </section>
-      <section>
-        <h3>Help &amp; troubleshooting</h3>
-        <details><summary>Set up or troubleshoot email</summary>
-          <p>Connect one existing account to one mail app, or investigate one sending or receiving issue. You sign in yourself. Excludes password recovery, mailbox migration and mail-server administration.</p>
-        </details>
-        <details><summary>Get a personal computer lesson</summary>
-          <p>Practice one everyday task on your computer, such as organizing files or joining a video call. Includes guided practice and a short set of steps to repeat. Device repair and ongoing support are outside scope.</p>
-        </details>
-      </section>
-    </div>
-  </section>
-</template>
+<script type="application/json" id="proposed-computer-services">
+[
+  {
+    "id": "software", "title": "Install and set up software", "icon": "device-laptop",
+    "brief": "One licensed app on one compatible computer",
+    "included": "Install the app, apply basic settings and check that it opens. You provide the license.",
+    "excluded": "Custom integrations and business deployments."
+  },
+  {
+    "id": "folder", "title": "Back up or transfer a folder", "icon": "file-text",
+    "brief": "One selected folder to one working drive",
+    "included": "Copy one selected folder from one working computer to one accessible, working drive you provide. Open a sample of the copied files together.",
+    "excluded": "Full-device migration, damaged drives and data recovery."
+  },
+  {
+    "id": "email", "title": "Set up or troubleshoot email", "icon": "message-circle",
+    "brief": "One existing account in one mail app",
+    "included": "Connect the account or investigate one sending or receiving issue. You sign in yourself.",
+    "excluded": "Password recovery, mailbox migration and mail-server administration."
+  },
+  {
+    "id": "lesson", "title": "Get a personal computer lesson", "icon": "user",
+    "brief": "Guided practice on one everyday task",
+    "included": "Practice one task on your computer, such as organizing files or joining a video call. Take away a short set of steps to repeat.",
+    "excluded": "Device repair and ongoing support."
+  }
+]
+</script>
