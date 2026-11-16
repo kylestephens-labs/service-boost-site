@@ -230,6 +230,8 @@ function restore(c, t) {
   });
 }
 
+if (typeof addSmartHomeSupport === "function") addSmartHomeSupport(tasks[1], prep[1]);
+
 let city = "",
   fit = "",
   slot = "";

@@ -1,25 +1,41 @@
-function renderSmartHomePreview(selection, pairingPanel) {
-  const price = tasks[1][0][2];
-  const pairing = serviceCard("Smart Device App &amp; Wi-Fi Pairing", "smart-home",
-    "$" + price, selection === "0", "choose(0)");
-  const proposals = [
-    ["doorbell-installation", "Video Doorbell Installation", "Doorbell mounting, wiring and hardware compatibility would need individual review."],
-    ["doorbell", "Video Doorbell Support", "Doorbell compatibility and troubleshooting would need individual review."],
-    ["thermostat-installation", "Smart Thermostat Installation", "Thermostat compatibility, installation and wiring would need individual review."],
-    ["thermostat", "Smart Thermostat Support", "Thermostat compatibility and troubleshooting would need individual review."],
-    ["garage-installation", "Garage Controller Installation", "Controller compatibility, installation and wiring would need individual review."],
-    ["garage", "Garage Controller Support", "Controller compatibility and troubleshooting would need individual review."],
-    ["hub-speaker", "Smart Hub &amp; Speaker Support", "Hub or speaker compatibility and troubleshooting would need individual review."],
+// Loaded only by the non-sending review build.
+function addSmartHomeSupport(packages, guidance) {
+  const devices = [
+    ["Video Doorbell", "one already-installed doorbell", "app, connectivity or notification issues", ""],
+    ["Smart Thermostat", "one already-installed thermostat", "app, connectivity or settings", ", HVAC or electrical repair"],
+    ["Smart Garage Controller", "one already-installed controller", "app, connectivity or settings", ", mechanical repair or safety-system adjustments"],
+    ["Smart Hub & Speaker", "one hub or speaker", "its app or connection to working Wi-Fi", ""],
   ];
-  const proposedCards = proposals.map(([id, title, details]) => {
-    const open = selection === id;
-    return serviceCard(title, "smart-home", "",
-      open, "location.hash='services/1/" + id + "'")
-      + (open ? '<section class="scope"><h2>' + title + '</h2><p>' + details + '</p><p>No installation, troubleshooting or repair service has been approved for this proposal.</p></section>' : "");
+  for (const [name, device, focus, exclusions] of devices) {
+    const question = "Can you access " + device + " and its app?";
+    packages.push([name + " Support", "smart-home", 229,
+      "The visit covers time and diagnosis for one issue even if it remains unresolved. You and Kyle agree on any extra work and price before proceeding.",
+      "Diagnose one issue on " + device + ": " + focus + "|Explain findings and next steps",
+      "Devices, subscriptions and replacement parts" + exclusions, question]);
+    guidance.push("Confirm you can access the device and app, and identify one issue to investigate.");
+  }
+}
+
+function renderSmartHomePreview(selection, panel) {
+  const packages = tasks[1].map(([name, icon, price], index) => {
+    const open = selection === String(index);
+    return serviceCard(index === 0 ? "Smart Device App &amp; Wi-Fi Pairing" : name, icon, "$" + price, open, "choose(" + index + ")")
+      + (open ? panel : "");
   });
-  return '<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>Smart home</h1>'
-    + '<section class="service-group"><h2>Device pairing</h2><p>Pair one compatible plug-in or battery device with its app on working Wi-Fi, up to 45 minutes. No mounting or wiring. Pay after your visit.</p><div class="picker computer-packages">'
-    + pairing + (selection === "0" ? pairingPanel : "") + '</div></section>'
-    + '<section class="service-group"><h2>Proposed services</h2><p>Review only · Scope and price to be confirmed · Unavailable for booking</p><div class="picker computer-packages">' + proposedCards.join("") + '</div></section>'
+  const installations = [
+    ["doorbell-installation", "Video Doorbell Installation", "One compatible customer-provided doorbell in an accessible location, app and working Wi-Fi connection, and a test. Battery mounting and existing wired replacement boundaries are pending."],
+    ["thermostat-installation", "Smart Thermostat Installation", "Replacement of one compatible existing thermostat in an accessible location, configuration and testing. New wiring and HVAC repair are excluded."],
+    ["garage-installation", "Smart Garage Controller Installation", "One compatible controller on an existing working opener, app connection and an operation test. Opener replacement and mechanical repair are excluded."],
+  ];
+  const installationCards = installations.map(([id, title, scope]) => {
+    const open = selection === id;
+    return serviceCard(title, "smart-home", "$249", open, "location.hash='services/1/" + id + "'")
+      + (open ? '<section class="scope"><h2>' + title + '</h2><p>Unavailable for booking.</p><h3>Scope under review</h3><p>' + scope + '</p></section>' : "");
+  });
+  const group = (heading, cards) => '<section class="service-group"><h2>' + heading + '</h2><div class="picker computer-packages">' + cards.join("") + '</div></section>';
+  return '<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>Smart home</h1><p>' + paymentNote + '</p>'
+    + group("Device pairing", packages.slice(0, 1))
+    + group("Device support", packages.slice(1))
+    + group("Installations · Unavailable for booking", installationCards)
     + '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p></section>';
 }
