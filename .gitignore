@@ -10,3 +10,4 @@ __pycache__/
 public-site/
 *.sqlite3*
 outreach-links*.csv
+visit-preview/
