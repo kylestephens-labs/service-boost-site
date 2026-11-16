@@ -2,46 +2,42 @@ const services = [
   [
     "Computer and printer support",
     "device-laptop",
-    129,
+    149,
     "Get one new computer ready for daily use.",
     "Set up one user profile|Connect to working Wi-Fi|Install updates and verify sign-in",
     "Data migration, hardware repair and account recovery",
     "Is this a working Windows PC or Mac with account access?",
-    "Connect one extra display",
-    20,
+
   ],
   [
     "Smart home",
     "smart-home",
-    99,
+    129,
     "Pair one compatible plug-in or battery device.",
     "Pair one supported device with its app|Connect to compatible Wi-Fi|Test one control or alert",
-    "Drilling, mounting, ladders and fixed wiring. Ring devices must already be safely mounted or usable on a table.",
+    "Drilling, mounting, ladders and fixed wiring. Ring mounting requires a separate scope and price agreed with Kyle.",
     "Is it plug-in or battery powered, compatible with your Wi-Fi and ready to pair without mounting or wiring?",
-    "Pair a second compatible device",
-    35,
+
   ],
   [
     "Wi-Fi &amp; network",
     "wifi",
-    119,
+    149,
     "Set up one router on your existing internet line.",
-    "Configure one supported router|Connect two devices|Test connectivity at the router",
+    "Configure one supported router|Connect up to two devices|Test connectivity at the router",
     "ISP repair, cable runs and whole-home coverage guarantees",
     "Is your internet service active with an accessible modem?",
-    "Connect two more devices",
-    20,
+
   ],
   [
     "Mobile devices",
     "device-mobile",
-    89,
+    129,
     "Set up one device and its essential settings.",
     "Connect one phone or tablet to Wi-Fi|Set up one existing account|Check updates and notifications",
     "Carrier activation, account recovery and data transfer",
     "Can you unlock the device and sign into your account?",
-    "Set up one additional email account",
-    15,
+
   ],
 ];
 const cities =
@@ -53,8 +49,8 @@ const tasks = services.map((s, j) => [
   [
     [
       "New computer setup",
-      "Smart-home device pairing",
-      "Router setup",
+      "Smart-home device setup",
+      "Router / Wi-Fi setup",
       "Phone or tablet setup",
     ][j],
     ...s.slice(1),
@@ -62,26 +58,24 @@ const tasks = services.map((s, j) => [
 ]);
 tasks[0].push(
   [
-    "Printer connection",
+    "Printer setup or reconnection",
     "printer",
-    89,
-    "Connect one compatible printer to one computer.",
-    "Install its driver|Connect over USB or working Wi-Fi|Print a test page",
+    129,
+    "Connect one printer to an existing working network for up to two computers.",
+    "Install its driver|Connect up to two computers|Print a test page",
     "Ink, hardware repairs and network repairs",
     "Do you have a compatible printer, ink and access to the computer?",
-    "Connect a second computer",
-    25,
+
   ],
   [
-    "Troubleshooting",
+    "Computer or printer troubleshooting",
     "tool",
-    109,
-    "Assess one computer or printer issue for up to 45 minutes.",
+    149,
+    "Assess one computer or printer issue. The $149 covers the diagnostic visit and time even if the issue remains unresolved. Kyle will obtain your approval before any extra work.",
     "Check symptoms and settings|Try a safe adjustment if appropriate|Explain findings and next steps",
     "Parts, data recovery, additional issues or a guaranteed fix",
     "Can you show Kyle one issue on a device you can access?",
-    "",
-    0,
+
   ],
 );
 let category = 0,
@@ -150,7 +144,7 @@ function zipError() {
   return !/^\d{5}$/.test(city)
     ? "Enter a five-digit visit ZIP."
     : !coverage.has(city)
-      ? "Outside the sample coverage area. Check the ZIP or return to the service choices. Choose a new window after correcting the ZIP."
+      ? "Outside the sample coverage area. Check the ZIP or return to the service choices. Enter your timing preference again after correcting the ZIP."
       : "";
 }
 function errors() {
@@ -216,40 +210,6 @@ function zipChanged(el) {
   }
   document.querySelector("#outside").textContent = zipError();
 }
-let week = 0;
-const pacificDay = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "America/Los_Angeles",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-}).format(new Date());
-const nextMonday = new Date(pacificDay + "T12:00:00Z");
-nextMonday.setUTCDate(
-  nextMonday.getUTCDate() +
-    ((8 - nextMonday.getUTCDay()) % 7) +
-    (nextMonday.getUTCDay() === 1 ? 7 : 0),
-);
-function dateLabel(offset) {
-  const day = new Date(nextMonday);
-  day.setUTCDate(day.getUTCDate() + offset);
-  return day.toLocaleDateString("en-US", {
-    timeZone: "UTC",
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-const weeks = [
-  [dateLabel(1) + " · 9–11 am", dateLabel(2) + " · 1–3 pm"],
-  [],
-  [dateLabel(15) + " · 9–11 am", dateLabel(18) + " · 10 am–noon"],
-];
-function changeWeek(v) {
-  week = Number(v);
-  slot = "";
-  render();
-}
 function useFlexibleTime() {
   slot = "Flexible · ask Kyle to suggest a time";
   go("checkout");
@@ -258,7 +218,7 @@ function contactNext() {
   if (slot) go("checkout");
   else
     document.querySelector("#time-error").textContent =
-      "Choose an arrival window, or view another sample week.";
+      "Enter your timing preference or ask Kyle to suggest a time.";
 }
 function advanceFit() {
   document.querySelector("#outside").textContent = zipError();
@@ -280,19 +240,16 @@ let active = "";
 function restore(c, t) {
   let key = c + "/" + t;
   if (key === active) return;
-  if (active) saved.set(active, { fit, slot, extra, week });
+  if (active) saved.set(active, { fit, slot });
   active = key;
-  ({ fit, slot, extra, week } = saved.get(key) || {
+  ({ fit, slot } = saved.get(key) || {
     fit: "",
     slot: "",
-    extra: false,
-    week: 0,
   });
 }
 
 let city = "",
   fit = "",
-  extra = false,
   slot = "";
 const root = document.querySelector("main");
 function go(page) {
@@ -337,12 +294,13 @@ function render() {
   if (requestedPage !== page && page !== "home") {
     history.replaceState(null, "", "#" + page + "/" + category + "/" + task);
   }
-  const [name, icon, base, desc, inc, exc, q, add, fee] = tasks[category][task];
-  const total = base + (extra ? fee : 0);
+  const [name, icon, base, desc, inc, exc, q] = tasks[category][task];
+  const duration = category === 0 && task === 2 ? "up to 60 minutes" : category === 2 || (category === 0 && task === 0) ? "60–75 minutes" : "45–60 minutes";
+  const total = base;
   const cards = services
     .map(
       ([n, ic, p, d], j) =>
-        `<button class="card" onclick="pick(${j})"><img alt="" src="assets/icons/${ic}.svg"><h3>${n}</h3><p>${j === 0 ? "Set up a computer, connect a printer or diagnose an issue." : d}</p><span class="price">${j === 0 ? "From " : ""}$${Math.min(...tasks[j].map((s) => s[2]))} <small>sample visit price</small> →</span></button>`,
+        `<button class="card" onclick="pick(${j})"><img alt="" src="assets/icons/${ic}.svg"><h3>${n}</h3><p>${j === 0 ? "Set up a computer, connect a printer or diagnose an issue." : d}</p><span class="price">${j === 0 ? "From " : ""}$${Math.min(...tasks[j].map((s) => s[2]))} <small>visit price</small> →</span></button>`,
     )
     .join("");
   if (page === "home") {
@@ -358,8 +316,8 @@ function render() {
     const brief = [
       [
         "One new PC or Mac",
-        "One printer, one computer",
-        "One issue · up to 45 minutes",
+        "One printer, up to two computers",
+        "One issue · up to 60 minutes",
       ],
       ["Pair one compatible device"],
       ["Set up one router"],
@@ -368,23 +326,23 @@ function render() {
     const cards = tasks[category]
       .map(
         ([title, ic, price], j) =>
-          `<button class="pick" aria-expanded="${!!selected && j === task}" onclick="choose(${j})"><img alt="" src="assets/icons/${ic}.svg"><b>${title}</b><small>${brief[category][j]}</small><span>$${price} sample</span></button>`,
+          `<button class="pick" aria-expanded="${!!selected && j === task}" onclick="choose(${j})"><img alt="" src="assets/icons/${ic}.svg"><b>${title}</b><small>${brief[category][j]}</small><span>$${price}</span></button>`,
       )
       .join("");
     const panel = guide
-      ? `<section class="scope"><h2>Find the right visit</h2><p>Compare the requirements for this category.</p>${tasks[category].map(([n, , , , , , question], j) => `<p><b>${n}</b> · ${question}<br>${prep[category][j]} <a href="#services/${category}/${j}">Review this service</a></p>`).join("")}<p></p><p>If the scope still looks uncertain, review it with Kyle before booking. This preview sends no request.</p><a href="#services/${category}">Back to choices</a></section>`
+      ? `<section class="scope"><h2>Find the right visit</h2><p>Compare the requirements for this category.</p>${tasks[category].map(([n, , , , , , question], j) => `<p><b>${n}</b> · ${question}<br>${prep[category][j]} <a href="#services/${category}/${j}">Review this service</a></p>`).join("")}<p></p><p><a href="https://www.serviceboost.co/request-help">Not sure? Ask Kyle</a> and agree on the scope and price before booking.</p><a href="#services/${category}">Back to choices</a></section>`
       : selected
-        ? `<section class="scope"><h2>${name}</h2><p>${desc}</p><div class="scope-grid"><div><h3>Included</h3><ul>${inc
+        ? `<section class="scope"><h2>${name}</h2><p>${desc}</p><p>Visit duration: ${duration}.</p><div class="scope-grid"><div><h3>Included</h3><ul>${inc
             .split("|")
             .map((x) => "<li>" + x + "</li>")
             .join(
               "",
-            )}</ul></div><div><h3>Outside scope</h3><p>${exc}</p></div></div>${add ? `<label><input type="checkbox" ${extra ? "checked" : ""} onchange="extra=this.checked;render()"> ${add} (+$${fee})</label>` : ""}<button onclick="go('fit')">Continue · $${total} sample</button></section>`
+            )}</ul></div><div><h3>Outside scope</h3><p>${exc}</p></div></div><button onclick="go('fit')">Continue · $${total}</button></section>`
         : "";
-    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>Select a service to see what Kyle can help with.</p><div class="picker">${cards}<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure</b><small>Get help choosing a visit</small></button></div>${panel}</section>`;
+    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>Select a service to see what Kyle can help with.</p><div class="picker">${cards}<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b><small>Get help choosing a visit</small></button></div>${panel}</section>`;
     return;
   }
-  const sum = `<aside><div class="kicker">Visit summary</div><h3>${name}</h3><p class="row"><span>One visit</span><b>$${base}</b></p>${extra ? '<p class="row"><span>' + add + "</span><b>$" + fee + "</b></p>" : ""}<div class="rule"></div><div class="row"><span>Sample total</span><strong>$${total}</strong></div>${city ? '<p class="zip-summary">ZIP ' + esc(city) + "</p>" : ""}${slot ? '<p class="slot-summary">' + slot + " · Pacific</p>" : ""}</aside>`;
+  const sum = `<aside><div class="kicker">Visit summary</div><h3>${name}</h3><p class="row"><span>One visit</span><b>$${base}</b></p><div class="rule"></div><div class="row"><span>Visit total</span><strong>$${total}</strong></div>${city ? '<p class="zip-summary">ZIP ' + esc(city) + "</p>" : ""}${slot ? '<p class="slot-summary">' + esc(slot) + " · Pacific</p>" : ""}</aside>`;
   let body = "";
   if (page === "detail") {
     location.replace("#services/" + category + "/" + task);
@@ -394,14 +352,14 @@ function render() {
     body = `<p class="kicker">Step 1 of 4 · Visit fit</p><h1>Check your setup</h1><label for="zip">Visit ZIP code</label><input class="entry" id="zip" name="zip" autocomplete="postal-code" aria-describedby="outside" inputmode="numeric" maxlength="5" value="${esc(city)}" oninput="zipChanged(this)"><p class="feedback" id="outside" role="status">${city ? zipError() : ""}</p><label for="fit">${q}</label><select id="fit" onchange="fit=this.value;if(fit!=='Yes')slot='';render()"><option value="">Choose an answer</option>${options(["Yes", "Not sure", "No"], fit)}</select>${fit && fit !== "Yes" ? `<p>${prep[category][task]} <a href="#services/${category}/guide">See setup guidance</a> or return to the choices.</p>` : ""}<p class="feedback" id="fit-error" role="status"></p><div class="actions"><button class="secondary" onclick="location.hash='services/'+category+'/'+task">Back</button><button id="nexttime" onclick="advanceFit()">Contact and visit address →</button></div>`;
   }
   if (page === "time") {
-    body = `<p class="kicker">Step 3 of 4 · Visit preference</p><h1>Choose a preferred arrival window</h1><p>Kyle will confirm timing separately. These are preferences, not available appointments. Pacific time · Illustrative visit duration: ${category === 0 && task === 2 ? "up to 45 minutes" : "about 45–60 minutes"}.</p><label for="week">Sample week</label><select id="week" onchange="changeWeek(this.value)">${[dateLabel(0), dateLabel(7), dateLabel(14)].map((w, j) => '<option value="' + j + '" ' + (week === j ? "selected" : "") + ">Week of " + w + "</option>").join("")}</select>${weeks[week].map((s) => '<label class="window"><input type="radio" name="slot" ' + (slot === s ? "checked" : "") + ' onchange="slot=this.value;render()" value="' + s + '"> ' + s + "</label>").join("") || '<p>No suggested windows this week. Choose another week or leave the timing open.</p><button class="secondary" onclick="changeWeek(2)">View next sample week</button><button class="secondary" onclick="useFlexibleTime()">Ask Kyle to suggest a time</button>'}<p id="time-error" role="status" class="feedback"></p><div class="actions"><button class="secondary" onclick="go('contact')">Back</button><button onclick="contactNext()">Review visit →</button></div>`;
+    body = `<p class="kicker">Step 3 of 4 · Visit preference</p><h1>Describe your preferred timing</h1><p>Kyle will confirm availability separately. Visit duration: ${duration}.</p><label for="timing">Timing preference (Pacific time)</label><input id="timing" class="entry" maxlength="160" value="${esc(slot)}" oninput="slot=this.value.trim()"><button class="secondary" onclick="useFlexibleTime()">Ask Kyle to suggest a time</button><p id="time-error" role="status" class="feedback"></p><div class="actions"><button class="secondary" onclick="go('contact')">Back</button><button onclick="contactNext()">Review visit →</button></div>`;
   }
   if (page === "contact") {
-    body = `<p class="kicker">Step 2 of 4 · Visit details</p><h1>Contact &amp; address</h1><p>Use fictional details for this preview.</p><div class="pair"><div>${field("person", "Name")}</div><div>${field("email", "Email", "email")}</div></div>${field("phone", "Phone (optional)", "tel")}${field("street", "Street address, including unit")}<div class="pair"><div>${field("town", "City")}</div><div><label>Visit ZIP code</label><p>${esc(city)}</p></div></div><a href="#fit/${category}/${task}">Edit visit ZIP</a>${field("arrival", "Arrival notes (optional)")}<div class="actions"><button class="secondary" onclick="go('fit')">Back</button><button id="review" onclick="validateContact()">Choose a preferred window →</button></div>`;
+    body = `<p class="kicker">Step 2 of 4 · Visit details</p><h1>Contact &amp; address</h1><p>Use fictional details for this preview.</p><div class="pair"><div>${field("person", "Name")}</div><div>${field("email", "Email", "email")}</div></div>${field("phone", "Phone (optional)", "tel")}${field("street", "Street address, including unit")}<div class="pair"><div>${field("town", "City")}</div><div><label>Visit ZIP code</label><p>${esc(city)}</p></div></div><a href="#fit/${category}/${task}">Edit visit ZIP</a>${field("arrival", "Arrival notes (optional)")}<div class="actions"><button class="secondary" onclick="go('fit')">Back</button><button id="review" onclick="validateContact()">Enter a timing preference →</button></div>`;
   }
   if (page === "checkout") {
-    body = `<p class="kicker">Step 4 of 4 · Request review</p><h1>Review your visit</h1><h3>${name}</h3><p>${desc}</p><p><b>Included</b> · ${inc.split("|").join(" · ")}</p><p><b>Outside scope</b> · ${exc}</p><div class="rule"></div><h3>Preferred arrival window</h3><p>${slot}, Pacific<br>${esc(contact.person)} · ${esc(contact.email)}<br>${esc(contact.street)}, ${esc(contact.town)}, CA ${esc(city)}</p><p><strong>Full illustrative price · $${total}</strong></p><p>Payment is due after the visit. Kyle will confirm accepted payment methods before you agree to the work.<br>Cancellation terms · Pending decision</p>${contact.phone ? "<p>Phone · " + esc(contact.phone) + "</p>" : ""}${contact.arrival ? "<p>Arrival · " + esc(contact.arrival) + "</p>" : ""}<div class="editlinks">${[
-      ["services", "Edit scope / add-on"],
+    body = `<p class="kicker">Step 4 of 4 · Request review</p><h1>Review your visit</h1><h3>${name}</h3><p>${desc}</p><p>Visit duration: ${duration}.</p><p><b>Included</b> · ${inc.split("|").join(" · ")}</p><p><b>Outside scope</b> · ${exc}</p><div class="rule"></div><h3>Preferred arrival window</h3><p>${esc(slot)}, Pacific<br>${esc(contact.person)} · ${esc(contact.email)}<br>${esc(contact.street)}, ${esc(contact.town)}, CA ${esc(city)}</p><p><strong>Fixed visit price · $${total}</strong></p><p>Payment is due after the visit. Kyle will confirm accepted payment methods before you agree to the work.<br>Cancellation terms · Pending decision</p>${contact.phone ? "<p>Phone · " + esc(contact.phone) + "</p>" : ""}${contact.arrival ? "<p>Arrival · " + esc(contact.arrival) + "</p>" : ""}<div class="editlinks">${[
+      ["services", "Edit service"],
       ["fit", "Edit ZIP / fit"],
       ["time", "Edit time"],
       ["contact", "Edit contact / address"],
@@ -424,9 +382,9 @@ function render() {
   }
   if (page === "done") {
     body =
-      '<h1>Preview complete</h1><p>No request was sent, appointment reserved, or payment collected. To contact Kyle, enter your details on the live request form.</p><a href="https://www.serviceboost.co/request-help">Start a real tech help request</a>';
+      `<h1>Preview complete</h1><p>No request was sent, appointment reserved, or payment collected. To contact Kyle, enter your details on the live request form.</p><a href="https://www.serviceboost.co/request-help?service=${category === 0 ? (task === 1 ? "printer" : "computer") : ["", "smart-home", "wifi", "mobile"][category]}">Start a real tech help request</a>`;
   }
-  root.innerHTML = `<div class="path"><a href="#home">All services</a> / <a href="#services/${category}">${services[category][0]}</a> / ${name} · ${{ detail: "Scope", fit: "Visit fit", time: "Appointment", contact: "Contact and address", checkout: "Checkout", done: "Complete" }[page]}</div><div class="mobile-total"><b>${name}</b><span>$${total} sample</span></div><div class="layout"><section class="panel">${body}</section>${sum}</div>`;
+  root.innerHTML = `<div class="path"><a href="#home">All services</a> / <a href="#services/${category}">${services[category][0]}</a> / ${name} · ${{ detail: "Scope", fit: "Visit fit", time: "Appointment", contact: "Contact and address", checkout: "Checkout", done: "Complete" }[page]}</div><div class="mobile-total"><b>${name}</b><span>$${total}</span></div><div class="layout"><section class="panel">${body}</section>${sum}</div>`;
 }
 addEventListener("hashchange", () => {
   render();
