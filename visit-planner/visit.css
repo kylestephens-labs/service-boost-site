@@ -618,13 +618,8 @@ body:has(.selection) .home-tail {
   width: 30px;
   height: 30px;
 }
-.pick small,
 .pick span {
   grid-column: 1/-1;
-}
-.pick small {
-  font-weight: 400;
-  color: #46516b;
 }
 .pick span {
   color: #1649b8;
@@ -670,9 +665,6 @@ body:has(.selection) .home-tail {
   }
   .pick {
     grid-template-columns: 30px 1fr auto;
-  }
-  .pick small {
-    grid-column: 2/-1;
   }
   .pick span {
     grid-column: 3;
