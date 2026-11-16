@@ -190,10 +190,12 @@ test("four price-free category cards lead directly to priced packages", () => {
   const home = visit("#home");
   assert.equal((home.match(/class="card"/g) || []).length, 4);
   assert.doesNotMatch(home, /\$\d/);
-  assert.match(home, /Fixed-price services · Pay after your visit/);
+  assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
   for (const [category, prices] of [[149,129,149],[129],[149],[129]].entries()) {
     const choices = visit("#services/" + category);
     assert.deepEqual([...choices.matchAll(/<span>\$(\d+)<\/span>/g)].map(m => Number(m[1])), prices);
+    assert.match(choices, /Fixed-price services · Pay after your visit/);
+    assert.match(visit("#fit/" + category + "/0"), /Visit summary[\s\S]*Fixed-price services · Pay after your visit<\/p><\/aside>/);
     assert.doesNotMatch(choices, /<input/);
   }
 });

@@ -223,10 +223,6 @@ button,
   padding: 7px;
   border-radius: 9px;
 }
-.card p {
-  font-weight: 400;
-  font-size: 15px;
-}
 .category-arrow { color: #1944ab; }
 .quick {
   background: #162554;
@@ -246,7 +242,7 @@ button,
 }
 .menu .card {
   display: grid;
-  grid-template-columns: 45px 1fr 1.2fr auto;
+  grid-template-columns: 45px 1fr auto;
   align-items: center;
 }
 .path {
@@ -380,9 +376,6 @@ select:focus-visible {
   }
   .menu .card {
     grid-template-columns: 35px 1fr auto;
-  }
-  .menu .card p {
-    grid-column: 2/-1;
   }
   .menu .category-arrow {
     grid-column: 3;
