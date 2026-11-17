@@ -21,7 +21,7 @@ document.addEventListener("click", event => {
   });
 });
 
-addEventListener("scroll", updateServiceShortcut, { passive: true });
+document.addEventListener("scroll", updateServiceShortcut, { passive: true, capture: true });
 addEventListener("hashchange", updateServiceShortcut);
 addEventListener("pageshow", updateServiceShortcut);
 addEventListener("resize", updateServiceShortcut);

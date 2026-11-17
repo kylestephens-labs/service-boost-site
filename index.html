@@ -37,21 +37,14 @@
 </script>
 </head>
 <body>
+    <div class="home-scroll">
     <!-- site-header -->
-    <a class="service-shortcut" href="/#services" hidden>Choose a service</a>
+    <div class="mobile-header"><a class="mobile-brand" href="/" aria-label="Service Boost home"><img src="/assets/brand.svg" width="32" height="32" alt=""><span>Service Boost</span></a><a class="mobile-call" href="tel:+19282257944">Call Kyle</a><a class="mobile-text" href="sms:+19282257944">Text Kyle</a><details class="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation"><a href="/">Home</a><a href="/partners">For IT providers</a></nav></details></div>
     <!-- preview-notice -->
     <main id="app"></main>
     <div class="home-tail">
       <section id="tech-faq" class="tech-faq" aria-labelledby="tech-faq-title">
         <h2 id="tech-faq-title">Frequently asked questions</h2>
-        <details>
-          <summary>What can you help me with?</summary>
-          <p>I help set up computers, reconnect printers, configure routers, set up phones and tablets, and connect compatible smart-home devices. Choose a category to see the available services and what’s included. Not sure which one fits? <a href="/request-help">Ask Kyle</a>.</p>
-        </details>
-        <details>
-          <summary>Do you help homes and small businesses?</summary>
-          <p>Yes. I help homes, home offices and small businesses. If your employer manages the equipment, you’ll need your IT team’s authorization before I make changes.</p>
-        </details>
         <details>
           <summary>How much does support cost?</summary>
           <p>Choose a service to see its fixed price, included work and exclusions before requesting a visit. If you need work outside the selected package, we’ll agree on the scope and price before proceeding.</p>
@@ -61,16 +54,29 @@
           <p>Payment is due after your visit. You don’t pay when you submit your request. I’ll confirm available payment options before your appointment.</p>
         </details>
         <details>
-          <summary>Do you come to my home?</summary>
-          <p>Yes. I provide on-site help for homes and home offices in the communities listed below. I’ll confirm your full address before confirming your visit.</p>
-        </details>
-        <details>
           <summary>Which cities do you serve?</summary>
           <p>I serve Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton and San Ramon. I confirm your full address before the visit is booked.</p>
         </details>
         <details>
           <summary>How soon can I get help, and how long will it take?</summary>
           <p>Each service shows its estimated visit length. Choose your preferred timing when you request a visit, and I’ll contact you to confirm availability and an arrival window. Your requested time isn’t reserved until I confirm it.</p>
+        </details>
+        <details>
+          <summary>What if you can’t resolve the issue?</summary>
+          <p>I’ll explain what I found and recommend next steps. The $229 troubleshooting visit covers diagnosis and up to 60 minutes working on one computer or printer issue, even if it can’t be fully resolved. Internal hardware repairs, data recovery, electrical work and fixed wiring aren’t included. We’ll agree on any additional work and its price before proceeding.</p>
+        </details>
+        <details class="more-faq"><summary>More FAQs</summary>
+        <details>
+          <summary>What can you help me with?</summary>
+          <p>I help set up computers, reconnect printers, configure routers, set up phones and tablets, and connect compatible smart-home devices. Choose a category to see the available services and what’s included. Not sure which one fits? <a href="/request-help">Ask Kyle</a>.</p>
+        </details>
+        <details>
+          <summary>Do you help homes and small businesses?</summary>
+          <p>Yes. I help homes, home offices and small businesses. If your employer manages the equipment, you’ll need your IT team’s authorization before I make changes.</p>
+        </details>
+        <details>
+          <summary>Do you come to my home?</summary>
+          <p>Yes. I provide on-site help for homes and home offices in the communities listed under “Which cities do you serve?”. I’ll confirm your full address before confirming your visit.</p>
         </details>
         <details>
           <summary>Can I cancel or reschedule?</summary>
@@ -84,9 +90,6 @@
           <summary>Will you need my passwords or access to my files?</summary>
           <p>Please don’t send passwords in the request form, by email or by text. You enter your own credentials. We’ll discuss any access needed for the agreed work, and you should back up important files before changes are made.</p>
         </details>
-        <details>
-          <summary>What if you can’t resolve the issue?</summary>
-          <p>I’ll explain what I found and recommend next steps. The $229 troubleshooting visit covers diagnosis and up to 60 minutes working on one computer or printer issue, even if it can’t be fully resolved. Internal hardware repairs, data recovery, electrical work and fixed wiring aren’t included. We’ll agree on any additional work and its price before proceeding.</p>
         </details>
       </section>
       <section class="closing-cta" aria-labelledby="closing-title">
@@ -98,6 +101,8 @@
       <p>Service Boost · Walnut Creek, California.</p>
       <a href="mailto:kyle@serviceboost.co">kyle@serviceboost.co</a>
     </footer>
+    </div>
+    <a class="service-shortcut" href="/#services" hidden>Choose a service</a>
     <script src="/config.js"></script>
     <script src="/intake.js"></script>
     <script src="/smart-home.js"></script>
