@@ -305,7 +305,7 @@ async function finishVisit() {
   }
 }
 function serviceCard(title, icon, priceLabel, expanded, action) {
-  return `<button class="pick" aria-expanded="${!!expanded}" onclick="${action}"><img alt="" src="assets/icons/${icon}.svg"><b>${title}</b><span>${priceLabel}</span></button>`;
+  return `<button class="pick" aria-expanded="${!!expanded}" onclick="${expanded ? "location.hash='services/'+category" : action}"><img alt="" src="assets/icons/${icon}.svg"><b>${title}</b><span>${priceLabel}</span></button>`;
 }
 function render() {
   let [page, c, t] = location.hash.slice(1).split("/");
@@ -366,7 +366,7 @@ function render() {
     const cards = tasks[category].map(([title, icon, price], j) => {
       const open = selected && j === task;
       return serviceCard(category === 0 ? (computerTitles[j] || title) : title, icon,
-        "$" + price, open, "choose(" + j + ")") + (category === 0 && open ? panel : "");
+        "$" + price, open, "choose(" + j + ")") + (open ? panel : "");
     });
     const guideCard = category === 0 ? "" : `<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b></button>`;
     let picker = `<div class="picker${category === 0 ? " computer-packages" : ""}">${cards.join("")}${guideCard}</div>`;
@@ -387,7 +387,7 @@ function render() {
       return;
     }
     const askKyle = category === 0 ? '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>' : "";
-    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p>${picker}${category !== 0 || guide ? panel : ""}${askKyle}</section>`;
+    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p>${picker}${guide ? panel : ""}${askKyle}</section>`;
     return;
   }
   const sum = `<aside><div class="kicker">Visit summary</div><h3>${name}</h3><p>${duration}</p><p class="row"><span>One visit</span><b>$${base}</b></p><div class="rule"></div><div class="row"><span>Visit total</span><strong>$${total}</strong></div>${city ? '<p class="zip-summary">ZIP ' + esc(city) + "</p>" : ""}<p class="slot-summary" ${slot ? "" : "hidden"}>${slot ? esc(slot) + " · Pacific" : ""}</p><p>${paymentNote}</p></aside>`;
@@ -397,7 +397,7 @@ function render() {
     return;
   }
   if (page === "fit") {
-    body = `<p class="kicker">Step 1 of 4 · Visit fit</p><h1>Check your setup</h1><p>Serving ${cities.join(", ")}. Kyle will confirm coverage using your full address.</p><label for="zip">Visit ZIP code</label><input class="entry" id="zip" name="zip" autocomplete="postal-code" aria-describedby="outside" inputmode="numeric" maxlength="5" value="${esc(city)}" oninput="zipChanged(this)"><p class="feedback" id="outside" role="status">${city ? zipError() : ""}</p><label for="fit">${q}</label><select id="fit" onchange="fit=this.value;if(fit!=='Yes')slot='';render()"><option value="">Choose an answer</option>${options(["Yes", "Not sure", "No"], fit)}</select>${fit && fit !== "Yes" ? `<p>${prep[category][task]} <a href="#services/${category}/guide">See setup guidance</a> or return to the choices.</p>` : ""}<p class="feedback" id="fit-error" role="status"></p><div class="actions"><button class="secondary" onclick="location.hash='services/'+category+'/'+task">Back</button><button id="nexttime" onclick="advanceFit()">Contact and visit address →</button></div>`;
+    body = `<p class="kicker">Step 1 of 4 · Visit fit</p><h1>Check your setup</h1><p>On-site help in Walnut Creek and nearby communities. Kyle confirms coverage using your full address.</p><label for="zip">Visit ZIP code</label><input class="entry" id="zip" name="zip" autocomplete="postal-code" aria-describedby="outside" inputmode="numeric" maxlength="5" value="${esc(city)}" oninput="zipChanged(this)"><p class="feedback" id="outside" role="status">${city ? zipError() : ""}</p><details class="area-list"><summary>View service-area cities</summary><p>${cities.join(", ")}</p></details><label for="fit">${q}</label><select id="fit" onchange="fit=this.value;if(fit!=='Yes')slot='';render()"><option value="">Choose an answer</option>${options(["Yes", "Not sure", "No"], fit)}</select>${fit && fit !== "Yes" ? `<p>${prep[category][task]} <a href="#services/${category}/guide">See setup guidance</a> or return to the choices.</p>` : ""}<details class="fit-scope"><summary>Review included work and visit terms</summary><p>${desc}</p><p>${inc.split("|").join(" · ")}</p><p>Outside scope · ${exc}</p></details><p class="owner-note">You’ll work directly with Kyle. Next, add your contact details and visit address. Kyle confirms your appointment request.</p><p class="feedback" id="fit-error" role="status"></p><div class="actions"><button class="secondary" onclick="location.hash='services/'+category+'/'+task">Back</button><button id="nexttime" onclick="advanceFit()">Contact and visit address →</button></div>`;
   }
   if (page === "time") {
     body = `<p class="kicker">Step 3 of 4 · Visit preference</p><h1>Describe your preferred timing</h1><p>Kyle will confirm availability separately. Visit duration: ${duration}.</p><label for="timing">Timing preference (Pacific time)</label><input id="timing" class="entry" maxlength="160" value="${esc(slot)}" oninput="timingChanged(this.value)"><button class="secondary" onclick="useFlexibleTime()">Ask Kyle to suggest a time</button><p id="time-error" role="status" class="feedback"></p><div class="actions"><button class="secondary" onclick="go('contact')">Back</button><button onclick="contactNext()">Review visit →</button></div>`;
@@ -433,7 +433,7 @@ function render() {
     body =
       `<h1>Preview complete</h1><p>Sending is disabled. No appointment has been reserved or payment collected.</p><h2>Prepared inquiry</h2><p>${esc(contact.person)} · ${esc(contact.email)}</p><p>${esc(visitPayload().problem).replaceAll("\n", "<br>")}</p><a href="#checkout/${category}/${task}">Return to review</a>`;
   }
-  root.innerHTML = `<div class="path"><a href="#home">All services</a> / <a href="#services/${category}">${services[category][0]}</a> / ${name} · ${{ detail: "Scope", fit: "Visit fit", time: "Appointment", contact: "Contact and address", checkout: "Checkout", done: "Complete" }[page]}</div><div class="mobile-total"><b>${name}</b><span>$${total}</span></div><div class="layout"><section class="panel">${body}</section>${sum}</div>`;
+  root.innerHTML = `<div class="path"><a href="#home">All services</a> / <a href="#services/${category}">${services[category][0]}</a> / ${name} · ${{ detail: "Scope", fit: "Visit fit", time: "Appointment", contact: "Contact and address", checkout: "Checkout", done: "Complete" }[page]}</div><div class="mobile-total"><b>${name}</b><span>$${total}<small>Pay after your visit</small></span></div><div class="layout"><section class="panel">${body}</section>${sum}</div>`;
 }
 function renderRoute() {
   render();

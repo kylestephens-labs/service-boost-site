@@ -35,6 +35,6 @@ function renderSmartHomeMenu(selection, panel) {
   return '<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>Smart home</h1><p>' + paymentNote + '</p>'
     + group("Device pairing", packages.slice(0, 1))
     + group("Device support", packages.slice(1))
-    + group("Installations · Unavailable for booking", installationCards)
+    + '<details class="unavailable-services"' + (installations.some(([id]) => id === selection) ? ' open' : '') + '><summary>View installations · Unavailable for booking</summary>' + group("Installation details", installationCards) + '</details>'
     + '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p></section>';
 }
