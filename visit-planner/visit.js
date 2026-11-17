@@ -433,7 +433,7 @@ function render() {
     body =
       `<h1>Preview complete</h1><p>Sending is disabled. No appointment has been reserved or payment collected.</p><h2>Prepared inquiry</h2><p>${esc(contact.person)} · ${esc(contact.email)}</p><p>${esc(visitPayload().problem).replaceAll("\n", "<br>")}</p><a href="#checkout/${category}/${task}">Return to review</a>`;
   }
-  root.innerHTML = `<div class="path"><a href="#home">All services</a> / <a href="#services/${category}">${services[category][0]}</a> / ${name} · ${{ detail: "Scope", fit: "Visit fit", time: "Appointment", contact: "Contact and address", checkout: "Checkout", done: "Complete" }[page]}</div><div class="mobile-total"><b>${name}</b><span>${total}<small>Pay after your visit</small></span></div><div class="layout"><section class="panel">${body}</section>${sum}</div>`;
+  root.innerHTML = `<div class="path"><a href="#home">All services</a> / <a href="#services/${category}">${services[category][0]}</a> / ${name} · ${{ detail: "Scope", fit: "Visit fit", time: "Appointment", contact: "Contact and address", checkout: "Checkout", done: "Complete" }[page]}</div><div class="mobile-total"><b>${name}</b><span>$${total}<small>Pay after your visit</small></span></div><div class="layout"><section class="panel">${body}</section>${sum}</div>`;
 }
 function renderRoute() {
   render();
