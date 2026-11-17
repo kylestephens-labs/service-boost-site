@@ -338,7 +338,7 @@ function render() {
     .join("");
   if (page === "home") {
     root.innerHTML =
-      `<section class="hybrid-hero"><div><h1>Home tech help, <span>made simple.</span></h1><p>On-site help in Walnut Creek and nearby communities.</p><button id="hero-service-cta">Choose a service</button></div></section>` +
+      `<section class="hybrid-hero"><div><h1>Get your tech working <span>&amp; get back to what matters.</span></h1><p>Local onsite tech help for your home or home office.</p><button id="hero-service-cta">Choose a service</button></div></section>` +
       `<div id="services" class="bar"><h2 tabindex="-1">Services</h2></div><div id="pricing" class="cards">${cards}</div><p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>
        <section id="about" class="founder"><img src="assets/kyle-stephens.png" alt="Kyle Stephens"><div><h2>Hi, I’m Kyle.</h2><p>I own Service Boost in Walnut Creek. You’ll work directly with me.</p></div></section>
        <section id="process" aria-label="How to book a visit"><ol class="booking-steps">
