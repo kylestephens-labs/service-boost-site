@@ -16,7 +16,7 @@ Approved packages for review and release:
 | $229 | Diagnose one computer or printer issue. Time is paid even if unresolved. Explain findings and next steps. |
 | $229 | Help with one existing email account or one sending or receiving issue. Excludes password recovery, mailbox migration and server administration. |
 | $229 | Install and configure one licensed app. Excludes custom integrations and business deployments. |
-| $229 | Practice one everyday computer task. Excludes device repair and ongoing support. |
+| $229 | Practice one everyday computer task in a 60-minute lesson. Excludes device repair and ongoing support. |
 | Request a quote | Copy one selected folder to one working drive. Excludes full-device migration, damaged drives and data recovery. |
 
  Extra work requires prior approval. Ring mounting requires separate scope and pricing. No reservation or payment transaction runs on submission.

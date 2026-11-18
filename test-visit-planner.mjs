@@ -79,7 +79,7 @@ test("review shows the fixed package price and ZIP edits invalidate timing", () 
   assert.match(visit("#checkout/0/1"),/Check your setup/);
 });
 
-test("all packages display approved prices and scopes without service time limits", () => {
+test("all packages display approved prices and only the computer lesson has a duration", () => {
   const { visit, run } = planner();
   for (const [path, price] of [
     ["0/0",229], ["0/1",199], ["0/2",229],
@@ -88,9 +88,11 @@ test("all packages display approved prices and scopes without service time limit
   ]) {
     const html = visit("#services/" + path);
     assert.ok(html.includes("Continue · $" + price + "</button>"));
-    assert.doesNotMatch(html, /minutes|Visit duration/);
+    if (path === "0/5") assert.match(html, /60-minute lesson/);
+    else assert.doesNotMatch(html, /minutes?|Visit duration/);
     assert.ok(run("visitPayload().problem").includes("$" + price));
-    assert.doesNotMatch(run("visitPayload().problem"), /minutes|Visit duration/);
+    if (path === "0/5") assert.match(run("visitPayload().problem"), /60-minute lesson/);
+    else assert.doesNotMatch(run("visitPayload().problem"), /minutes?|Visit duration/);
     assert.doesNotMatch(html, /type="checkbox"/);
     if (path === "0/2") assert.match(html, /even if the issue remains unresolved.*approval before any extra work/);
   }

@@ -80,7 +80,7 @@ tasks[0].push(
   ],
   ["Install and set up software", "device-laptop", 229, "Install one licensed app on one compatible computer.", "Install the app|Apply basic settings|Check that it opens", "Custom integrations and business deployments", "Do you have the license and a compatible computer?"],
   ["Set up or troubleshoot email", "message-circle", 229, "Connect one existing account in one mail app or investigate one sending or receiving issue.", "You sign in yourself|Check the account setup or investigate the issue", "Password recovery, mailbox migration and mail-server administration", "Can you sign in to the existing account?"],
-  ["Get a personal computer lesson", "user", 229, "Practice one everyday task on your computer.", "Practice the task together|Take away a short set of steps to repeat", "Device repair and ongoing support", "Do you have access to your computer and one task to practice?"],
+  ["Get a personal computer lesson", "user", 229, "Practice one everyday task on your computer in a 60-minute lesson.", "Practice the task together|Take away a short set of steps to repeat", "Device repair and ongoing support", "Do you have access to your computer and one task to practice?"],
 );
 let category = 0,
   task = 0;
