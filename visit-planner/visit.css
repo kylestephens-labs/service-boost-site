@@ -905,8 +905,19 @@ body:has(#hero-service-cta) main { min-height: 0; padding-block: 0; }
   .layout .pair { grid-template-columns:1fr; }
 }
 @media(max-width:360px) { .mobile-header { gap:8px; padding-inline:12px; } }
-.selection .pick::after { content:"+"; grid-column:3; grid-row:1; font-size:1.25rem; color:#224cc2; }
-.selection .pick[aria-expanded="true"]::after { content:"−"; }
+.selection .pick::after {
+  content:"";
+  grid-column:3;
+  grid-row:1;
+  justify-self:center;
+  align-self:center;
+  width:.5rem;
+  height:.5rem;
+  border-right:2px solid #224cc2;
+  border-bottom:2px solid #224cc2;
+  transform:translateY(-.15rem) rotate(45deg);
+}
+.selection .pick[aria-expanded="true"]::after { transform:translateY(.15rem) rotate(225deg); }
 .selection .picker .pick { grid-template-columns:minmax(0,1fr) fit-content(35%) 1rem; }
 .unavailable-services { margin:2rem 0; padding:1rem; background:#f4f5f7; border-radius:8px; }
 .unavailable-services > summary { cursor:pointer; min-height:44px; padding:.5rem 0; font-weight:700; }
