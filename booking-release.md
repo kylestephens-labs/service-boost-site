@@ -15,9 +15,9 @@ Use the existing public Service Boost event. Its verified question order is addr
 - Safe error/contact fallback, correct keyboard/mobile behavior, no customer data in application storage.
 - Exact-head Validate CI and independent review before merge; verify deployed commit and live page separately.
 
-## Launch blocker
+## Scheduling decision
 
-November 18 public inspection still offered November 19 at 17:00 Pacific, conflicting with LaDonna's agreed 17:00–18:00 window. Reconcile the already-authorized calendar entry and verify the slot disappears before releasing live scheduling.
+On November 18, the user explicitly accepted the existing appointment overlap risk and instructed implementation, merge and deployment without reconciling that calendar entry. Calendar availability settings are outside this release.
 
 ## NOT_PROVEN
 

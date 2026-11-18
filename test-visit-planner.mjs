@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { spawnSync } from "node:child_process";
 import vm from "node:vm";
 
 test("service shortcut focuses the heading and honors the user's motion preference", () => {
@@ -36,47 +35,94 @@ test("service shortcut focuses the heading and honors the user's motion preferen
 function planner(globals = {}) {
   const main = { innerHTML: "" };
   const ctx = vm.createContext({
-    AbortSignal, ...globals,
+    URL, window: { SERVICE_BOOST_BOOKING_ENABLED: false }, ...globals,
     location: { hash: "", origin: globals.origin || "http://localhost" },
     history: { replaceState(_state, _title, hash) { ctx.location.hash = hash; } },
     document: {
-      body: { classList: { add() {} } },
+      body: { classList: { add() {}, toggle() {} } },
       querySelector: selector => selector === "#proposed-computer-services" ? null : main,
       querySelectorAll: () => [],
     },
     scrollTo() {}, addEventListener() {},
   });
   const run = (code) => vm.runInContext(code, ctx);
-  run(readFileSync(new URL("./visit-planner/intake.js", import.meta.url), "utf8"));
+  run(readFileSync(new URL("./visit-planner/booking.js", import.meta.url), "utf8"));
   run(readFileSync(new URL("./visit-planner/smart-home.js", import.meta.url), "utf8"));
   run(readFileSync(new URL("./visit-planner/wifi-menu.js", import.meta.url), "utf8"));
   run(readFileSync(new URL("./visit-planner/visit.js", import.meta.url), "utf8"));
   return { run, main, visit: (route) => {ctx.location.hash = route; run("render()"); return main.innerHTML;} };
 }
 
-test("a preference requires an eligible setup and a visit address matching the ZIP", () => {
-  const {run,visit} = planner();
-  assert.match(visit("#time/0/1"), /Check your setup/);
-  assert.equal(run("location.hash"), "#fit/0/1");
-  run("city='94599'; fit='Yes'");
-  assert.match(visit("#time/0/1"), /Contact &amp; address/);
-  run("Object.assign(contact,{person:'Avery Example',email:'avery@example.invalid',street:'100 Example Lane',town:''})");
-  assert.match(visit("#checkout/0/1"), /Contact &amp; address/);
-  run("contact.town='Walnut Creek'");
-  assert.match(visit("#checkout/0/1"), /Describe your preferred timing/);
-  assert.equal(run("location.hash"), "#time/0/1");
+test("legacy visit links retain their selection and enter one non-sending review flow", () => {
+  const {visit, run} = planner();
+  for (const route of ["book", "fit", "contact", "time", "checkout", "done"]) {
+    const html = visit("#" + route + "/0/1");
+    assert.match(html, /Printer setup or reconnection/);
+    assert.match(html, /<strong>\$199<\/strong>/);
+    assert.match(html, /Review preview: scheduling is disabled/);
+    assert.doesNotMatch(html, /<iframe|booking-widget|href="https:\/\/calendly|Step \d|Send visit request/);
+    if (route !== "book") assert.equal(run("location.hash"), "#book/0/1");
+  }
+  for (const route of ["#book/0/999", "#book/1/doorbell-installation", "#book/2/cabling", "#book/0/folder", "#book/-1/0", "#book/0/NaN"]) {
+    assert.doesNotMatch(visit(route), /id="calendar-title"|booking-widget/);
+  }
 });
 
-test("review shows the fixed package price and ZIP edits invalidate timing", () => {
-  const {run,visit} = planner();
-  visit("#services/0/1");
-  run("city='94596';fit='Yes';Object.assign(contact,{person:'Avery Example',email:'avery@example.invalid',street:'100 Example Lane',town:'Walnut Creek'});useFlexibleTime()");
-  const review = visit("#checkout/0/1");
-  assert.match(review, /Fixed visit price · \$199/);
-  assert.match(review,/Payment is due after the visit/);
-  run("zipChanged({value:'123'})");
-  assert.equal(run("slot"),"");
-  assert.match(visit("#checkout/0/1"),/Check your setup/);
+test("provider context preserves price, scope and diagnostic terms without contact data", () => {
+  const {visit, run} = planner();
+  visit("#book/0/2");
+  const url = new URL(run('bookingURL(tasks[category][task], "0/2")'));
+  assert.equal(url.origin, "https://calendly.com");
+  assert.equal(url.pathname, "/kyle-serviceboost/30min");
+  assert.equal(url.searchParams.get("utm_content"), "service-0-2");
+  assert.equal(url.searchParams.get("timezone"), "America/Los_Angeles");
+  for (const term of ["$229", "even if the issue remains unresolved", "Included:", "Outside scope:", "Pay after your visit"]) {
+    assert.ok(url.searchParams.get("a3").includes(term));
+  }
+  assert.equal(url.searchParams.has("email"), false);
+  assert.equal(url.searchParams.has("name"), false);
+  assert.ok(!run('bookingURL(tasks[category][task], "0/2")').includes("+"));
+  const html = visit("#book/0/2");
+  assert.ok(html.indexOf("even if the issue remains unresolved") < html.indexOf("<details"));
+});
+
+test("delayed provider load cannot mount an obsolete service and failures keep a help path", async () => {
+  const {run, visit, main} = planner();
+  const mounts = [];
+  const scripts = [];
+  let host;
+  run("window.SERVICE_BOOST_BOOKING_ENABLED = true");
+  run("document.createElement = () => ({remove(){}})");
+  run("document.head = {append: script => captureScript(script)}");
+  run("document.getElementById = () => currentHost()");
+  // Inject only the external boundary; use the real loading and rendering code.
+  run("window.Calendly = undefined");
+  const first = {isConnected:true, replaceChildren(){}, querySelector(){return null;}};
+  host = first;
+  // Functions supplied through the VM retain access to the test's boundary state.
+  run("globalThis.installHooks = (capture, current) => {globalThis.captureScript=capture;globalThis.currentHost=current}");
+  run("installHooks")((script) => scripts.push(script), () => host);
+  visit("#book/0/0");
+  first.isConnected = false;
+  host = {isConnected:true, replaceChildren(){}, querySelector(){return null;}};
+  visit("#book/0/1");
+  assert.equal(scripts.length, 1);
+  run("window.Calendly = {initInlineWidget: options => captureMount(options)}");
+  run("globalThis.installMount = callback => {globalThis.captureMount=callback}");
+  run("installMount")(options => mounts.push(options));
+  scripts[0].onload();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(mounts.length, 1);
+  assert.equal(mounts[0].parentElement, host);
+  assert.match(new URL(mounts[0].url).searchParams.get("a3"), /Printer setup or reconnection/);
+  assert.match(main.innerHTML, /Open scheduling in a new tab/);
+
+  run("window.Calendly = undefined; calendlyScript = null");
+  visit("#book/3/0");
+  scripts[1].onerror();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.match(host.innerHTML, /calendar could not load/);
+  assert.match(main.innerHTML, /Not sure\? Ask Kyle/);
 });
 
 test("all packages display approved prices and only the computer lesson has a duration", () => {
@@ -90,97 +136,12 @@ test("all packages display approved prices and only the computer lesson has a du
     assert.ok(html.includes("Continue · $" + price + "</button>"));
     if (path === "0/5") assert.match(html, /60-minute lesson/);
     else assert.doesNotMatch(html, /minutes?|Visit duration/);
-    assert.ok(run("visitPayload().problem").includes("$" + price));
-    if (path === "0/5") assert.match(run("visitPayload().problem"), /60-minute lesson/);
-    else assert.doesNotMatch(run("visitPayload().problem"), /minutes?|Visit duration/);
+    assert.ok(run("bookingContext(tasks[category][task])").includes("$" + price));
+    if (path === "0/5") assert.match(run("bookingContext(tasks[category][task])"), /60-minute lesson/);
+    else assert.doesNotMatch(run("bookingContext(tasks[category][task])"), /minutes?|Visit duration/);
     assert.doesNotMatch(html, /type="checkbox"/);
     if (path === "0/2") assert.match(html, /even if the issue remains unresolved.*approval before any extra work/);
   }
-});
-test("preview keeps the selected package and updates timing without transmitting", async () => {
-  const {run, main, visit} = planner({ fetch() { assert.fail("unexpected network call"); } });
-  visit("#services/0/2");
-  run("city='94596';fit='Yes';Object.assign(contact,{person:'QA Example',email:'qa@example.invalid',street:'100 Example Lane',town:'Walnut Creek',arrival:'TEST ONLY'});timingChanged('Tuesday morning')");
-  assert.equal(main.textContent, "Tuesday morning · Pacific");
-  run("timingChanged('')");
-  assert.equal(main.hidden, true);
-  run("timingChanged('Friday afternoon')");
-  assert.equal(main.hidden, false);
-  assert.equal(main.textContent, "Friday afternoon · Pacific");
-  await run("finishVisit()");
-  const done = visit("#done/0/2");
-  for (const expected of ["$229", "even if the issue remains unresolved", "100 Example Lane", "Friday afternoon", "TEST ONLY", "Sending is disabled"])
-    assert.ok(done.includes(expected), expected);
-
-  const payload = run("visitPayload()");
-  const python = `import json, sys
-from unittest.mock import patch
-from backend import app
-with patch.object(app.smtplib, 'SMTP') as relay:
-    smtp = relay.return_value.__enter__.return_value
-    smtp.send_message.return_value = {}
-    app.send_quote(app.validate(json.load(sys.stdin)))
-    print(smtp.send_message.call_args.args[0].get_content())`;
-  const result = spawnSync("python3", ["-c", python], {
-    cwd: new URL(".", import.meta.url), input: JSON.stringify(payload), encoding: "utf8",
-    env: { ...process.env, PYTHONPATH: "backend" },
-  });
-  assert.equal(result.status, 0, result.stderr);
-  assert.ok(result.stdout.includes(payload.problem));
-});
-
-test("intake retries explicitly, retains payload and suppresses duplicate sends", async () => {
-  let release;
-  const calls = [];
-  const {run} = planner({ transport(url, options) {
-    calls.push({url, options});
-    return new Promise(resolve => { release = resolve; });
-  } });
-  run("const candidate = createVisitIntake('/quote', transport); const data = {problem:'TEST ONLY'}");
-  const pending = run("candidate.submit(data)");
-  assert.equal(await run("candidate.submit(data)"), "sending");
-  release({status:502, json:async () => ({message:"unconfirmed"})});
-  assert.equal(await pending, "unconfirmed");
-  const retry = run("candidate.submit(data)");
-  release({status:200, json:async () => ({message:"Your request has been sent. Kyle will follow up using your preferred reply method."})});
-  assert.equal(await retry, "accepted");
-  assert.equal(await run("candidate.submit(data)"), "accepted");
-  assert.equal(calls.length, 2);
-  assert.equal(calls[0].options.body, calls[1].options.body);
-  assert.equal(calls[1].options.method, "POST");
-  const other = run("candidate.submit({problem:'Second fictional package'})");
-  release({status:200, json:async () => ({message:"Your request has been sent. Kyle will follow up using your preferred reply method."})});
-  assert.equal(await other, "accepted");
-  assert.equal(await run("candidate.submit(data)"), "accepted");
-  assert.equal(calls.length, 3);
-});
-test("live form submits using the chosen reply method with manual address and timing confirmation", async () => {
-  const calls = [];
-  const { run, main, visit } = planner({
-    origin: "https://www.serviceboost.co",
-    window: {
-      SERVICE_BOOST_QUOTE_ENDPOINT: "https://quotes.serviceboost.co/quote",
-      async fetch(url, options) {
-        calls.push(JSON.parse(options.body));
-        return {status:200, json:async () => ({message:"Your request has been sent. Kyle will follow up using your preferred reply method."})};
-      },
-    },
-  });
-  visit("#services/0/1");
-  run("city='94599';fit='Yes';slot='Friday afternoon';Object.assign(contact,{method:'text',person:'Example',street:'100 Example Lane',town:'Walnut Creek'})");
-  assert.equal(run("hasContact()"), false);
-  run("contact.phone='925-555-0100'");
-  run("contact.email='jane@example.c'");
-  assert.equal(run("hasContact()"), false);
-  run("contact.email=''");
-  const html = visit("#checkout/0/1");
-  for (const expected of ["There is no fee", "by text", "pending until Kyle accepts", "payment options before the visit","Send visit request"]) assert.ok(html.includes(expected));
-  await run("finishVisit()");
-  assert.equal(calls.length, 1);
-  assert.equal(calls[0].reply_method, "text");
-  assert.match(main.textContent, /pending until Kyle accepts/);
-  await run("finishVisit()");
-  assert.equal(calls.length, 1);
 });
 test("legacy homepage sections have a rendered scroll target", () => {
   const {run,main} = planner();
@@ -202,7 +163,7 @@ test("four price-free category cards lead directly to priced packages", () => {
     const choices = visit("#services/" + category);
     assert.deepEqual([...choices.matchAll(/<span>\$(\d+)<\/span>/g)].map(m => Number(m[1])), prices);
     assert.match(choices, /Fixed-price services · Pay after your visit/);
-    assert.match(visit("#fit/" + category + "/0"), /Visit summary[\s\S]*Fixed-price services · Pay after your visit<\/p><\/aside>/);
+    assert.match(visit("#fit/" + category + "/0"), /Pay after your visit · No card required/);
     assert.doesNotMatch(choices, /<input/);
   }
 });
@@ -222,16 +183,15 @@ test("review smart-home support carries approved terms and installations have no
   for (const index of [1, 2, 3, 4]) {
     const html = visit("#services/1/" + index);
     assert.match(html, /Continue · \$229/);
-    const payload = run("visitPayload()");
-    assert.equal(payload.service, "smart-home");
-    for (const term of ["Support · $229", "remains unresolved", "extra work and price", "subscriptions and replacement parts"]) assert.ok(payload.problem.includes(term));
-    assert.match(visit("#fit/1/" + index), /Check your setup/);
+    const context = run("bookingContext(tasks[category][task])");
+    for (const term of ["Support · $229", "remains unresolved", "extra work and price", "subscriptions and replacement parts"]) assert.ok(context.includes(term));
+    assert.match(visit("#fit/1/" + index), /Choose a time/);
   }
   for (const slug of ["doorbell-installation", "thermostat-installation", "garage-installation"]) {
     const html = visit("#services/1/" + slug);
     assert.match(html, /Unavailable for booking/);
     assert.doesNotMatch(html, /Continue ·/);
-    assert.doesNotMatch(visit("#fit/1/" + slug), /Check your setup/);
+    assert.doesNotMatch(visit("#fit/1/" + slug), /id="calendar-title"/);
   }
 });
 
@@ -241,6 +201,6 @@ test("Wi-Fi services outside router setup have no booking route", () => {
     const html = visit("#services/2/" + service);
     assert.match(html, /Unavailable for booking/);
     assert.doesNotMatch(html, /Continue ·/);
-    assert.doesNotMatch(visit("#fit/2/" + service), /Check your setup/);
+    assert.doesNotMatch(visit("#fit/2/" + service), /id="calendar-title"/);
   }
 });
