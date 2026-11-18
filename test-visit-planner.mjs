@@ -68,20 +68,17 @@ test("legacy visit links retain their selection and enter one non-sending review
   }
 });
 
-test("provider context preserves price, scope and diagnostic terms without contact data", () => {
+test("booking leaves all invitee answers blank and retains service tracking", () => {
   const {visit, run} = planner();
   visit("#book/0/2");
-  const url = new URL(run('bookingURL(tasks[category][task], "0/2")'));
+  const url = new URL(run('bookingURL("0/2")'));
   assert.equal(url.origin, "https://calendly.com");
   assert.equal(url.pathname, "/kyle-serviceboost/30min");
   assert.equal(url.searchParams.get("utm_content"), "service-0-2");
   assert.equal(url.searchParams.get("timezone"), "America/Los_Angeles");
-  for (const term of ["$229", "even if the issue remains unresolved", "Included:", "Outside scope:", "Pay after your visit"]) {
-    assert.ok(url.searchParams.get("a3").includes(term));
-  }
+  for (let i = 1; i <= 10; i++) assert.equal(url.searchParams.has("a" + i), false);
   assert.equal(url.searchParams.has("email"), false);
   assert.equal(url.searchParams.has("name"), false);
-  assert.ok(!run('bookingURL(tasks[category][task], "0/2")').includes("+"));
   const html = visit("#book/0/2");
   assert.ok(html.indexOf("even if the issue remains unresolved") < html.indexOf("<details"));
 });
@@ -114,7 +111,9 @@ test("delayed provider load cannot mount an obsolete service and failures keep a
   await new Promise(resolve => setImmediate(resolve));
   assert.equal(mounts.length, 1);
   assert.equal(mounts[0].parentElement, host);
-  assert.match(new URL(mounts[0].url).searchParams.get("a3"), /Printer setup or reconnection/);
+  assert.equal(new URL(mounts[0].url).searchParams.get("utm_content"), "service-0-1");
+  assert.equal(new URL(mounts[0].url).searchParams.has("a3"), false);
+  assert.equal(mounts[0].prefill, undefined);
   assert.match(main.innerHTML, /Open scheduling in a new tab/);
 
   run("window.Calendly = undefined; calendlyScript = null");
@@ -136,9 +135,10 @@ test("all packages display approved prices and only the computer lesson has a du
     assert.ok(html.includes("Continue · $" + price + "</button>"));
     if (path === "0/5") assert.match(html, /60-minute lesson/);
     else assert.doesNotMatch(html, /minutes?|Visit duration/);
-    assert.ok(run("bookingContext(tasks[category][task])").includes("$" + price));
-    if (path === "0/5") assert.match(run("bookingContext(tasks[category][task])"), /60-minute lesson/);
-    else assert.doesNotMatch(run("bookingContext(tasks[category][task])"), /minutes?|Visit duration/);
+    const booking = visit("#book/" + path);
+    assert.ok(booking.includes("<strong>$" + price + "</strong>"));
+    if (path === "0/5") assert.match(booking, /60-minute lesson/);
+    else assert.doesNotMatch(booking, /minutes?|Visit duration/);
     assert.doesNotMatch(html, /type="checkbox"/);
     if (path === "0/2") assert.match(html, /even if the issue remains unresolved.*approval before any extra work/);
   }
@@ -183,8 +183,8 @@ test("review smart-home support carries approved terms and installations have no
   for (const index of [1, 2, 3, 4]) {
     const html = visit("#services/1/" + index);
     assert.match(html, /Continue · \$229/);
-    const context = run("bookingContext(tasks[category][task])");
-    for (const term of ["Support · $229", "remains unresolved", "extra work and price", "subscriptions and replacement parts"]) assert.ok(context.includes(term));
+    const context = visit("#book/1/" + index);
+    for (const term of ["Support", "<strong>$229</strong>", "remains unresolved", "extra work and price", "subscriptions and replacement parts"]) assert.ok(context.includes(term));
     assert.match(visit("#fit/1/" + index), /Choose a time/);
   }
   for (const slug of ["doorbell-installation", "thermostat-installation", "garage-installation"]) {

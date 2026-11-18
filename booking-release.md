@@ -4,7 +4,7 @@
 
 Replace the eligible fixed-price visit wizard with the approved compact service summary and a single Calendly scheduling/intake flow. Preserve catalog prices and scope, diagnostic-charge disclosure, service selection, pay-after-visit terms, quote-only/unavailable services and the existing request-help path. No customer-facing service time caps are added.
 
-Use the existing public Service Boost event. Its verified question order is address (a1), phone (a2), issue (a3). Pass selected catalog scope/price into a3 and service ID into tracking; never use editable answers as authoritative pricing. Native Calendly owns booking confirmation and management links. No second inquiry is submitted. No API credentials, billing, payment, Yelp changes or backend changes.
+Use the existing public Service Boost event. Leave all invitee answers blank, including the optional issue/notes field. Keep selected catalog scope/price on the website and service ID in tracking. Native Calendly owns booking confirmation and management links. No second inquiry is submitted. No API credentials, billing, payment, Yelp changes or backend changes.
 
 ## Acceptance
 

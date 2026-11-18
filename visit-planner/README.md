@@ -2,7 +2,7 @@
 
 Build with `python3 build-site.py`. Eligible visits use the shared Service Boost Calendly event. For a non-booking review build, run `python3 build-site.py --review-visits` and `python3 preview-site.py --review-visits --port 18786`. The review build disables the provider script, widget and direct scheduling link.
 
-Customers choose a package and an available time, then enter their name, email, address and phone once in Calendly. The selected service, price and scope prefill the third question (issue/notes); service ID travels in utm_content. These editable notes are not pricing authority. Native Calendly handles confirmation and management links; the page never creates a second inquiry or a synthetic confirmation. Payment is due after the visit. The existing /request-help flow remains separate.
+Customers choose a package and an available time, then enter their name, email, address and phone once in Calendly. Invitee fields, including the optional issue/notes field, start blank. Service ID travels in utm_content; service name, price and scope remain visible on the website. Native Calendly handles confirmation and management links; the page never creates a second inquiry or a synthetic confirmation. Payment is due after the visit. The existing /request-help flow remains separate.
 
 Approved packages for review and release:
 
@@ -19,6 +19,6 @@ Approved packages for review and release:
 | $229 | Practice one everyday computer task in a 60-minute lesson. Excludes device repair and ongoing support. |
 | Request a quote | Copy one selected folder to one working drive. Excludes full-device migration, damaged drives and data recovery. |
 
-Extra work requires prior approval. Ring mounting requires separate scope and pricing. Calendly reserves appointments; the website does not collect payment or store contact details. Changing Calendly question order requires updating the a3 mapping and checking the live form. Actual notification delivery is not proven without an authorized booking.
+Extra work requires prior approval. Ring mounting requires separate scope and pricing. Calendly reserves appointments; the website does not collect payment or store contact details. Actual notification delivery is not proven without an authorized booking.
 
 Validate with `node --test test-visit-planner.mjs` and the repository Validate workflow. To roll back, revert the release PR and redeploy the prior static site. The backend contract and data schema are unchanged.
