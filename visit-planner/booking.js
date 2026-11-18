@@ -15,36 +15,20 @@ function loadCalendly() {
   return calendlyScript;
 }
 
-function bookingContext(service) {
-  const [name, , price, description, included, excluded] = service;
-  return [
-    name + " · $" + price,
-    description,
-    "Included: " + included.split("|").join(", "),
-    "Outside scope: " + excluded,
-    "Pay after your visit. Extra work requires approval.",
-    "Issue or arrival notes: ",
-  ].join("\n");
-}
-
-function bookingURL(service, id) {
+function bookingURL(id) {
   const url = new URL("https://calendly.com/kyle-serviceboost/30min");
   url.searchParams.set("hide_event_type_details", "1");
   url.searchParams.set("primary_color", "2057ed");
   url.searchParams.set("timezone", "America/Los_Angeles");
   url.searchParams.set("utm_source", "serviceboost");
   url.searchParams.set("utm_content", "service-" + id.replace("/", "-"));
-  // The shared event's third question is the optional issue/notes field.
-  // This editable context is informative, never a pricing authority.
-  url.searchParams.set("a3", bookingContext(service));
-  // The embed SDK decodes percent escapes but does not decode form-style +.
-  return url.href.replaceAll("+", "%20");
+  return url.href;
 }
 
 function renderBooking(root, service, id, preparation, cities) {
   const [name, , price, description, included, excluded, requirement] = service;
   const enabled = window.SERVICE_BOOST_BOOKING_ENABLED === true;
-  const url = bookingURL(service, id);
+  const url = bookingURL(id);
   const diagnostic = description.includes("unresolved");
   root.innerHTML = `<div class="booking-layout">
     <section class="booking-service" aria-labelledby="booking-title">
