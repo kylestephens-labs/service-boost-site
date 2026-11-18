@@ -79,17 +79,20 @@ test("review shows the fixed package price and ZIP edits invalidate timing", () 
   assert.match(visit("#checkout/0/1"),/Check your setup/);
 });
 
-test("all nine packages display approved prices and durations before continuing", () => {
+test("all packages display approved prices and only the computer lesson has a duration", () => {
   const { visit, run } = planner();
-  for (const [path, price, minutes] of [
-    ["0/0",229,"up to 60"], ["0/1",199,"up to 45"], ["0/2",229,"up to 60"],
-    ["0/3",229,"up to 60"], ["0/4",229,"up to 60"], ["0/5",229,"60"],
-    ["1/0",199,"up to 45"], ["2/0",229,"up to 60"], ["3/0",199,"up to 45"],
+  for (const [path, price] of [
+    ["0/0",229], ["0/1",199], ["0/2",229],
+    ["0/3",229], ["0/4",229], ["0/5",229],
+    ["1/0",199], ["1/1",229], ["1/2",229], ["1/3",229], ["1/4",229], ["2/0",229], ["3/0",199],
   ]) {
     const html = visit("#services/" + path);
     assert.ok(html.includes("Continue · $" + price + "</button>"));
-    assert.ok(html.includes(minutes + " minutes"));
-    assert.ok(run("visitPayload().problem").includes("$" + price + " · " + minutes + " minutes"));
+    if (path === "0/5") assert.match(html, /60-minute lesson/);
+    else assert.doesNotMatch(html, /minutes?|Visit duration/);
+    assert.ok(run("visitPayload().problem").includes("$" + price));
+    if (path === "0/5") assert.match(run("visitPayload().problem"), /60-minute lesson/);
+    else assert.doesNotMatch(run("visitPayload().problem"), /minutes?|Visit duration/);
     assert.doesNotMatch(html, /type="checkbox"/);
     if (path === "0/2") assert.match(html, /even if the issue remains unresolved.*approval before any extra work/);
   }
@@ -221,7 +224,7 @@ test("review smart-home support carries approved terms and installations have no
     assert.match(html, /Continue · \$229/);
     const payload = run("visitPayload()");
     assert.equal(payload.service, "smart-home");
-    for (const term of ["Support · $229 · up to 60 minutes", "remains unresolved", "extra work and price", "subscriptions and replacement parts"]) assert.ok(payload.problem.includes(term));
+    for (const term of ["Support · $229", "remains unresolved", "extra work and price", "subscriptions and replacement parts"]) assert.ok(payload.problem.includes(term));
     assert.match(visit("#fit/1/" + index), /Check your setup/);
   }
   for (const slug of ["doorbell-installation", "thermostat-installation", "garage-installation"]) {
