@@ -260,10 +260,6 @@ function options(a, v) {
 }
 const live = typeof window !== "undefined" && ["https://www.serviceboost.co", "https://serviceboost.co"].includes(location.origin) && window.SERVICE_BOOST_QUOTE_ENDPOINT === "https://quotes.serviceboost.co/quote";
 const intake = createVisitIntake(live ? window.SERVICE_BOOST_QUOTE_ENDPOINT : null, live ? window.fetch.bind(window) : null);
-function visitDuration(group = category, index = task) {
-  if (group === 0 && index === 5) return "60 minutes";
-  return tasks[group][index][2] === 199 ? "up to 45 minutes" : "up to 60 minutes";
-}
 function visitPayload() {
   const [name, , price, description, included, excluded] = tasks[category][task];
   const service = category === 0 ? (task === 1 ? "printer" : "computer")
@@ -273,7 +269,7 @@ function visitPayload() {
     name: contact.person.trim(), email: contact.email.trim(), phone: contact.phone.trim(),
     location: contact.town.trim() + ", CA " + city,
     problem: [
-      name + " · $" + price + " · " + visitDuration(),
+      name + " · $" + price,
       description, "Included: " + included.split("|").join(", "), "Outside scope: " + excluded,
       "Visit address: " + contact.street.trim() + ", " + contact.town.trim() + ", CA " + city,
       "Preferred timing (Pacific): " + slot, "Pending manual confirmation; no appointment reserved.",
@@ -328,7 +324,6 @@ function render() {
     history.replaceState(null, "", "#" + page + "/" + category + "/" + task);
   }
   const [name, icon, base, desc, inc, exc, q] = tasks[category][task];
-  const duration = visitDuration();
   const total = base;
   const cards = services
     .map(
@@ -355,7 +350,7 @@ function render() {
     const panel = guide
       ? `<section class="scope"><h2>Find the right visit</h2><p>Compare the requirements for this category.</p>${tasks[category].map(([n, , , , , , question], j) => `<p><b>${n}</b> · ${question}<br>${prep[category][j]} <a href="#services/${category}/${j}">Review this service</a></p>`).join("")}<p></p><p><a href="https://www.serviceboost.co/request-help">Not sure? Ask Kyle</a> and agree on the scope and price before booking.</p><a href="#services/${category}">Back to choices</a></section>`
       : selected
-        ? `<section class="scope"><h2>${name}</h2><p>${desc}</p><p>Visit duration: ${duration}.</p><div class="scope-grid"><div><h3>Included</h3><ul>${inc
+        ? `<section class="scope"><h2>${name}</h2><p>${desc}</p><div class="scope-grid"><div><h3>Included</h3><ul>${inc
             .split("|")
             .map((x) => "<li>" + x + "</li>")
             .join(
@@ -390,7 +385,7 @@ function render() {
     root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p>${picker}${guide ? panel : ""}${askKyle}</section>`;
     return;
   }
-  const sum = `<aside><div class="kicker">Visit summary</div><h3>${name}</h3><p>${duration}</p><p class="row"><span>One visit</span><b>$${base}</b></p><div class="rule"></div><div class="row"><span>Visit total</span><strong>$${total}</strong></div>${city ? '<p class="zip-summary">ZIP ' + esc(city) + "</p>" : ""}<p class="slot-summary" ${slot ? "" : "hidden"}>${slot ? esc(slot) + " · Pacific" : ""}</p><p>${paymentNote}</p></aside>`;
+  const sum = `<aside><div class="kicker">Visit summary</div><h3>${name}</h3><p class="row"><span>One visit</span><b>$${base}</b></p><div class="rule"></div><div class="row"><span>Visit total</span><strong>$${total}</strong></div>${city ? '<p class="zip-summary">ZIP ' + esc(city) + "</p>" : ""}<p class="slot-summary" ${slot ? "" : "hidden"}>${slot ? esc(slot) + " · Pacific" : ""}</p><p>${paymentNote}</p></aside>`;
   let body = "";
   if (page === "detail") {
     location.replace("#services/" + category + "/" + task);
@@ -400,13 +395,13 @@ function render() {
     body = `<p class="kicker">Step 1 of 4 · Visit fit</p><h1>Check your setup</h1><p>On-site help in Walnut Creek and nearby communities. Kyle confirms coverage using your full address.</p><label for="zip">Visit ZIP code</label><input class="entry" id="zip" name="zip" autocomplete="postal-code" aria-describedby="outside" inputmode="numeric" maxlength="5" value="${esc(city)}" oninput="zipChanged(this)"><p class="feedback" id="outside" role="status">${city ? zipError() : ""}</p><details class="area-list"><summary>View service-area cities</summary><p>${cities.join(", ")}</p></details><label for="fit">${q}</label><select id="fit" onchange="fit=this.value;if(fit!=='Yes')slot='';render()"><option value="">Choose an answer</option>${options(["Yes", "Not sure", "No"], fit)}</select>${fit && fit !== "Yes" ? `<p>${prep[category][task]} <a href="#services/${category}/guide">See setup guidance</a> or return to the choices.</p>` : ""}<details class="fit-scope"><summary>Review included work and visit terms</summary><p>${desc}</p><p>${inc.split("|").join(" · ")}</p><p>Outside scope · ${exc}</p></details><p class="owner-note">You’ll work directly with Kyle. Next, add your contact details and visit address. Kyle confirms your appointment request.</p><p class="feedback" id="fit-error" role="status"></p><div class="actions"><button class="secondary" onclick="location.hash='services/'+category+'/'+task">Back</button><button id="nexttime" onclick="advanceFit()">Contact and visit address →</button></div>`;
   }
   if (page === "time") {
-    body = `<p class="kicker">Step 3 of 4 · Visit preference</p><h1>Describe your preferred timing</h1><p>Kyle will confirm availability separately. Visit duration: ${duration}.</p><label for="timing">Timing preference (Pacific time)</label><input id="timing" class="entry" maxlength="160" value="${esc(slot)}" oninput="timingChanged(this.value)"><button class="secondary" onclick="useFlexibleTime()">Ask Kyle to suggest a time</button><p id="time-error" role="status" class="feedback"></p><div class="actions"><button class="secondary" onclick="go('contact')">Back</button><button onclick="contactNext()">Review visit →</button></div>`;
+    body = `<p class="kicker">Step 3 of 4 · Visit preference</p><h1>Describe your preferred timing</h1><p>Kyle will confirm availability separately.</p><label for="timing">Timing preference (Pacific time)</label><input id="timing" class="entry" maxlength="160" value="${esc(slot)}" oninput="timingChanged(this.value)"><button class="secondary" onclick="useFlexibleTime()">Ask Kyle to suggest a time</button><p id="time-error" role="status" class="feedback"></p><div class="actions"><button class="secondary" onclick="go('contact')">Back</button><button onclick="contactNext()">Review visit →</button></div>`;
   }
   if (page === "contact") {
     body = `<p class="kicker">Step 2 of 4 · Visit details</p><h1>Contact &amp; address</h1><p>${live ? "Kyle will check your full address and confirm coverage." : "Use fictional details for this preview."}</p><div class="pair"><div>${field("person", "Name")}</div><div>${field("email", contact.method === "email" ? "Email" : "Email (optional)", "email")}</div></div><label for="method">How should Kyle confirm the visit?</label><select id="method" onchange="contact.method=this.value;render()">${["email","call","text"].map(m => `<option value="${m}" ${m === contact.method ? "selected" : ""}>${{email:"Email",call:"Phone call",text:"Text message"}[m]}</option>`).join("")}</select>${field("phone", contact.method === "email" ? "Phone (optional)" : "Phone", "tel")}${field("street", "Street address, including unit")}<div class="pair"><div>${field("town", "City")}</div><div><label>Visit ZIP code</label><p>${esc(city)}</p></div></div><a href="#fit/${category}/${task}">Edit visit ZIP</a>${field("arrival", "Arrival notes (optional)")}<div class="actions"><button class="secondary" onclick="go('fit')">Back</button><button id="review" onclick="validateContact()">Enter a timing preference →</button></div>`;
   }
   if (page === "checkout") {
-    body = `<p class="kicker">Step 4 of 4 · Request review</p><h1>Review your visit</h1><h3>${name}</h3><p>${desc}</p><p>Visit duration: ${duration}.</p><p><b>Included</b> · ${inc.split("|").join(" · ")}</p><p><b>Outside scope</b> · ${exc}</p><div class="rule"></div><h3>Preferred arrival window</h3><p>${esc(slot)}, Pacific<br>${esc(contact.person)} · ${esc(contact.email)}<br>${esc(contact.street)}, ${esc(contact.town)}, CA ${esc(city)}</p><p><strong>Fixed visit price · $${total}</strong></p><p>Payment is due after the visit. Kyle will confirm payment options before the visit.<br>To cancel or reschedule, notify Kyle as soon as possible. There is no fee.<br>Kyle will confirm the date and arrival window by ${contact.method}. Your request is pending until Kyle accepts it.</p>${contact.phone ? "<p>Phone · " + esc(contact.phone) + "</p>" : ""}${contact.arrival ? "<p>Arrival · " + esc(contact.arrival) + "</p>" : ""}<div class="editlinks">${[
+    body = `<p class="kicker">Step 4 of 4 · Request review</p><h1>Review your visit</h1><h3>${name}</h3><p>${desc}</p><p><b>Included</b> · ${inc.split("|").join(" · ")}</p><p><b>Outside scope</b> · ${exc}</p><div class="rule"></div><h3>Preferred arrival window</h3><p>${esc(slot)}, Pacific<br>${esc(contact.person)} · ${esc(contact.email)}<br>${esc(contact.street)}, ${esc(contact.town)}, CA ${esc(city)}</p><p><strong>Fixed visit price · $${total}</strong></p><p>Payment is due after the visit. Kyle will confirm payment options before the visit.<br>To cancel or reschedule, notify Kyle as soon as possible. There is no fee.<br>Kyle will confirm the date and arrival window by ${contact.method}. Your request is pending until Kyle accepts it.</p>${contact.phone ? "<p>Phone · " + esc(contact.phone) + "</p>" : ""}${contact.arrival ? "<p>Arrival · " + esc(contact.arrival) + "</p>" : ""}<div class="editlinks">${[
       ["services", "Edit service"],
       ["fit", "Edit ZIP / fit"],
       ["time", "Edit time"],
