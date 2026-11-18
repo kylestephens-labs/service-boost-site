@@ -132,7 +132,8 @@ test("all packages display approved prices and only the computer lesson has a du
     ["1/0",199], ["1/1",229], ["1/2",229], ["1/3",229], ["1/4",229], ["2/0",229], ["3/0",199],
   ]) {
     const html = visit("#services/" + path);
-    assert.ok(html.includes("Continue · $" + price + "</button>"));
+    assert.ok(html.includes('onclick="go(\'book\')">Choose a time</button>'));
+    assert.ok(html.includes("<span>$" + price + "</span>"));
     if (path === "0/5") assert.match(html, /60-minute lesson/);
     else assert.doesNotMatch(html, /minutes?|Visit duration/);
     const booking = visit("#book/" + path);
@@ -173,7 +174,7 @@ test("folder transfer has a quote path outside the fixed-price flow", () => {
   const html = visit("#services/0/folder");
   assert.ok(html.includes('href="/request-help">Request a quote'));
   assert.ok(html.includes("Full-device migration, damaged drives and data recovery"));
-  assert.doesNotMatch(html, /Continue ·/);
+  assert.doesNotMatch(html, /Choose a time<\/button>/);
   assert.ok(html.indexOf("Setup &amp; installation") < html.indexOf("Help &amp; learning"));
   assert.ok(html.indexOf("Help &amp; learning") < html.indexOf("Not sure what you need? Ask Kyle"));
 });
@@ -182,7 +183,7 @@ test("review smart-home support carries approved terms and installations have no
   const {visit, run} = planner();
   for (const index of [1, 2, 3, 4]) {
     const html = visit("#services/1/" + index);
-    assert.match(html, /Continue · \$229/);
+    assert.match(html, /Choose a time<\/button>/);
     const context = visit("#book/1/" + index);
     for (const term of ["Support", "<strong>$229</strong>", "remains unresolved", "extra work and price", "subscriptions and replacement parts"]) assert.ok(context.includes(term));
     assert.match(visit("#fit/1/" + index), /Choose a time/);
@@ -190,7 +191,7 @@ test("review smart-home support carries approved terms and installations have no
   for (const slug of ["doorbell-installation", "thermostat-installation", "garage-installation"]) {
     const html = visit("#services/1/" + slug);
     assert.match(html, /Unavailable for booking/);
-    assert.doesNotMatch(html, /Continue ·/);
+    assert.doesNotMatch(html, /Choose a time<\/button>/);
     assert.doesNotMatch(visit("#fit/1/" + slug), /id="calendar-title"/);
   }
 });
@@ -200,7 +201,7 @@ test("Wi-Fi services outside router setup have no booking route", () => {
   for (const service of ["cabling", "connectivity", "extension"]) {
     const html = visit("#services/2/" + service);
     assert.match(html, /Unavailable for booking/);
-    assert.doesNotMatch(html, /Continue ·/);
+    assert.doesNotMatch(html, /Choose a time<\/button>/);
     assert.doesNotMatch(visit("#fit/2/" + service), /id="calendar-title"/);
   }
 });

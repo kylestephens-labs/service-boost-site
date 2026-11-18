@@ -178,7 +178,7 @@ function render() {
             .map((x) => "<li>" + x + "</li>")
             .join(
               "",
-            )}</ul></div><div><h3>Outside scope</h3><p>${exc}</p></div></div><button onclick="go('book')">Continue · $${total}</button></section>`
+            )}</ul></div><div><h3>Outside scope</h3><p>${exc}</p></div></div><button onclick="go('book')">Choose a time</button></section>`
         : "";
     const computerTitles = ["Set up a new computer", "Set up or reconnect a printer", "Troubleshoot a computer or printer"];
     const cards = tasks[category].map(([title, icon, price], j) => {
