@@ -16,7 +16,7 @@ function loadCalendly() {
 }
 
 function bookingURL(id) {
-  const url = new URL("https://calendly.com/kyle-serviceboost/30min");
+  const url = new URL("https://calendly.com/kyle-serviceboost/book-a-visit");
   url.searchParams.set("hide_event_type_details", "1");
   url.searchParams.set("primary_color", "2057ed");
   url.searchParams.set("timezone", "America/Los_Angeles");

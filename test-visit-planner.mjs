@@ -73,7 +73,7 @@ test("booking leaves all invitee answers blank and retains service tracking", ()
   visit("#book/0/2");
   const url = new URL(run('bookingURL("0/2")'));
   assert.equal(url.origin, "https://calendly.com");
-  assert.equal(url.pathname, "/kyle-serviceboost/30min");
+  assert.equal(url.pathname, "/kyle-serviceboost/book-a-visit");
   assert.equal(url.searchParams.get("utm_content"), "service-0-2");
   assert.equal(url.searchParams.get("timezone"), "America/Los_Angeles");
   for (let i = 1; i <= 10; i++) assert.equal(url.searchParams.has("a" + i), false);
