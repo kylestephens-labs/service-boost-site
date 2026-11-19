@@ -48,7 +48,7 @@ function renderBooking(root, service, id, preparation, cities) {
       </details>
     </section>
     <section class="booking-calendar" aria-labelledby="calendar-title">
-      <h2 id="calendar-title">Choose a time</h2>
+      <h2 id="calendar-title">Choose an arrival time</h2>
       <p class="booking-timezone">Pacific time</p>
       ${enabled ? '<div id="booking-widget" class="booking-widget"><p role="status">Loading available times…</p></div>' : '<p class="booking-disabled">Review preview: scheduling is disabled. No appointment can be booked here.</p>'}
       <p class="booking-help"><a href="/request-help">Not sure? Ask Kyle</a></p>
@@ -64,7 +64,7 @@ function renderBooking(root, service, id, preparation, cities) {
     host.replaceChildren();
     provider.initInlineWidget({url, parentElement: host, resize: true});
     const frame = host.querySelector("iframe");
-    if (frame) frame.title = "Choose a time and book " + name;
+    if (frame) frame.title = "Choose an arrival time and book " + name;
   }).catch(() => {
     if (host.isConnected) host.innerHTML = '<p role="status">The calendar could not load. Use the scheduling link below or ask Kyle for help.</p>';
   });

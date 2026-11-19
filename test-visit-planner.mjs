@@ -186,7 +186,7 @@ test("review smart-home support carries approved terms and installations have no
     assert.match(html, /Choose a time<\/button>/);
     const context = visit("#book/1/" + index);
     for (const term of ["Support", "<strong>$229</strong>", "remains unresolved", "extra work and price", "subscriptions and replacement parts"]) assert.ok(context.includes(term));
-    assert.match(visit("#fit/1/" + index), /Choose a time/);
+    assert.match(visit("#fit/1/" + index), /Choose an arrival time/);
   }
   for (const slug of ["doorbell-installation", "thermostat-installation", "garage-installation"]) {
     const html = visit("#services/1/" + slug);
