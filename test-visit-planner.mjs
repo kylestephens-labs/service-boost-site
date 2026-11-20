@@ -160,10 +160,10 @@ test("four price-free category cards lead directly to priced packages", () => {
   assert.equal((home.match(/class="card"/g) || []).length, 4);
   assert.doesNotMatch(home, /\$\d/);
   assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
-  for (const [category, prices] of [[229,199,229,229,229,229],[249,249,249,229,229,229,229],[229,249],[199]].entries()) {
+  for (const [category, prices] of [[229,199,229,229,229,229],[249,249,249,229,229,229,229],[229],[199]].entries()) {
     const choices = visit("#services/" + category);
     assert.deepEqual([...choices.matchAll(/<span>\$(\d+)<\/span>/g)].map(m => Number(m[1])), prices);
-    assert.match(choices, /Fixed-price services · Pay after your visit/);
+    assert.match(choices, category === 2 ? /Router setup is fixed price, with payment after your visit/ : /Fixed-price services · Pay after your visit/);
     assert.match(visit("#fit/" + category + "/" + (category === 1 ? 1 : 0)), /Pay after your visit · No card required/);
     assert.doesNotMatch(choices, /<input/);
   }
@@ -219,12 +219,37 @@ test("retired pairing routes never book or alias another service; support IDs st
   for (const [i, name] of names.entries()) assert.ok(visit("#book/1/" + (i + 1)).includes(name));
 });
 
-test("Wi-Fi services outside router setup have no booking route", () => {
+test("Wi-Fi groups show router setup and installation before support, with prices only for router setup", () => {
   const {visit} = planner();
-  for (const service of ["cabling", "connectivity", "extension"]) {
+  const html = visit("#services/2");
+  const labels = [...html.matchAll(/<b>(.*?)<\/b><span>(.*?)<\/span>/g)].map(match => match.slice(1));
+  assert.deepEqual(labels, [
+    ["New WiFi Connection Setup", "$229"], ["Wi-Fi Signal Extension", "Ask Kyle"],
+    ["In-Wall Cable Running", "Ask Kyle"], ["Connectivity Support", "Ask Kyle"],
+  ]);
+  assert.ok(html.indexOf("<h2>Setup &amp; installation</h2>") < html.indexOf("<h2>Support</h2>"));
+  assert.doesNotMatch(html, /Unavailable for booking/);
+  assert.match(visit("#book/2/0"), /New WiFi Connection Setup[\s\S]*<strong>\$229<\/strong>/);
+});
+
+test("Wi-Fi inquiry cards keep their selected service on legacy routes without opening booking", () => {
+  const {visit, run} = planner();
+  run("window.SERVICE_BOOST_BOOKING_ENABLED = true");
+  for (const [service, detail] of [
+    ["cabling", /Describe where the network cable needs to go/],
+    ["connectivity", /which devices are having connection problems/],
+    ["extension", /where Wi-Fi is weak/],
+  ]) {
     const html = visit("#services/2/" + service);
-    assert.match(html, /Unavailable for booking/);
+    assert.match(html, detail);
+    assert.ok(html.includes('href="/request-help?service=wifi&amp;network=' + service + '"'));
+    assert.doesNotMatch(html, /Unavailable for booking|\$249/);
     assert.doesNotMatch(html, /Choose a time<\/button>/);
-    assert.doesNotMatch(visit("#fit/2/" + service), /id="calendar-title"/);
+    for (const route of ["book", "fit", "contact", "time", "checkout", "done", "detail"]) {
+      const legacy = visit("#" + route + "/2/" + service);
+      assert.equal(legacy, html);
+      assert.equal(run("location.hash"), "#services/2/" + service);
+      assert.doesNotMatch(legacy, /id="calendar-title"|booking-widget/);
+    }
   }
 });
