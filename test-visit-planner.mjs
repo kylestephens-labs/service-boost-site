@@ -129,7 +129,7 @@ test("all packages display approved prices and only the computer lesson has a du
   for (const [path, price] of [
     ["0/0",229], ["0/1",199], ["0/2",229],
     ["0/3",229], ["0/4",229], ["0/5",229],
-    ["1/0",199], ["1/1",229], ["1/2",229], ["1/3",229], ["1/4",229], ["2/0",229], ["3/0",199],
+    ["1/1",229], ["1/2",229], ["1/3",229], ["1/4",229], ["2/0",229], ["3/0",199],
   ]) {
     const html = visit("#services/" + path);
     assert.ok(html.includes('onclick="go(\'book\')">Choose a time</button>'));
@@ -160,11 +160,11 @@ test("four price-free category cards lead directly to priced packages", () => {
   assert.equal((home.match(/class="card"/g) || []).length, 4);
   assert.doesNotMatch(home, /\$\d/);
   assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
-  for (const [category, prices] of [[229,199,229,229,229,229],[199,229,229,229,229,249,249,249],[229,249],[199]].entries()) {
+  for (const [category, prices] of [[229,199,229,229,229,229],[249,249,249,229,229,229,229],[229,249],[199]].entries()) {
     const choices = visit("#services/" + category);
     assert.deepEqual([...choices.matchAll(/<span>\$(\d+)<\/span>/g)].map(m => Number(m[1])), prices);
     assert.match(choices, /Fixed-price services · Pay after your visit/);
-    assert.match(visit("#fit/" + category + "/0"), /Pay after your visit · No card required/);
+    assert.match(visit("#fit/" + category + "/" + (category === 1 ? 1 : 0)), /Pay after your visit · No card required/);
     assert.doesNotMatch(choices, /<input/);
   }
 });
@@ -190,10 +190,32 @@ test("review smart-home support carries approved terms and installations have no
   }
   for (const slug of ["doorbell-installation", "thermostat-installation", "garage-installation"]) {
     const html = visit("#services/1/" + slug);
-    assert.match(html, /Unavailable for booking/);
+    assert.ok(html.includes('href="/request-help?service=smart-home&amp;installation=' + slug + '">Ask Kyle about installation'));
+    assert.match(html, /inquiry, not a reservation/);
+    assert.doesNotMatch(html, /Unavailable for booking|Installation details|Request a quote/);
     assert.doesNotMatch(html, /Choose a time<\/button>/);
     assert.doesNotMatch(visit("#fit/1/" + slug), /id="calendar-title"/);
   }
+});
+
+test("retired pairing routes never book or alias another service; support IDs stay stable", () => {
+  const {visit, run} = planner();
+  run("window.SERVICE_BOOST_BOOKING_ENABLED = true");
+  const menu = visit("#services/1");
+  assert.doesNotMatch(menu, /Pairing|pairing|\$199/);
+  assert.ok(menu.indexOf('<h2>Installation</h2>') < menu.indexOf('<h2>Support</h2>'));
+  for (const route of ["services", "book", "fit", "contact", "time", "checkout", "done", "detail"]) {
+    for (const id of ["0", "00"]) {
+      const html = visit("#" + route + "/1/" + id);
+      assert.match(html, /That service is no longer offered/);
+      assert.doesNotMatch(html, /booking-widget|id="calendar-title"|Choose a time<\/button>/);
+      assert.equal(run("location.hash"), "#services/1/retired");
+    }
+  }
+  assert.doesNotMatch(visit("#services/1/guide"), /pairing|Smart-home device setup/);
+  const names = ["Video Doorbell Support", "Smart Thermostat Support", "Smart Garage Controller Support", "Smart Hub &amp; Speaker Support"];
+  run("window.SERVICE_BOOST_BOOKING_ENABLED = false");
+  for (const [i, name] of names.entries()) assert.ok(visit("#book/1/" + (i + 1)).includes(name));
 });
 
 test("Wi-Fi services outside router setup have no booking route", () => {
