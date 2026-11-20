@@ -15,26 +15,35 @@ function addSmartHomeSupport(packages, guidance) {
   }
 }
 
-function renderSmartHomeMenu(selection, panel) {
-  const packages = tasks[1].map(([name, icon, price], index) => {
-    const open = selection === String(index);
-    return serviceCard(name, icon, "$" + price, open, "choose(" + index + ")", "smart-home-support-" + index)
-      + (open ? panel : "");
-  });
+function renderSmartHomeMenu(selection, guide) {
   const installations = [
-    ["doorbell-installation", "Video Doorbell Installation", "Install one compatible customer-provided video doorbell in an accessible location, connect it to the app and existing Wi-Fi, and test operation."],
-    ["thermostat-installation", "Smart Thermostat Installation &amp; Setup", "Requires a working thermostat at the installation location.<ul><li>Assess the location and check compatibility.</li><li>Replace the existing thermostat with one compatible smart thermostat.</li><li>Connect it to existing Wi-Fi, complete initial setup and test operation.</li><li>Install and set up the mobile app.</li><li>Show how to use the everyday controls.</li></ul>New wiring and HVAC repair are excluded."],
-    ["garage-installation", "Smart Garage Controller Installation", "One compatible controller on an existing working opener, app connection and an operation test. Opener replacement and mechanical repair are excluded."],
+    ["doorbell-installation", "Video Doorbell Installation",
+      serviceScope("Install one compatible customer-provided video doorbell in an accessible location, connect it to the app and existing Wi-Fi, and test operation.")],
+    ["thermostat-installation", "Smart Thermostat Installation & Setup",
+      serviceScope("Requires a working thermostat at the installation location.",
+        "Assess the location and check compatibility.|Replace the existing thermostat with one compatible smart thermostat.|Connect it to existing Wi-Fi, complete initial setup and test operation.|Install and set up the mobile app.|Show how to use the everyday controls.",
+        "New wiring and HVAC repair are excluded.")],
+    ["garage-installation", "Smart Garage Controller Installation",
+      serviceScope("One compatible controller on an existing working opener, app connection and an operation test.",
+        "", "Opener replacement and mechanical repair are excluded.")],
   ];
-  const installationCards = installations.map(([id, title, scope]) => {
-    const open = selection === id;
-    return serviceCard(title, "smart-home", "$249", open, "location.hash='services/1/" + id + "'", id)
-      + (open ? '<section class="scope"><h2>' + title + '</h2><p>Tell Kyle about your device and setup. No new wiring or electrical work is included.</p><h3>Service details</h3><div>' + scope + '</div><p><a href="/request-help?service=smart-home&amp;installation=' + id + '">Ask Kyle about installation</a></p></section>' : "");
+  const installationCards = installations.map(([id, title, scope]) => ({
+    id,
+    title,
+    icon: "smart-home",
+    priceLabel: "$249",
+    detail: '<p>Tell Kyle about your device and setup. No new wiring or electrical work is included.</p><h4>Service details</h4>' + scope,
+    href: "/request-help?service=smart-home&installation=" + id,
+    action: "Ask Kyle about installation",
+  }));
+  return renderServiceMenu(1, selection, {
+    title: "Smart home",
+    subtitle: "On-site smart home installation and support in Walnut Creek and nearby communities.",
+    status: selection === "retired" ? "That service is no longer offered. Choose an installation inquiry or support service below." : "",
+    groups: [
+      { heading: "Installation", note: "Kyle confirms scope, price and availability before scheduling.", cards: installationCards },
+      { heading: "Support", note: paymentNote, cards: tasks[1].map((_, id) => scheduledService(1, id)) },
+    ],
+    guide,
   });
-  const group = (heading, note, cards) => '<section class="service-group"><h2>' + heading + '</h2><p>' + note + '</p><div class="picker computer-packages">' + cards.join("") + '</div></section>';
-  return '<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a service</div><h1>Smart home</h1>'
-    + (selection === "retired" ? '<p role="status">That service is no longer offered. Choose an installation inquiry or support service below.</p>' : '')
-    + group("Installation", "Kyle confirms scope, price and availability before scheduling.", installationCards)
-    + group("Support", paymentNote, packages)
-    + '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p></section>';
 }

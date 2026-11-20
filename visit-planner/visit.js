@@ -77,8 +77,6 @@ tasks[0].push(
   ["Set up or troubleshoot email", "message-circle", 229, "Connect one existing account in one mail app or investigate one sending or receiving issue.", "You sign in yourself|Check the account setup or investigate the issue", "Password recovery, mailbox migration and mail-server administration", "Can you sign in to the existing account?"],
   ["Get a personal computer lesson", "user", 229, "Practice one everyday task on your computer in a 60-minute lesson.", "Practice the task together|Take away a short set of steps to repeat", "Device repair and ongoing support", "Do you have access to your computer and one task to practice?"],
 );
-let category = 0,
-  task = 0;
 function esc(s) {
   return s.replace(
     /[&<>"']/g,
@@ -111,26 +109,16 @@ addSmartHomeSupport(tasks[1], prep[1]);
 
 const root = document.querySelector("main");
 let cardToRefocus;
-function go(page) {
-  location.hash =
-    page === "home"
-      ? page
-      : page + "/" + category + (page === "services" ? "" : "/" + task);
-}
 function pick(n) {
-  category = n;
-  task = 0;
-  go("services");
+  location.hash = "services/" + n;
 }
-function choose(n) {
-  task = n;
-  location.hash = "services/" + category + "/" + n;
-}
-function serviceCard(title, icon, priceLabel, expanded, action, cardId) {
-  const toggle = expanded ? "location.hash='services/'+category" : action;
-  const id = cardId ? ` id="${cardId}"` : "";
-  const rememberFocus = cardId ? "cardToRefocus = this.id; " : "";
-  return `<button class="pick"${id} aria-expanded="${!!expanded}" onclick="${rememberFocus}${toggle}"><img alt="" src="assets/icons/${icon}.svg"><b>${title}</b><span>${priceLabel}</span></button>`;
+function renderVisitGuide(category) {
+  const entries = tasks[category].map(([name, , , , , , question], id) =>
+    '<p><b>' + esc(name) + '</b> · ' + esc(question) + '<br>' + esc(prep[category][id]) +
+    ' <a href="#services/' + category + '/' + id + '">Review this service</a></p>').join("");
+  return '<section class="scope"><h2>Find the right visit</h2><p>Compare the requirements for this category.</p>' + entries +
+    '<p><a href="/request-help">Not sure? Ask Kyle</a> and agree on the scope and price before booking.</p>' +
+    '<a href="#services/' + category + '">Back to choices</a></section>';
 }
 function render() {
   let [page, c, t] = location.hash.slice(1).split("/");
@@ -146,23 +134,18 @@ function render() {
   if (!visitRoute ||
       !/^\d+$/.test(c) || !tasks[Number(c)] ||
       (page !== "services" && (!/^\d+$/.test(t) || !tasks[Number(c)][Number(t)]))) page = "home";
-  category = /^\d+$/.test(c) && tasks[Number(c)] ? Number(c) : 0;
-  task = /^\d+$/.test(t) && tasks[category][Number(t)] ? Number(t) : tasks[category].findIndex(Boolean);
+  const category = /^\d+$/.test(c) && tasks[Number(c)] ? Number(c) : 0;
+  const task = /^\d+$/.test(t) && tasks[category][Number(t)] ? Number(t) : tasks[category].findIndex(Boolean);
   if (["fit", "contact", "time", "checkout", "done"].includes(page)) page = "book";
   if (requestedPage !== page && page !== "home" && t !== "retired") {
     history.replaceState(null, "", "#" + page + "/" + category + "/" + (wifiInquiry ? t : task));
   }
   document.body.classList.toggle("booking-page", page === "book");
-  document.body.classList.toggle("computer-menu-page", page === "services" && category === 0);
-  const [name, icon, base, desc, inc, exc, q] = tasks[category][task];
-  const total = base;
-  const cards = services
-    .map(
-      ([n, ic], j) =>
-        `<button class="card" onclick="pick(${j})"><img alt="" src="assets/icons/${ic}.svg"><h3>${n}</h3><span class="category-arrow" aria-hidden="true">→</span></button>`,
-    )
-    .join("");
+  document.body.classList.toggle("visit-menu-page", page === "services");
   if (page === "home") {
+    const cards = services.map(([name, icon], id) =>
+      `<button class="card" onclick="pick(${id})"><img alt="" src="assets/icons/${icon}.svg"><h3>${name}</h3><span class="category-arrow" aria-hidden="true">→</span></button>`
+    ).join("");
     root.innerHTML =
       `<section class="hybrid-hero"><div><h1>Get your tech working <span>&amp; get back to what matters.</span></h1><p>Local onsite tech help for your home or home office.</p><button id="hero-service-cta">Choose a service</button></div></section>` +
       `<div id="services" class="bar"><h2 tabindex="-1">Services</h2></div><div id="pricing" class="cards">${cards}</div><p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>
@@ -175,39 +158,22 @@ function render() {
     return;
   }
   if (page === "services") {
-    const guide = t === "guide",
-      selected =
-        page === "services" && t !== undefined && !guide && tasks[category][t];
-    const panel = guide
-      ? `<section class="scope"><h2>Find the right visit</h2><p>Compare the requirements for this category.</p>${tasks[category].map(([n, , , , , , question], j) => `<p><b>${n}</b> · ${question}<br>${prep[category][j]} <a href="#services/${category}/${j}">Review this service</a></p>`).join("")}<p></p><p><a href="https://www.serviceboost.co/request-help">Not sure? Ask Kyle</a> and agree on the scope and price before booking.</p><a href="#services/${category}">Back to choices</a></section>`
-      : category !== 0 && selected
-        ? `<section class="scope"><h2>${name}</h2><p>${desc}</p><div class="scope-grid"><div><h3>Included</h3><ul>${inc
-            .split("|")
-            .map((x) => "<li>" + x + "</li>")
-            .join(
-              "",
-            )}</ul></div><div><h3>Outside scope</h3><p>${exc}</p></div></div><button onclick="go('book')">Choose a time</button></section>`
-        : "";
+    const guide = t === "guide" ? renderVisitGuide(category) : "";
     if (category === 0) {
-      root.innerHTML = renderComputerMenu(tasks[0], t, guide ? panel : "");
-      return;
+      root.innerHTML = renderComputerMenu(t, guide);
+    } else if (category === 1) {
+      root.innerHTML = renderSmartHomeMenu(t, guide);
+    } else if (category === 2) {
+      root.innerHTML = renderWifiMenu(t, guide);
+    } else {
+      root.innerHTML = renderServiceMenu(3, t, {
+        title: "Mobile devices",
+        subtitle: "On-site phone and tablet setup in Walnut Creek and nearby communities.",
+        terms: paymentNote,
+        groups: [{ cards: [scheduledService(3, 0)] }],
+        guide,
+      });
     }
-    const cards = tasks[category].map(([title, icon, price], j) => {
-      const open = selected && j === task;
-      return serviceCard(title, icon,
-        "$" + price, open, "choose(" + j + ")") + (open ? panel : "");
-    });
-    const guideCard = `<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b></button>`;
-    const picker = `<div class="picker">${cards.join("")}${guideCard}</div>`;
-    if (category === 1 && !guide) {
-      root.innerHTML = renderSmartHomeMenu(t, panel);
-      return;
-    }
-    if (category === 2 && !guide) {
-      root.innerHTML = renderWifiMenu(t, panel);
-      return;
-    }
-    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p>${picker}${guide ? panel : ""}</section>`;
     return;
   }
   if (page === "detail") {

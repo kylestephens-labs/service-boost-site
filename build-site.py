@@ -28,7 +28,7 @@ if review_visits:
     home = output / 'index.html'
     home.write_text(home.read_text().replace('<!-- preview-notice -->', '<div class="strip"><div>Review preview</div></div>')
                     .replace('</head>', '<meta name="robots" content="noindex"></head>'))
-for asset in ('visit.css', 'booking.css', 'computer-menu.css', 'booking.js', 'computer-menu.js',
+for asset in ('visit.css', 'booking.css', 'service-menu.css', 'booking.js', 'service-menu.js', 'computer-menu.js',
               'smart-home.js', 'wifi-menu.js', 'visit.js', 'service-cta.js'):
     shutil.copyfile(root / 'visit-planner' / asset, output / asset)
 for name, route in [('index.html', '/'), ('request-help.html', '/request-help'),

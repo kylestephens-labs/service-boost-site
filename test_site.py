@@ -40,8 +40,8 @@ class SiteContracts(unittest.TestCase):
         self.assertTrue(any(a.get('id') == 'app' for _, a in page.nodes))
         self.assertEqual([a['src'] for t, a in page.nodes if t == 'script' and 'src' in a],
                          ['tech-support.js', '/config.js', '/booking.js', '/smart-home.js', '/wifi-menu.js',
-                          '/computer-menu.js', '/visit.js', '/service-cta.js'])
-        self.assertIn('/computer-menu.css', [a.get('href') for t, a in page.nodes if t == 'link'])
+                          '/service-menu.js', '/computer-menu.js', '/visit.js', '/service-cta.js'])
+        self.assertIn('/service-menu.css', [a.get('href') for t, a in page.nodes if t == 'link'])
         links = [a.get('href') for t, a in page.nodes if t == 'a']
         self.assertIn('tel:+19282257944', links)
         self.assertIn('sms:+19282257944?body=Hi%20Kyle%2C%20I%20need%20tech%20help.', links)
