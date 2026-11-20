@@ -39,6 +39,15 @@ function initializeTechHelp() {
   const picker = document.getElementById('service-picker');
   const change = document.getElementById('change-service');
   const serviceIds = new Set(Array.from(service.options, option => option.value));
+  const installationRequests = {
+    'doorbell-installation': ['Video Doorbell Installation', 'Device make/model, battery-powered or wired, mounting location, and existing Wi-Fi.'],
+    'thermostat-installation': ['Smart Thermostat Installation & Setup', 'New and existing thermostat models, whether the current thermostat works, and existing Wi-Fi.'],
+    'garage-installation': ['Smart Garage Controller Installation', 'Controller and opener models, whether the opener works, and existing Wi-Fi.'],
+  };
+  const installationId = new URLSearchParams(location.search).get('installation');
+  const installation = Object.hasOwn(installationRequests, installationId) ? installationRequests[installationId] : null;
+  const problem = document.getElementById('help-problem');
+  const installationPrefix = () => service.value === 'smart-home' && installation ? 'Installation inquiry: ' + installation[0] + '\n\n' : '';
   let sending = false;
   let ready = false;
   let checking = false;
@@ -46,8 +55,12 @@ function initializeTechHelp() {
 
   function updateService() {
     const selected = Array.from(service.options).find(option => option.value === service.value);
-    document.getElementById('selected-name').textContent = selected.textContent;
+    const inquiry = installationPrefix();
+    document.getElementById('selected-name').textContent = inquiry ? installation[0] : selected.textContent;
     document.getElementById('selected-icon').src = 'assets/icons/' + serviceIcons[service.value] + '.svg';
+    document.getElementById('help-problem-label').textContent = inquiry ? 'What model and setup do you have?' : 'What’s happening?';
+    problem.placeholder = inquiry ? installation[1] : '';
+    problem.maxLength = 4000 - inquiry.length;
   }
   async function checkAvailability() {
     if (ready || sending || checking || completed) return;
@@ -81,6 +94,11 @@ function initializeTechHelp() {
     const payload = Object.fromEntries(new FormData(form));
     payload.project_type = 'tech_support';
     payload.reply_method = 'email';
+    payload.problem = installationPrefix() + payload.problem;
+    if (payload.problem.length > 4000) {
+      status.textContent = 'Please shorten your description to ' + problem.maxLength + ' characters or fewer.';
+      return;
+    }
     sending = true;
     fields.disabled = true;
     status.textContent = 'Sending your request…';

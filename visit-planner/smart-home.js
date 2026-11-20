@@ -18,7 +18,7 @@ function addSmartHomeSupport(packages, guidance) {
 function renderSmartHomeMenu(selection, panel) {
   const packages = tasks[1].map(([name, icon, price], index) => {
     const open = selection === String(index);
-    return serviceCard(index === 0 ? "Smart Device App &amp; Wi-Fi Pairing" : name, icon, "$" + price, open, "choose(" + index + ")")
+    return serviceCard(name, icon, "$" + price, open, "choose(" + index + ")", "smart-home-support-" + index)
       + (open ? panel : "");
   });
   const installations = [
@@ -28,13 +28,13 @@ function renderSmartHomeMenu(selection, panel) {
   ];
   const installationCards = installations.map(([id, title, scope]) => {
     const open = selection === id;
-    return serviceCard(title, "smart-home", "$249", open, "location.hash='services/1/" + id + "'")
-      + (open ? '<section class="scope"><h2>' + title + '</h2><p>Unavailable for booking.</p><h3>Service details</h3><div>' + scope + '</div></section>' : "");
+    return serviceCard(title, "smart-home", "$249", open, "location.hash='services/1/" + id + "'", id)
+      + (open ? '<section class="scope"><h2>' + title + '</h2><p>Tell Kyle about your device and setup. No new wiring or electrical work is included.</p><h3>Service details</h3><div>' + scope + '</div><p><a href="/request-help?service=smart-home&amp;installation=' + id + '">Ask Kyle about installation</a></p></section>' : "");
   });
-  const group = (heading, cards) => '<section class="service-group"><h2>' + heading + '</h2><div class="picker computer-packages">' + cards.join("") + '</div></section>';
-  return '<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>Smart home</h1><p>' + paymentNote + '</p>'
-    + group("Device pairing", packages.slice(0, 1))
-    + group("Device support", packages.slice(1))
-    + '<details class="unavailable-services"' + (installations.some(([id]) => id === selection) ? ' open' : '') + '><summary>View installations · Unavailable for booking</summary>' + group("Installation details", installationCards) + '</details>'
+  const group = (heading, note, cards) => '<section class="service-group"><h2>' + heading + '</h2><p>' + note + '</p><div class="picker computer-packages">' + cards.join("") + '</div></section>';
+  return '<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a service</div><h1>Smart home</h1>'
+    + (selection === "retired" ? '<p role="status">That service is no longer offered. Choose an installation inquiry or support service below.</p>' : '')
+    + group("Installation", "Kyle confirms scope, price and availability before scheduling.", installationCards)
+    + group("Support", paymentNote, packages)
     + '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p></section>';
 }

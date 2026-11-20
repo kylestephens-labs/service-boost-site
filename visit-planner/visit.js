@@ -13,11 +13,6 @@ const services = [
   [
     "Smart home",
     "smart-home",
-    199,
-    "Pair one compatible plug-in or battery device.",
-    "Pair one supported device with its app|Connect to compatible Wi-Fi|Test one control or alert",
-    "Drilling, mounting, ladders and fixed wiring. Ring mounting requires a separate scope and price agreed with Kyle.",
-    "Is it plug-in or battery powered, compatible with your Wi-Fi and ready to pair without mounting or wiring?",
 
   ],
   [
@@ -50,7 +45,7 @@ const tasks = services.map((s, j) => [
   [
     [
       "New computer setup",
-      "Smart-home device setup",
+      "",
       "New WiFi Connection Setup",
       "Phone or tablet setup",
     ][j],
@@ -102,9 +97,7 @@ const prep = [
     "Confirm you can sign in to the account.",
     "Choose one task and have your computer ready.",
   ],
-  [
-    "Check the model and app requirements. Confirm it can be paired without mounting or wiring.",
-  ],
+  new Array(1),
   [
     "Check that internet service is active at the modem and that you can access the router.",
   ],
@@ -112,9 +105,12 @@ const prep = [
     "Confirm you can unlock the phone or tablet and sign into the account used for setup.",
   ],
 ];
+// Keep retired pairing ID 0 empty so existing support IDs 1–4 never shift.
+tasks[1] = new Array(1);
 addSmartHomeSupport(tasks[1], prep[1]);
 
 const root = document.querySelector("main");
+let cardToRefocus;
 function go(page) {
   location.hash =
     page === "home"
@@ -130,19 +126,28 @@ function choose(n) {
   task = n;
   location.hash = "services/" + category + "/" + n;
 }
-function serviceCard(title, icon, priceLabel, expanded, action) {
-  return `<button class="pick" aria-expanded="${!!expanded}" onclick="${expanded ? "location.hash='services/'+category" : action}"><img alt="" src="assets/icons/${icon}.svg"><b>${title}</b><span>${priceLabel}</span></button>`;
+function serviceCard(title, icon, priceLabel, expanded, action, cardId) {
+  const toggle = expanded ? "location.hash='services/'+category" : action;
+  const id = cardId ? ` id="${cardId}"` : "";
+  const rememberFocus = cardId ? "cardToRefocus = this.id; " : "";
+  return `<button class="pick"${id} aria-expanded="${!!expanded}" onclick="${rememberFocus}${toggle}"><img alt="" src="assets/icons/${icon}.svg"><b>${title}</b><span>${priceLabel}</span></button>`;
 }
 function render() {
   let [page, c, t] = location.hash.slice(1).split("/");
   const requestedPage = page;
+  if (["services","book","fit","contact","time","checkout","done","detail"].includes(page) &&
+      /^\d+$/.test(c) && Number(c) === 1 && /^\d+$/.test(t) && Number(t) === 0) {
+    page = "services";
+    t = "retired";
+    history.replaceState(null, "", "#services/1/retired");
+  }
   if (!["services","book","fit","contact","time","checkout","done","detail"].includes(page) ||
       !/^\d+$/.test(c) || !tasks[Number(c)] ||
       (page !== "services" && (!/^\d+$/.test(t) || !tasks[Number(c)][Number(t)]))) page = "home";
   category = /^\d+$/.test(c) && tasks[Number(c)] ? Number(c) : 0;
-  task = /^\d+$/.test(t) && tasks[category][Number(t)] ? Number(t) : 0;
+  task = /^\d+$/.test(t) && tasks[category][Number(t)] ? Number(t) : tasks[category].findIndex(Boolean);
   if (["fit", "contact", "time", "checkout", "done"].includes(page)) page = "book";
-  if (requestedPage !== page && page !== "home") {
+  if (requestedPage !== page && page !== "home" && t !== "retired") {
     history.replaceState(null, "", "#" + page + "/" + category + "/" + task);
   }
   document.body.classList.toggle("booking-page", page === "book");
@@ -217,6 +222,13 @@ function render() {
 
 function renderRoute() {
   render();
+  const card = cardToRefocus && document.getElementById(cardToRefocus);
+  cardToRefocus = undefined;
+  if (card) {
+    card.focus({ preventScroll: true });
+    card.scrollIntoView({ block: "nearest" });
+    return;
+  }
   const anchor = location.hash.slice(1);
   if (["services", "pricing", "about", "process", "tech-faq"].includes(anchor)) {
     document.getElementById(anchor)?.scrollIntoView();

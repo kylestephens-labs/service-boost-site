@@ -4,9 +4,9 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 const source = readFileSync(new URL('./tech-support.js', import.meta.url), 'utf8');
 
-function page({ available = true, serviceQuery = 'wifi', response = async () => ({ok:true}), readiness } = {}) {
+function page({ available = true, serviceQuery = 'wifi', installationQuery = '', response = async () => ({ok:true}), readiness } = {}) {
   const nodes = {}, calls = [];
-  for (const id of ['tech-help-form','help-fields','help-service','help-email','help-status','help-submit','retry-availability','service-picker','change-service','selected-name','selected-icon','service-summary','request-form','request-confirmation','confirmation-title']) {
+  for (const id of ['tech-help-form','help-fields','help-service','help-email','help-problem','help-problem-label','help-status','help-submit','retry-availability','service-picker','change-service','selected-name','selected-icon','service-summary','request-form','request-confirmation','confirmation-title']) {
     nodes[id] = {value:'', hidden:id === 'request-confirmation', handlers:{}, addEventListener(name, callback) {this.handlers[name] = callback;},
       setAttribute(name, value) {this[name] = value;}, focus() {this.focused = true;}};
   }
@@ -18,7 +18,7 @@ function page({ available = true, serviceQuery = 'wifi', response = async () => 
   form.reportValidity = () => true;
   form.reset = () => {form.resetCalled = true; service.value = 'help'; nodes['help-email'].value = '';};
   vm.runInNewContext(source, {
-    URL, URLSearchParams, AbortSignal, location:new URL('https://serviceboost.co/request-help?service=' + encodeURIComponent(serviceQuery)),
+    URL, URLSearchParams, AbortSignal, location:new URL('https://serviceboost.co/request-help?service=' + encodeURIComponent(serviceQuery) + '&installation=' + encodeURIComponent(installationQuery)),
     window:{SERVICE_BOOST_QUOTE_ENDPOINT:'https://quotes.serviceboost.co/quote', addEventListener() {}, scrollTo() {}},
     document:{getElementById:id => nodes[id], querySelectorAll:() => [], body:{classList:{add() {}}}},
     FormData: class { *[Symbol.iterator]() {
@@ -45,6 +45,35 @@ test('older backend disables submission but allows manual availability retry', a
   await p.nodes['retry-availability'].handlers.click();
   assert.equal(p.nodes['help-submit'].disabled, false);
   assert.equal(p.nodes['retry-availability'].hidden, true);
+});
+
+test('installation inquiries preserve selected scope in existing intake and clear context on service change', async () => {
+  for (const [id, name] of [['doorbell-installation','Video Doorbell Installation'], ['thermostat-installation','Smart Thermostat Installation & Setup'], ['garage-installation','Smart Garage Controller Installation']]) {
+    const p = page({serviceQuery:'smart-home',installationQuery:id});
+    assert.equal(p.nodes['selected-name'].textContent, name);
+    assert.match(p.nodes['help-problem'].placeholder, /model/i);
+    await settle(); await p.submit();
+    assert.equal(p.calls[0].service, 'smart-home');
+    assert.equal(p.calls[0].problem, 'Installation inquiry: ' + name + '\n\nWi-Fi drops during calls.');
+    assert.equal(p.nodes['help-problem'].maxLength + ('Installation inquiry: ' + name + '\n\n').length, 4000);
+  }
+  const p = page({serviceQuery:'smart-home',installationQuery:'doorbell-installation'});
+  p.nodes['help-service'].value = 'printer';
+  p.nodes['help-service'].handlers.change();
+  assert.equal(p.nodes['selected-name'].textContent, 'printer');
+  assert.equal(p.nodes['help-problem'].placeholder, '');
+  assert.equal(p.nodes['help-problem'].maxLength, 4000);
+  await settle(); await p.submit();
+  assert.equal(p.calls[0].problem, 'Wi-Fi drops during calls.');
+});
+
+test('unrecognized installation queries cannot inject inquiry context', async () => {
+  for (const installationQuery of ['constructor','__proto__','<img src=x>','unknown']) {
+    const p = page({serviceQuery:'smart-home',installationQuery});
+    assert.equal(p.nodes['selected-name'].textContent, 'smart-home');
+    await settle(); await p.submit();
+    assert.equal(p.calls[0].problem, 'Wi-Fi drops during calls.');
+  }
 });
 
 test('email-only requests retain service and clear personal fields on success', async () => {
