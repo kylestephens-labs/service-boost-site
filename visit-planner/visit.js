@@ -110,6 +110,7 @@ tasks[1] = new Array(1);
 addSmartHomeSupport(tasks[1], prep[1]);
 
 const root = document.querySelector("main");
+let cardToRefocus;
 function go(page) {
   location.hash =
     page === "home"
@@ -125,8 +126,11 @@ function choose(n) {
   task = n;
   location.hash = "services/" + category + "/" + n;
 }
-function serviceCard(title, icon, priceLabel, expanded, action) {
-  return `<button class="pick" aria-expanded="${!!expanded}" onclick="${expanded ? "location.hash='services/'+category" : action}"><img alt="" src="assets/icons/${icon}.svg"><b>${title}</b><span>${priceLabel}</span></button>`;
+function serviceCard(title, icon, priceLabel, expanded, action, cardId) {
+  const toggle = expanded ? "location.hash='services/'+category" : action;
+  const id = cardId ? ` id="${cardId}"` : "";
+  const rememberFocus = cardId ? "cardToRefocus = this.id; " : "";
+  return `<button class="pick"${id} aria-expanded="${!!expanded}" onclick="${rememberFocus}${toggle}"><img alt="" src="assets/icons/${icon}.svg"><b>${title}</b><span>${priceLabel}</span></button>`;
 }
 function render() {
   let [page, c, t] = location.hash.slice(1).split("/");
@@ -218,6 +222,13 @@ function render() {
 
 function renderRoute() {
   render();
+  const card = cardToRefocus && document.getElementById(cardToRefocus);
+  cardToRefocus = undefined;
+  if (card) {
+    card.focus({ preventScroll: true });
+    card.scrollIntoView({ block: "nearest" });
+    return;
+  }
   const anchor = location.hash.slice(1);
   if (["services", "pricing", "about", "process", "tech-faq"].includes(anchor)) {
     document.getElementById(anchor)?.scrollIntoView();

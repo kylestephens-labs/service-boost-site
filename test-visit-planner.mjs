@@ -191,7 +191,7 @@ test("review smart-home support carries approved terms and installations have no
   for (const slug of ["doorbell-installation", "thermostat-installation", "garage-installation"]) {
     const html = visit("#services/1/" + slug);
     assert.ok(html.includes('href="/request-help?service=smart-home&amp;installation=' + slug + '">Ask Kyle about installation'));
-    assert.match(html, /inquiry, not a reservation/);
+    assert.match(html, /No new wiring or electrical work is included/);
     assert.doesNotMatch(html, /Unavailable for booking|Installation details|Request a quote/);
     assert.doesNotMatch(html, /Choose a time<\/button>/);
     assert.doesNotMatch(visit("#fit/1/" + slug), /id="calendar-title"/);
@@ -203,7 +203,8 @@ test("retired pairing routes never book or alias another service; support IDs st
   run("window.SERVICE_BOOST_BOOKING_ENABLED = true");
   const menu = visit("#services/1");
   assert.doesNotMatch(menu, /Pairing|pairing|\$199/);
-  assert.ok(menu.indexOf('<h2>Installation</h2>') < menu.indexOf('<h2>Support</h2>'));
+  assert.match(menu, /<h2>Installation<\/h2><p>Kyle confirms scope, price and availability before scheduling\.<\/p>.*<h2>Support<\/h2><p>Fixed-price services · Pay after your visit<\/p>/);
+  assert.equal((menu.match(/Fixed-price services/g) || []).length, 1);
   for (const route of ["services", "book", "fit", "contact", "time", "checkout", "done", "detail"]) {
     for (const id of ["0", "00"]) {
       const html = visit("#" + route + "/1/" + id);
