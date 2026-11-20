@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 const source = readFileSync(new URL('./tech-support.js', import.meta.url), 'utf8');
 
-function page({ available = true, serviceQuery = 'wifi', installationQuery = '', response = async () => ({ok:true}), readiness } = {}) {
+function page({ available = true, serviceQuery = 'wifi', installationQuery = '', networkQuery = '', response = async () => ({ok:true}), readiness } = {}) {
   const nodes = {}, calls = [];
   for (const id of ['tech-help-form','help-fields','help-service','help-email','help-problem','help-problem-label','help-status','help-submit','retry-availability','service-picker','change-service','selected-name','selected-icon','service-summary','request-form','request-confirmation','confirmation-title']) {
     nodes[id] = {value:'', hidden:id === 'request-confirmation', handlers:{}, addEventListener(name, callback) {this.handlers[name] = callback;},
@@ -18,7 +18,7 @@ function page({ available = true, serviceQuery = 'wifi', installationQuery = '',
   form.reportValidity = () => true;
   form.reset = () => {form.resetCalled = true; service.value = 'help'; nodes['help-email'].value = '';};
   vm.runInNewContext(source, {
-    URL, URLSearchParams, AbortSignal, location:new URL('https://serviceboost.co/request-help?service=' + encodeURIComponent(serviceQuery) + '&installation=' + encodeURIComponent(installationQuery)),
+    URL, URLSearchParams, AbortSignal, location:new URL('https://serviceboost.co/request-help?' + new URLSearchParams({service:serviceQuery, installation:installationQuery, network:networkQuery})),
     window:{SERVICE_BOOST_QUOTE_ENDPOINT:'https://quotes.serviceboost.co/quote', addEventListener() {}, scrollTo() {}},
     document:{getElementById:id => nodes[id], querySelectorAll:() => [], body:{classList:{add() {}}}},
     FormData: class { *[Symbol.iterator]() {
@@ -74,6 +74,45 @@ test('unrecognized installation queries cannot inject inquiry context', async ()
     await settle(); await p.submit();
     assert.equal(p.calls[0].problem, 'Wi-Fi drops during calls.');
   }
+});
+
+test('allowlisted network inquiries carry the selected service and prompt through the existing intake', async () => {
+  for (const [networkQuery, name, prompt, hint] of [
+    ['connectivity', 'Connectivity Support', 'What connection issue are you seeing?', /devices are affected/],
+    ['extension', 'Wi-Fi Signal Extension', 'Where is Wi-Fi weak?', /affected rooms/],
+    ['cabling', 'In-Wall Cable Running', 'Where does the network cable need to go?', /start and end points/],
+  ]) {
+    const p = page({networkQuery});
+    assert.equal(p.nodes['selected-name'].textContent, name);
+    assert.equal(p.nodes['help-problem-label'].textContent, prompt);
+    assert.match(p.nodes['help-problem'].placeholder, hint);
+    const prefix = 'Network inquiry: ' + name + '\n\n';
+    assert.equal(p.nodes['help-problem'].maxLength, 4000 - prefix.length);
+    await settle(); await p.submit();
+    assert.equal(p.calls[0].service, 'wifi');
+    assert.equal(p.calls[0].problem, prefix + 'Wi-Fi drops during calls.');
+  }
+});
+
+test('network inquiries reject unknown and mismatched context and clear it when changing service', async () => {
+  for (const options of [
+    {networkQuery:'constructor'}, {networkQuery:'<img src=x>'}, {networkQuery:'unknown'},
+    {serviceQuery:'help', networkQuery:'cabling'}, {installationQuery:'doorbell-installation'},
+  ]) {
+    const p = page(options);
+    assert.equal(p.nodes['selected-name'].textContent, options.serviceQuery ?? 'wifi');
+    assert.equal(p.nodes['help-problem'].placeholder, '');
+    await settle(); await p.submit();
+    assert.equal(p.calls[0].problem, 'Wi-Fi drops during calls.');
+  }
+  const p = page({networkQuery:'cabling'});
+  p.nodes['help-service'].value = 'printer';
+  p.nodes['help-service'].handlers.change();
+  assert.equal(p.nodes['selected-name'].textContent, 'printer');
+  assert.equal(p.nodes['help-problem-label'].textContent, 'What’s happening?');
+  assert.equal(p.nodes['help-problem'].maxLength, 4000);
+  await settle(); await p.submit();
+  assert.equal(p.calls[0].problem, 'Wi-Fi drops during calls.');
 });
 
 test('email-only requests retain service and clear personal fields on success', async () => {

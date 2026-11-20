@@ -44,10 +44,27 @@ function initializeTechHelp() {
     'thermostat-installation': ['Smart Thermostat Installation & Setup', 'New and existing thermostat models, whether the current thermostat works, and existing Wi-Fi.'],
     'garage-installation': ['Smart Garage Controller Installation', 'Controller and opener models, whether the opener works, and existing Wi-Fi.'],
   };
-  const installationId = new URLSearchParams(location.search).get('installation');
-  const installation = Object.hasOwn(installationRequests, installationId) ? installationRequests[installationId] : null;
+  const networkRequests = {
+    connectivity: ['Connectivity Support', 'What connection issue are you seeing?', 'Share which devices are affected, when it happens, and whether other devices can connect.'],
+    extension: ['Wi-Fi Signal Extension', 'Where is Wi-Fi weak?', 'List the affected rooms, your router model, and any extender or mesh equipment you have.'],
+    cabling: ['In-Wall Cable Running', 'Where does the network cable need to go?', 'Share the start and end points, access to walls or ceilings, and any materials you already have.'],
+  };
+  const query = new URLSearchParams(location.search);
+  const requested = query.get('service');
+  const installationId = query.get('installation');
+  const networkId = query.get('network');
+  let inquiry;
+  if (requested === 'smart-home' && Object.hasOwn(installationRequests, installationId)) {
+    const [name, placeholder] = installationRequests[installationId];
+    inquiry = {name, placeholder, prompt: 'What model and setup do you have?', type: 'Installation inquiry'};
+  }
+  if (requested === 'wifi' && Object.hasOwn(networkRequests, networkId)) {
+    const [name, prompt, placeholder] = networkRequests[networkId];
+    inquiry = {name, placeholder, prompt, type: 'Network inquiry'};
+  }
   const problem = document.getElementById('help-problem');
-  const installationPrefix = () => service.value === 'smart-home' && installation ? 'Installation inquiry: ' + installation[0] + '\n\n' : '';
+  const selectedInquiry = () => service.value === requested ? inquiry : undefined;
+  const inquiryPrefix = () => selectedInquiry() ? inquiry.type + ': ' + inquiry.name + '\n\n' : '';
   let sending = false;
   let ready = false;
   let checking = false;
@@ -55,12 +72,12 @@ function initializeTechHelp() {
 
   function updateService() {
     const selected = Array.from(service.options).find(option => option.value === service.value);
-    const inquiry = installationPrefix();
-    document.getElementById('selected-name').textContent = inquiry ? installation[0] : selected.textContent;
+    const details = selectedInquiry();
+    document.getElementById('selected-name').textContent = details?.name ?? selected.textContent;
     document.getElementById('selected-icon').src = 'assets/icons/' + serviceIcons[service.value] + '.svg';
-    document.getElementById('help-problem-label').textContent = inquiry ? 'What model and setup do you have?' : 'What’s happening?';
-    problem.placeholder = inquiry ? installation[1] : '';
-    problem.maxLength = 4000 - inquiry.length;
+    document.getElementById('help-problem-label').textContent = details?.prompt ?? 'What’s happening?';
+    problem.placeholder = details?.placeholder ?? '';
+    problem.maxLength = 4000 - inquiryPrefix().length;
   }
   async function checkAvailability() {
     if (ready || sending || checking || completed) return;
@@ -94,7 +111,7 @@ function initializeTechHelp() {
     const payload = Object.fromEntries(new FormData(form));
     payload.project_type = 'tech_support';
     payload.reply_method = 'email';
-    payload.problem = installationPrefix() + payload.problem;
+    payload.problem = inquiryPrefix() + payload.problem;
     if (payload.problem.length > 4000) {
       status.textContent = 'Please shorten your description to ' + problem.maxLength + ' characters or fewer.';
       return;
@@ -135,7 +152,6 @@ function initializeTechHelp() {
       fields.disabled = completed;
     }
   });
-  const requested = new URLSearchParams(location.search).get('service');
   service.value = serviceIds.has(requested) ? requested : 'help';
   updateService();
   document.getElementById('service-summary').hidden = false;

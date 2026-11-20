@@ -135,20 +135,22 @@ function serviceCard(title, icon, priceLabel, expanded, action, cardId) {
 function render() {
   let [page, c, t] = location.hash.slice(1).split("/");
   const requestedPage = page;
-  if (["services","book","fit","contact","time","checkout","done","detail"].includes(page) &&
-      /^\d+$/.test(c) && Number(c) === 1 && /^\d+$/.test(t) && Number(t) === 0) {
+  const visitRoute = ["services","book","fit","contact","time","checkout","done","detail"].includes(page);
+  const wifiInquiry = visitRoute && /^\d+$/.test(c) && Number(c) === 2 && Object.hasOwn(wifiInquiries, t);
+  if (wifiInquiry) page = "services";
+  if (visitRoute && /^\d+$/.test(c) && Number(c) === 1 && /^\d+$/.test(t) && Number(t) === 0) {
     page = "services";
     t = "retired";
     history.replaceState(null, "", "#services/1/retired");
   }
-  if (!["services","book","fit","contact","time","checkout","done","detail"].includes(page) ||
+  if (!visitRoute ||
       !/^\d+$/.test(c) || !tasks[Number(c)] ||
       (page !== "services" && (!/^\d+$/.test(t) || !tasks[Number(c)][Number(t)]))) page = "home";
   category = /^\d+$/.test(c) && tasks[Number(c)] ? Number(c) : 0;
   task = /^\d+$/.test(t) && tasks[category][Number(t)] ? Number(t) : tasks[category].findIndex(Boolean);
   if (["fit", "contact", "time", "checkout", "done"].includes(page)) page = "book";
   if (requestedPage !== page && page !== "home" && t !== "retired") {
-    history.replaceState(null, "", "#" + page + "/" + category + "/" + task);
+    history.replaceState(null, "", "#" + page + "/" + category + "/" + (wifiInquiry ? t : task));
   }
   document.body.classList.toggle("booking-page", page === "book");
   const [name, icon, base, desc, inc, exc, q] = tasks[category][task];
