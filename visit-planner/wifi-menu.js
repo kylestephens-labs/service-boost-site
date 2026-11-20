@@ -14,20 +14,27 @@ const wifiInquiries = {
   },
 };
 
-function renderWifiMenu(selection, panel) {
-  const [name, icon, price] = tasks[2][0];
-  const setup = serviceCard(name, icon, "$" + price, selection === "0", "choose(0)", "wifi-router-setup")
-    + (selection === "0" ? panel : "");
-  function inquiryCard(id) {
+function renderWifiMenu(selection, guide) {
+  function inquiry(id) {
     const { title, detail } = wifiInquiries[id];
-    const open = selection === id;
-    return serviceCard(title, "wifi", "Ask Kyle", open, "location.hash='services/2/" + id + "'", "wifi-" + id)
-      + (open ? '<section class="scope"><h2>' + title + '</h2><p>' + detail + '</p>'
-        + '<p><a href="/request-help?service=wifi&amp;network=' + id + '">Ask Kyle about ' + title.toLowerCase() + '</a></p></section>' : "");
+    return {
+      id,
+      title,
+      icon: "wifi",
+      priceLabel: "Ask Kyle",
+      detail: serviceScope(detail),
+      href: "/request-help?service=wifi&network=" + id,
+      action: "Ask Kyle about " + title.toLowerCase(),
+    };
   }
-  return '<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a service</div><h1>Wi-Fi &amp; network</h1>'
-    + '<section class="service-group"><h2>Setup &amp; installation</h2><p>Router setup is fixed price, with payment after your visit.</p>'
-    + '<div class="picker computer-packages">' + setup + inquiryCard("extension") + inquiryCard("cabling") + '</div></section>'
-    + '<section class="service-group"><h2>Support</h2><div class="picker computer-packages">' + inquiryCard("connectivity") + '</div></section>'
-    + '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p></section>';
+  return renderServiceMenu(2, selection, {
+    title: "Wi-Fi & network",
+    subtitle: "On-site router setup and network help in Walnut Creek and nearby communities.",
+    groups: [
+      { heading: "Setup & installation", note: "Router setup is fixed price, with payment after your visit.",
+        cards: [scheduledService(2, 0), inquiry("extension"), inquiry("cabling")] },
+      { heading: "Support", cards: [inquiry("connectivity")] },
+    ],
+    guide,
+  });
 }
