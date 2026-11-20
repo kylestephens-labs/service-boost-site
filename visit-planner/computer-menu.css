@@ -1,0 +1,477 @@
+.computer-menu-page {
+  --computer-canvas: #f5f7fc;
+  --computer-ink: #151c3b;
+  --computer-muted: #42516b;
+  --computer-blue: #214bc0;
+  --computer-border: #d9e0ee;
+  --computer-focus: #2153d6;
+  background: var(--computer-canvas);
+}
+
+.computer-menu-page .global-header .global-nav a[href^="tel:"],
+.computer-menu-page .mobile-header a[href^="tel:"] {
+  border: 1px solid #b6c8f0;
+  border-radius: 999px;
+  background: #f6f8ff;
+  color: #2049b8;
+  padding-inline: 15px;
+  text-decoration: none;
+}
+
+.computer-menu-page .global-header .global-nav a[href^="tel:"]:hover,
+.computer-menu-page .mobile-header a[href^="tel:"]:hover {
+  background: #eaf0ff;
+}
+
+.computer-menu-page main {
+  max-width: 1168px;
+  padding: 47px 32px 48px;
+}
+
+.computer-menu-page .computer-shell {
+  max-width: 760px;
+  margin: 0 auto;
+  color: var(--computer-ink);
+}
+
+.computer-hero {
+  padding-bottom: 32px;
+}
+
+.computer-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  color: var(--computer-blue);
+  text-decoration: none;
+  font-size: .935rem;
+  font-weight: 700;
+}
+
+.computer-back:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.computer-menu-page .computer-hero h1 {
+  margin: 0;
+  color: var(--computer-ink);
+  font-size: clamp(2.125rem, 4.3vw, 3.375rem);
+  line-height: 1.07;
+  letter-spacing: -.045em;
+  max-width: 820px;
+}
+
+.computer-hero .computer-subtitle {
+  margin: 12px 0 0;
+  color: var(--computer-muted);
+  font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+  line-height: 1.48;
+  max-width: 38rem;
+}
+
+.computer-hero .computer-terms {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  margin: 14px 0 0;
+  color: #294785;
+  font-size: .925rem;
+  font-weight: 700;
+}
+
+.computer-terms img {
+  flex: none;
+}
+
+.computer-layout {
+  display: grid;
+  gap: 28px;
+}
+
+.computer-group + .computer-group {
+  margin-top: 26px;
+}
+
+.computer-menu-page .computer-group h2 {
+  margin: 0 0 12px;
+  color: #263454;
+  font-size: 1.125rem;
+  line-height: 1.35;
+  letter-spacing: -.012em;
+}
+
+.computer-service {
+  position: relative;
+  border: 1px solid var(--computer-border);
+  border-radius: 13px;
+  background: #fff;
+  transition: border-color .16s, box-shadow .16s;
+  margin-bottom: 8px;
+}
+
+.computer-service:last-child {
+  margin-bottom: 0;
+}
+
+@media (hover: hover) {
+  .computer-service:hover {
+    border-color: #a8bdee;
+    box-shadow: 0 2px 7px #263c6510;
+  }
+}
+
+.computer-service:has([aria-expanded="true"]) {
+  border-color: #9fb6ed;
+  box-shadow: 0 2px 10px #263c650d;
+}
+
+.computer-card-heading {
+  margin: 0;
+}
+
+.computer-menu-page .computer-toggle {
+  appearance: none;
+  width: 100%;
+  min-height: 68px;
+  margin: 0;
+  padding: 12px 16px;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto 18px;
+  align-items: center;
+  gap: 13px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--computer-ink);
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.computer-menu-page .computer-toggle[aria-expanded="true"] {
+  border-radius: 12px 12px 0 0;
+  background: #f1f5ff;
+}
+
+.computer-icon {
+  display: grid;
+  height: 38px;
+  place-items: center;
+  border-radius: 9px;
+  background: #edf2ff;
+}
+
+.computer-icon img,
+.computer-chevron,
+.computer-back img,
+.computer-terms img,
+.computer-help a img {
+  filter: brightness(0) saturate(100%) invert(27%) sepia(94%) saturate(1868%) hue-rotate(211deg) brightness(86%) contrast(104%);
+}
+
+.computer-menu-page .computer-toggle .computer-name {
+  font-size: 1.225rem;
+  line-height: 1.24;
+  font-weight: 700;
+  letter-spacing: -.014em;
+}
+
+.computer-price {
+  color: var(--computer-blue);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  font-variant-numeric: lining-nums tabular-nums;
+  text-align: right;
+}
+
+.computer-quote {
+  color: #344a76;
+  font-size: .9rem;
+  font-weight: 700;
+}
+
+.computer-chevron {
+  justify-self: end;
+  transform: rotate(90deg);
+}
+
+.computer-toggle[aria-expanded="true"] .computer-chevron {
+  transform: rotate(-90deg);
+}
+
+.computer-menu-page .computer-toggle:focus-visible,
+.computer-menu-page .computer-shell a:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 3px solid var(--computer-focus);
+  outline-offset: 3px;
+}
+
+.computer-detail {
+  padding: 17px 66px 22px;
+  border-top: 1px solid #e1e8f5;
+  color: #36445e;
+  font-size: 1rem;
+}
+
+.computer-detail p {
+  margin: 0;
+  max-width: 55ch;
+}
+
+.computer-detail .computer-exclusions {
+  margin-bottom: 14px;
+}
+
+.computer-detail ul {
+  margin: 9px 0 14px;
+  padding-inline-start: 22px;
+}
+
+.computer-detail li + li {
+  margin-top: 3px;
+}
+
+.computer-detail li::marker {
+  color: var(--computer-blue);
+}
+
+.computer-detail .computer-action {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 15px;
+  border-radius: 8px;
+  background: #204bbd;
+  color: #fff;
+  text-decoration: none;
+  font-size: .975rem;
+  font-weight: 700;
+}
+
+.computer-detail .computer-action:hover {
+  background: #173d9e;
+}
+
+.computer-inline-help {
+  margin: 20px 0 0;
+  padding: 1px 0 0;
+  color: var(--computer-muted);
+  font-size: .975rem;
+}
+
+.computer-inline-help a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--computer-blue);
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.computer-help {
+  display: none;
+  align-self: start;
+  padding: 21px 21px 16px;
+  border: 1px solid var(--computer-border);
+  border-radius: 13px;
+  background: #fff;
+}
+
+.computer-owner {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 17px;
+  color: #30456f;
+  font-size: .925rem;
+  font-weight: 700;
+}
+
+.computer-owner img {
+  border: 1px solid #d9e1f2;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 35%;
+}
+
+.computer-owner strong {
+  font-size: inherit;
+  line-height: 1.25;
+}
+
+.computer-menu-page .computer-help h2 {
+  margin: 0;
+  color: var(--computer-ink);
+  font-size: 1.24rem;
+  letter-spacing: -.02em;
+  line-height: 1.28;
+}
+
+.computer-help p {
+  margin: 8px 0 5px;
+  color: var(--computer-muted);
+  font-size: .97rem;
+  line-height: 1.48;
+}
+
+.computer-help a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--computer-blue);
+  font-size: .975rem;
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.computer-menu-page .site-footer {
+  max-width: 1120px;
+  color: var(--computer-muted);
+}
+
+@media (min-width: 1080px) {
+  .computer-menu-page .computer-shell {
+    max-width: 1060px;
+  }
+
+  .computer-layout {
+    grid-template-columns: minmax(0, 1fr) 255px;
+    column-gap: 30px;
+  }
+
+  .computer-help {
+    display: block;
+    margin-top: 36px;
+  }
+
+  .computer-inline-help {
+    display: none;
+  }
+}
+
+@media (min-width: 1200px) and (min-height: 780px) {
+  .computer-help {
+    position: sticky;
+    top: 110px;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .computer-menu-page header.global-header {
+    flex-wrap: nowrap;
+    gap: 16px;
+    padding-block: 14px;
+  }
+
+  .computer-menu-page .global-header .global-brand {
+    gap: 10px;
+    font-size: 22px;
+  }
+
+  .computer-menu-page .global-brand img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .computer-menu-page .global-header .global-nav {
+    width: auto;
+    flex-wrap: nowrap;
+    gap: 17px;
+  }
+
+  .computer-menu-page .global-header .global-nav a {
+    gap: 7px;
+    font-size: 16px;
+  }
+
+  .computer-menu-page .global-header .global-contact img {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 760px) {
+  .computer-menu-page main {
+    padding: 28px 18px 25px;
+  }
+
+  .computer-menu-page .mobile-header a[href^="tel:"] {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 12px;
+  }
+
+  .computer-back {
+    margin-bottom: 12px;
+  }
+
+  .computer-hero {
+    padding-bottom: 27px;
+  }
+
+  .computer-hero .computer-subtitle {
+    margin-top: 9px;
+  }
+
+  .computer-hero .computer-terms {
+    margin-top: 12px;
+    font-size: .85rem;
+  }
+
+  .computer-menu-page .computer-toggle {
+    min-height: 65px;
+    padding: 11px 13px;
+    gap: 10px;
+  }
+
+  .computer-detail {
+    padding: 15px 16px 17px;
+  }
+}
+
+@media (max-width: 550px) {
+  .computer-hero h1 span {
+    display: block;
+  }
+
+  .computer-menu-page .computer-toggle {
+    grid-template-columns: minmax(0, 1fr) fit-content(30%) 14px;
+  }
+
+  .computer-icon {
+    display: none;
+  }
+
+  .computer-menu-page .computer-toggle .computer-name {
+    font-size: 1.115rem;
+  }
+
+  .computer-price {
+    font-size: 1.025rem;
+  }
+
+  .computer-quote {
+    font-size: .8rem;
+    max-width: 65px;
+  }
+
+  .computer-chevron {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .computer-service {
+    transition: none;
+  }
+}

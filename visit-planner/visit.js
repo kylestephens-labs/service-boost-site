@@ -153,6 +153,7 @@ function render() {
     history.replaceState(null, "", "#" + page + "/" + category + "/" + (wifiInquiry ? t : task));
   }
   document.body.classList.toggle("booking-page", page === "book");
+  document.body.classList.toggle("computer-menu-page", page === "services" && category === 0);
   const [name, icon, base, desc, inc, exc, q] = tasks[category][task];
   const total = base;
   const cards = services
@@ -179,7 +180,7 @@ function render() {
         page === "services" && t !== undefined && !guide && tasks[category][t];
     const panel = guide
       ? `<section class="scope"><h2>Find the right visit</h2><p>Compare the requirements for this category.</p>${tasks[category].map(([n, , , , , , question], j) => `<p><b>${n}</b> · ${question}<br>${prep[category][j]} <a href="#services/${category}/${j}">Review this service</a></p>`).join("")}<p></p><p><a href="https://www.serviceboost.co/request-help">Not sure? Ask Kyle</a> and agree on the scope and price before booking.</p><a href="#services/${category}">Back to choices</a></section>`
-      : selected
+      : category !== 0 && selected
         ? `<section class="scope"><h2>${name}</h2><p>${desc}</p><div class="scope-grid"><div><h3>Included</h3><ul>${inc
             .split("|")
             .map((x) => "<li>" + x + "</li>")
@@ -187,22 +188,17 @@ function render() {
               "",
             )}</ul></div><div><h3>Outside scope</h3><p>${exc}</p></div></div><button onclick="go('book')">Choose a time</button></section>`
         : "";
-    const computerTitles = ["Set up a new computer", "Set up or reconnect a printer", "Troubleshoot a computer or printer"];
+    if (category === 0) {
+      root.innerHTML = renderComputerMenu(tasks[0], t, guide ? panel : "");
+      return;
+    }
     const cards = tasks[category].map(([title, icon, price], j) => {
       const open = selected && j === task;
-      return serviceCard(category === 0 ? (computerTitles[j] || title) : title, icon,
+      return serviceCard(title, icon,
         "$" + price, open, "choose(" + j + ")") + (open ? panel : "");
     });
-    const guideCard = category === 0 ? "" : `<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b></button>`;
-    let picker = `<div class="picker${category === 0 ? " computer-packages" : ""}">${cards.join("")}${guideCard}</div>`;
-    if (category === 0) {
-      const folderOpen = t === "folder";
-      const folder = serviceCard("Back up or transfer a folder", "file-text", "Request a quote", folderOpen, "location.hash='services/0/folder'")
-        + (folderOpen ? '<section class="scope"><h2>Back up or transfer a folder</h2><p>Copy one selected folder from one working computer to one accessible, working drive you provide. Open a sample of the copied files together.</p><h3>Outside scope</h3><p>Full-device migration, damaged drives and data recovery.</p><a href="/request-help">Request a quote</a></section>' : "");
-      const group = (heading, entries) => `<section class="service-group"><h2>${heading}</h2><div class="picker computer-packages">${entries.join("")}</div></section>`;
-      picker = group("Setup &amp; installation", [cards[0], cards[1], cards[3], folder])
-        + group("Help &amp; learning", [cards[2], cards[4], cards[5]]);
-    }
+    const guideCard = `<button class="pick" aria-expanded="${guide}" onclick="location.hash='services/'+category+'/guide'"><img alt="" src="assets/icons/message-circle.svg"><b>Not sure? Ask Kyle</b></button>`;
+    const picker = `<div class="picker">${cards.join("")}${guideCard}</div>`;
     if (category === 1 && !guide) {
       root.innerHTML = renderSmartHomeMenu(t, panel);
       return;
@@ -211,8 +207,7 @@ function render() {
       root.innerHTML = renderWifiMenu(t, panel);
       return;
     }
-    const askKyle = category === 0 ? '<p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>' : "";
-    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p>${picker}${guide ? panel : ""}${askKyle}</section>`;
+    root.innerHTML = `<section class="selection"><div class="path"><a href="#home">All services</a> / Choose a visit</div><h1>${services[category][0]}</h1><p>${paymentNote}</p>${picker}${guide ? panel : ""}</section>`;
     return;
   }
   if (page === "detail") {
