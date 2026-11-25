@@ -99,7 +99,8 @@ class SiteContracts(unittest.TestCase):
         expected = {
             '/computer-troubleshooting': (
                 'computer', ['/#book/0/2', '/#book/0/4', '/#book/0/5', '/#book/0/0', '/#book/0/3', '/request-help'],
-                ['$229', 'even if the issue remains unresolved', 'Parts, hardware repairs, data recovery', 'Request a quote'],
+                ['$229', 'even if the issue remains unresolved', 'Parts, hardware repairs, data recovery',
+                 'Make sure you can access the computer', 'Request a quote'],
             ),
             '/printer-setup': (
                 'printer', ['/#book/0/1', '/#book/0/2'],
@@ -108,14 +109,15 @@ class SiteContracts(unittest.TestCase):
             '/wifi-networking': (
                 'wifi', ['/#book/2/0'] + ['/request-help?service=wifi&network=' + choice
                                          for choice in ('extension', 'cabling', 'connectivity')],
-                ['$229', 'existing internet line', 'qualifications and permits'],
+                ['$229', 'existing internet line', 'Confirm internet service is active and the modem is accessible',
+                 'qualifications and permits', 'which devices have connection problems'],
             ),
             '/smart-home': (
                 'smart-home', ['/request-help?service=smart-home&installation=' + choice for choice in
                                ('doorbell-installation', 'thermostat-installation', 'garage-installation')] +
                 ['/#book/1/1', '/#book/1/2', '/#book/1/3', '/#book/1/4'],
                 ['$249<small>Confirm with Kyle', '$229', 'confirms scope, price, and availability',
-                 'New wiring and electrical work'],
+                 'New wiring and electrical work', 'his findings and next steps'],
             ),
         }
         titles = []
@@ -147,6 +149,8 @@ class SiteContracts(unittest.TestCase):
                     self.assertEqual(card.count('class="visit-menu-action"'), 1)
                 for phrase in terms:
                     self.assertIn(phrase, content)
+                if service == 'computer':
+                    self.assertNotIn('60-minute', content)
                 if service == 'wifi':
                     self.assertNotIn('$249', content)
                 if service == 'smart-home':
