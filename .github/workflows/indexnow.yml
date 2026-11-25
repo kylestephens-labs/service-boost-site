@@ -1,0 +1,31 @@
+name: Notify IndexNow
+on: deployment_status
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    if: >-
+      github.event.deployment.environment == 'Production' &&
+      github.event.deployment.creator.login == 'vercel[bot]' &&
+      github.event.deployment_status.creator.login == 'vercel[bot]' &&
+      github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    concurrency: indexnow-live
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/cache/restore@v4
+        with:
+          path: .indexnow-cache
+          key: indexnow-live-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: indexnow-live-v1-
+      - id: sync
+        run: python3 deploy/indexnow.py
+      - if: steps.sync.outputs.updated == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .indexnow-cache
+          key: indexnow-live-v1-${{ github.run_id }}-${{ github.run_attempt }}
