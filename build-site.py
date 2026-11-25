@@ -44,6 +44,7 @@ service_pages = {
     'wifi-networking': ('Home Wi-Fi and networking',
                         'Wi-Fi drops during calls, misses the home office, or needs a new router or mesh?',
                         'wifi'),
+    'phone-tablet-setup': ('Phone or tablet setup', 'On-site phone and tablet setup', 'mobile'),
     'smart-home': ('Smart-home installation and support',
                    'Ask about installing a compatible video doorbell or get help with one you already use.',
                    'smart-home'),
@@ -52,7 +53,8 @@ service_sources = root / 'service-pages'
 service_layout = Template((service_sources / 'layout.html').read_text())
 for slug, (title, description, service) in service_pages.items():
     (output / f'{slug}.html').write_text(service_layout.substitute(
-        title=escape(title), description=escape(description),
+        title=escape(title), heading='Mobile devices' if service == 'mobile' else escape(title),
+        subtitle=escape(description + (' in ' if service == 'mobile' else ' Visits in ') + 'Walnut Creek and nearby communities.'),
         canonical=f'https://www.serviceboost.co/{slug}',
         robots='<meta name="robots" content="noindex">' if review_visits else '',
         content=(service_sources / f'{slug}.html').read_text(),

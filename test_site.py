@@ -14,7 +14,7 @@ AUTO_CONCEPTS = ['auto-repair.html', 'auto-repair/services.html',
                  'auto-repair/about.html', 'auto-repair/contact.html']
 INDUSTRY_CONCEPTS = ['restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html']
 CONCEPTS = ['landscape.html', 'salon.html'] + AUTO_CONCEPTS + INDUSTRY_CONCEPTS
-SERVICE_ROUTES = ['/computer-troubleshooting', '/printer-setup', '/wifi-networking', '/smart-home']
+SERVICE_ROUTES = ['/computer-troubleshooting', '/printer-setup', '/wifi-networking', '/smart-home', '/phone-tablet-setup']
 SERVICE_PAGES = [path[1:] + '.html' for path in SERVICE_ROUTES]
 PRODUCTION = ['index.html', 'request-help.html', 'web-design.html', 'partners.html',
               'partner-report.html', 'partner-inquiry.html'] + SERVICE_PAGES
@@ -94,7 +94,7 @@ class SiteContracts(unittest.TestCase):
     def test_service_pages_are_crawlable_and_link_to_existing_customer_flows(self):
         home = Page('index.html')
         self.assertEqual([a['href'] for tag, a in home.nodes if tag == 'a' and a.get('class') == 'card'],
-                         ['/computer-troubleshooting', '/smart-home', '/wifi-networking', '/#services/3'])
+                         ['/computer-troubleshooting', '/smart-home', '/wifi-networking', '/phone-tablet-setup'])
         self.assertIn('/printer-setup', [a.get('href') for tag, a in home.nodes if tag == 'a'])
         expected = {
             '/computer-troubleshooting': (
@@ -111,6 +111,10 @@ class SiteContracts(unittest.TestCase):
                                          for choice in ('extension', 'cabling', 'connectivity')],
                 ['$229', 'existing internet line', 'Confirm internet service is active and the modem is accessible',
                  'qualifications and permits', 'which devices have connection problems'],
+            ),
+            '/phone-tablet-setup': (
+                'mobile', ['/#book/3/0'], ['$199', 'Connect one phone or tablet to Wi-Fi',
+                                          'Carrier activation, account recovery and data transfer'],
             ),
             '/smart-home': (
                 'smart-home', ['/request-help?service=smart-home&installation=' + choice for choice in
