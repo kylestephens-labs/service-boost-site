@@ -103,12 +103,12 @@ class SiteContracts(unittest.TestCase):
                  'Make sure you can access the computer', 'Request a quote'],
             ),
             '/printer-setup': (
-                'printer', ['/#book/0/1', '/#book/0/2'],
-                ['$199', '$229', 'up to two computers', 'Ink, hardware repairs and network repairs'],
+                'printer', ['/#book/0/1'],
+                ['$229', 'even if the issue remains unresolved', 'up to two computers', 'Ink, hardware repairs and network repairs'],
             ),
             '/wifi-networking': (
                 'wifi', ['/#book/2/0'] + ['/request-help?service=wifi&network=' + choice
-                                         for choice in ('extension', 'cabling', 'connectivity')],
+                                         for choice in ('coverage', 'cabling')],
                 ['$229', 'existing internet line', 'Confirm internet service is active and the modem is accessible',
                  'qualifications and permits', 'which devices have connection problems'],
             ),
@@ -117,10 +117,8 @@ class SiteContracts(unittest.TestCase):
                                           'Carrier activation, account recovery and data transfer'],
             ),
             '/smart-home': (
-                'smart-home', ['/request-help?service=smart-home&installation=' + choice for choice in
-                               ('doorbell-installation', 'thermostat-installation', 'garage-installation')] +
-                ['/#book/1/1', '/#book/1/2', '/#book/1/3', '/#book/1/4'],
-                ['$249', '$229', 'confirms scope, price, and availability',
+                'smart-home', ['/#device/1/1', '/#device/1/2', '/#device/1/3', '/#book/1/4'],
+                ['$249', '$229', 'checks compatibility, scope and availability',
                  'New wiring and electrical work', 'his findings and next steps'],
             ),
         }
@@ -157,8 +155,8 @@ class SiteContracts(unittest.TestCase):
                     self.assertNotIn('60-minute', content)
                 if service == 'wifi':
                     cards = re.findall(r'<details\b[^>]*>(.*?)</details>', content, re.S)
-                    for card, label, action in zip(cards, ['$229', '$249', 'Ask Kyle', '$229'],
-                                                   ['Schedule router setup', 'Schedule Service', 'Ask Kyle', 'Schedule Service']):
+                    for card, label, action in zip(cards, ['$229', '$229', 'Ask Kyle'],
+                                                   ['Schedule router setup', 'Schedule Service', 'Ask Kyle']):
                         self.assertIn('>' + label + '</span>', card)
                         self.assertIn('>' + action + '</a>', card)
                 if service == 'smart-home':

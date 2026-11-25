@@ -78,8 +78,9 @@ test('unrecognized installation queries cannot inject inquiry context', async ()
 
 test('allowlisted network inquiries carry the selected service and prompt through the existing intake', async () => {
   for (const [networkQuery, name, prompt, hint] of [
-    ['connectivity', 'Connectivity Support', 'What connection issue are you seeing?', /devices are affected/],
-    ['extension', 'Wi-Fi Signal Extension', 'Where is Wi-Fi weak?', /affected rooms/],
+    ['coverage', 'Wi-Fi Coverage & Connection Help', 'Where is Wi-Fi weak or dropping?', /affected rooms/],
+    ['connectivity', 'Wi-Fi Coverage & Connection Help', 'What connection issue are you seeing?', /devices are affected/],
+    ['extension', 'Wi-Fi Coverage & Connection Help', 'Where is Wi-Fi weak?', /affected rooms/],
     ['cabling', 'In-Wall Cable Running', 'Where does the network cable need to go?', /start and end points/],
   ]) {
     const p = page({networkQuery});

@@ -43,6 +43,7 @@ function planner(globals = {}) {
       body: { classList: { add() {}, toggle() {} } },
       querySelector: selector => selector === "#proposed-computer-services" ? null : main,
       querySelectorAll: () => [],
+      getElementById: () => null,
     },
     scrollTo() {}, addEventListener() {},
   });
@@ -60,8 +61,8 @@ test("legacy visit links retain their selection and enter one non-sending review
   const {visit, run} = planner();
   for (const route of ["book", "fit", "contact", "time", "checkout", "done"]) {
     const html = visit("#" + route + "/0/1");
-    assert.match(html, /Printer setup or reconnection/);
-    assert.match(html, /<strong>\$199<\/strong>/);
+    assert.match(html, /Printer Setup &amp; Troubleshooting/);
+    assert.match(html, /<strong>\$229<\/strong>/);
     assert.match(html, /Review preview: scheduling is disabled/);
     assert.doesNotMatch(html, /<iframe|booking-widget|href="https:\/\/calendly|Step \d|Send visit request/);
     if (route !== "book") assert.equal(run("location.hash"), "#book/0/1");
@@ -130,14 +131,15 @@ test("delayed provider load cannot mount an obsolete service and failures keep a
 test("all packages display approved prices and only the computer lesson booking retains its duration", () => {
   const { visit } = planner();
   for (const [path, price] of [
-    ["0/0",229], ["0/1",199], ["0/2",229],
+    ["0/0",229], ["0/1",229], ["0/2",229],
     ["0/3",229], ["0/4",229], ["0/5",229],
-    ["1/1",229], ["1/2",229], ["1/3",229], ["1/4",229], ["2/0",229], ["3/0",199],
+    ["1/1",249], ["1/2",249], ["1/3",249], ["1/4",229], ["2/0",229], ["3/0",199],
   ]) {
     const html = visit("#services/" + path);
-    assert.ok(html.includes('href="#book/' + path + '">Schedule a visit'));
+    const needsIntake = /^1\/[123]$/.test(path);
+    const next = needsIntake ? "#device/" : "#book/";
+    assert.ok(html.includes('href="' + next + path + '">' + (needsIntake ? "Schedule Service" : "Schedule a visit")));
     assert.ok(html.includes('<span class="visit-menu-price">$' + price + '</span>'));
-    assert.equal((html.match(/Schedule a visit/g) || []).length, 1);
     assert.doesNotMatch(html, /minutes?|Visit duration/);
     const booking = visit("#book/" + path);
     assert.ok(booking.includes("<strong>$" + price + "</strong>"));
@@ -165,15 +167,15 @@ test("four price-free category cards lead directly to priced packages", () => {
     ["/computer-troubleshooting", "/smart-home", "/wifi-networking", "/phone-tablet-setup"]);
   assert.doesNotMatch(home, /\$\d/);
   assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
-  for (const [category, prices] of [[229,199,229,229,229,229],[249,249,249,229,229,229,229],[229,249,229],[199]].entries()) {
+  for (const [category, prices] of [[229,229,229,229,229,229],[249,249,249,229],[229,229],[199]].entries()) {
     const choices = visit("#services/" + category);
     assert.deepEqual([...choices.matchAll(/<span class="visit-menu-price">\$(\d+)<\/span>/g)].map(m => Number(m[1])), prices);
     assert.match(choices, /class="visit-menu-inline-help"/);
     assert.match(choices, /<aside class="visit-menu-help"/);
     assert.match(choices, [
       /Fixed prices where shown\. Pay after your visit\./,
-      /Fixed-price services · Pay after your visit/,
-      /Router setup is fixed price, with payment after your visit/,
+      /Pay after your visit on fixed-price services/,
+      /Pay after your visit on fixed-price services/,
       /Fixed-price services · Pay after your visit/,
     ][category]);
     assert.match(visit("#fit/" + category + "/" + (category === 1 ? 1 : 0)), /Pay after your visit · No card required/);
@@ -186,8 +188,8 @@ test("folder transfer has a quote path outside the fixed-price flow", () => {
   const closed = visit("#services/0");
   assert.doesNotMatch(closed, /Schedule a visit|design preview|list only/i);
   assert.deepEqual([...closed.matchAll(/class="visit-menu-name">([^<]+)/g)].map(match => match[1]), [
-    "Set up a new computer", "Set up or reconnect a printer", "Install and set up software", "Back up or transfer a folder",
-    "Troubleshoot a computer or printer", "Set up or troubleshoot email", "Get a personal computer lesson",
+    "Set up a new computer", "Printer Setup &amp; Troubleshooting", "Install and set up software", "Back up or transfer a folder",
+    "Computer troubleshooting", "Set up or troubleshoot email", "Get a personal computer lesson",
   ]);
   assert.match(closed, /id="visit-menu-card-0-folder" aria-expanded="false" aria-controls="visit-menu-scope-0-folder"/);
   const html = visit("#services/0/folder");
@@ -202,20 +204,16 @@ test("folder transfer has a quote path outside the fixed-price flow", () => {
 
 test("review smart-home support carries approved terms and installations have no booking route", () => {
   const {visit, run} = planner();
-  for (const index of [1, 2, 3, 4]) {
-    const html = visit("#services/1/" + index);
-    assert.match(html, /Schedule a visit/);
-    assert.match(html, /subscriptions and replacement parts/);
-    const context = visit("#book/1/" + index);
-    for (const term of ["Support", "<strong>$229</strong>", "remains unresolved", "extra work and price", "subscriptions and replacement parts"]) assert.ok(context.includes(term));
-    assert.match(visit("#fit/1/" + index), /Choose an arrival time/);
-  }
-  for (const slug of ["doorbell-installation", "thermostat-installation", "garage-installation"]) {
-    const html = visit("#services/1/" + slug);
-    assert.ok(html.includes('href="/request-help?service=smart-home&amp;installation=' + slug + '">Ask Kyle about installation'));
-    assert.match(html, /No new wiring or electrical work is included/);
-    assert.doesNotMatch(html, /Unavailable for booking|Installation details|Request a quote/);
-    assert.doesNotMatch(html, /Schedule a visit/);
+  for (const [offset, slug] of ["doorbell-installation", "thermostat-installation", "garage-installation"].entries()) {
+    const id = offset + 1;
+    const html = visit("#services/1/" + id);
+    assert.equal(visit("#services/1/" + slug), html);
+    assert.match(html, /Schedule Service/);
+    const intake = visit("#device/1/" + id);
+    assert.ok(intake.includes('/request-help?service=smart-home&amp;installation=' + slug));
+    assert.ok(intake.includes('href="#book/1/' + id + '"'));
+    const booking = visit("#book/1/" + id);
+    for (const term of ["Support", "<strong>$249</strong>", "remains unresolved", "extra work and price", "subscriptions and replacement parts"]) assert.ok(booking.includes(term));
     assert.doesNotMatch(visit("#fit/1/" + slug), /id="calendar-title"/);
   }
 });
@@ -225,8 +223,7 @@ test("retired pairing routes never book or alias another service; support IDs st
   run("window.SERVICE_BOOST_BOOKING_ENABLED = true");
   const menu = visit("#services/1");
   assert.doesNotMatch(menu, /Pairing|pairing|\$199/);
-  assert.match(menu, /<h2>Installation<\/h2><p class="visit-menu-group-note">Kyle confirms scope, price and availability before scheduling\.<\/p>.*<h2>Support<\/h2><p class="visit-menu-group-note">Fixed-price services · Pay after your visit<\/p>/);
-  assert.equal((menu.match(/Fixed-price services/g) || []).length, 1);
+  assert.equal((menu.match(/class="visit-menu-name"/g) || []).length, 4);
   for (const route of ["services", "book", "fit", "contact", "time", "checkout", "done", "detail"]) {
     for (const id of ["0", "00"]) {
       const html = visit("#" + route + "/1/" + id);
@@ -246,10 +243,9 @@ test("Wi-Fi groups show router setup and installation before support, with appro
   const html = visit("#services/2");
   const labels = [...html.matchAll(/<span class="visit-menu-name">(.*?)<\/span><span class="visit-menu-price[^"]*">(.*?)<\/span>/g)].map(match => match.slice(1));
   assert.deepEqual(labels, [
-    ["New WiFi Connection Setup", "$229"], ["Wi-Fi Signal Extension", "$249"],
-    ["In-Wall Cable Running", "Ask Kyle"], ["Connectivity Support", "$229"],
+    ["New WiFi Connection Setup", "$229"], ["Wi-Fi Coverage &amp; Connection Help", "$229"],
+    ["In-Wall Cable Running", "Ask Kyle"],
   ]);
-  assert.ok(html.indexOf("<h2>Setup &amp; installation</h2>") < html.indexOf("<h2>Support</h2>"));
   assert.doesNotMatch(html, /Unavailable for booking/);
   assert.match(visit("#book/2/0"), /New WiFi Connection Setup[\s\S]*<strong>\$229<\/strong>/);
   assert.match(visit("#services/2/0"), /ISP repair, cable runs and whole-home coverage guarantees/);
@@ -260,18 +256,20 @@ test("Wi-Fi inquiry cards keep their selected service on legacy routes without o
   run("window.SERVICE_BOOST_BOOKING_ENABLED = true");
   for (const [service, detail] of [
     ["cabling", /Describe where the network cable needs to go/],
-    ["connectivity", /which devices are having connection problems/],
+    ["connectivity", /which devices have connection problems/],
     ["extension", /where Wi-Fi is weak/],
+    ["coverage", /where Wi-Fi is weak/],
   ]) {
     const html = visit("#services/2/" + service);
+    const target = service === "cabling" ? service : "coverage";
     assert.match(html, detail);
-    assert.ok(html.includes('href="/request-help?service=wifi&amp;network=' + service + '"'));
+    assert.ok(html.includes('href="/request-help?service=wifi&amp;network=' + target + '"'));
     assert.equal(html.includes(">Schedule Service</a>"), service !== "cabling");
     assert.doesNotMatch(html, /Schedule a visit/);
     for (const route of ["book", "fit", "contact", "time", "checkout", "done", "detail"]) {
       const legacy = visit("#" + route + "/2/" + service);
       assert.equal(legacy, html);
-      assert.equal(run("location.hash"), "#services/2/" + service);
+      assert.equal(run("location.hash"), "#services/2/" + target);
       assert.doesNotMatch(legacy, /id="calendar-title"|booking-widget/);
     }
   }
