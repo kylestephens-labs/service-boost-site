@@ -35,25 +35,28 @@ for asset in ('visit.css', 'booking.css', 'service-menu.css', 'booking.js', 'ser
     shutil.copyfile(root / 'visit-planner' / asset, output / asset)
 
 service_pages = {
-    'computer-troubleshooting': ('Computer troubleshooting',
-                                 'On-site help diagnosing one computer issue in Walnut Creek and nearby communities.'),
+    'computer-troubleshooting': ('In-home computer troubleshooting',
+                                 'Computer won’t start, keeps freezing, or shows an error you can’t get past?',
+                                 'computer'),
     'printer-setup': ('Printer setup and troubleshooting',
-                      'Connect a working printer or get help diagnosing one printer issue.'),
+                      'Printer offline, disconnected after a router change, or ready for Wi-Fi setup?',
+                      'printer'),
     'wifi-networking': ('Home Wi-Fi and networking',
-                        'On-site router setup and help with connection problems, weak Wi-Fi, or network cabling.'),
+                        'Wi-Fi drops during calls, misses the home office, or needs a new router or mesh?',
+                        'wifi'),
     'smart-home': ('Smart-home installation and support',
-                   'Ask about compatible smart-home installation or book help with an existing device.'),
+                   'Ask about installing a compatible video doorbell or get help with one you already use.',
+                   'smart-home'),
 }
 service_sources = root / 'service-pages'
 service_layout = Template((service_sources / 'layout.html').read_text())
-for slug, (title, description) in service_pages.items():
-    related = ''.join(f'<li><a href="/{other}">{escape(details[0])}</a></li>'
-                      for other, details in service_pages.items() if other != slug)
+for slug, (title, description, service) in service_pages.items():
     (output / f'{slug}.html').write_text(service_layout.substitute(
         title=escape(title), description=escape(description),
         canonical=f'https://www.serviceboost.co/{slug}',
         robots='<meta name="robots" content="noindex">' if review_visits else '',
-        content=(service_sources / f'{slug}.html').read_text(), related=related,
+        content=(service_sources / f'{slug}.html').read_text(),
+        inquiry=f'/request-help?service={service}',
     ))
 
 header_routes = [('index.html', '/'), ('request-help.html', '/request-help'),

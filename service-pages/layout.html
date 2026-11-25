@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>$title in Walnut Creek | Service Boost</title>
-  <meta name="description" content="$description">
+  <meta name="description" content="$description Visits in Walnut Creek and nearby communities.">
   <link rel="canonical" href="$canonical">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/visit.css">
@@ -19,17 +19,21 @@
       <div class="visit-menu-hero">
         <a class="visit-menu-back" href="/#services"><img src="/assets/icons/chevron-left.svg" width="14" height="14" alt="">All services</a>
         <h1>$title</h1>
-        <p class="visit-menu-subtitle">$description</p>
+        <p class="visit-menu-subtitle">$description Visits in Walnut Creek and nearby communities.</p>
+        <p class="visit-menu-terms"><img src="/assets/icons/circle-check.svg" width="18" height="18" alt="">Pay after your visit on fixed-price services.</p>
       </div>
-      $content
-      <section class="service-page-section">
-        <h2>Service area</h2>
-        <p>On-site visits are available in Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, and San Ramon. <a href="/request-help">Ask Kyle</a> about an address outside these cities.</p>
-      </section>
-      <section class="service-page-section" aria-labelledby="related-service-heading">
-        <h2 id="related-service-heading">Related services</h2>
-        <ul>$related</ul>
-      </section>
+      <div class="visit-menu-layout">
+        <div class="visit-menu-list">
+          $content
+          <p class="visit-menu-inline-help"><a href="$inquiry">Not sure which visit? Ask Kyle</a></p>
+        </div>
+        <aside class="visit-menu-help" aria-labelledby="visit-menu-help-title">
+          <div class="visit-menu-owner"><img src="/assets/kyle-stephens.png" width="48" height="48" alt=""><strong>Kyle Stephens</strong></div>
+          <h2 id="visit-menu-help-title">Not sure which visit?</h2>
+          <p>I own Service Boost here in Walnut Creek. Tell me what’s going on and I’ll help you choose a service.</p>
+          <a href="$inquiry">Ask Kyle <img src="/assets/icons/arrow-right.svg" width="16" height="16" alt=""></a>
+        </aside>
+      </div>
     </div>
   </main>
   <footer class="site-footer">
