@@ -59,6 +59,6 @@ function renderServiceMenu(category, selection, { title, subtitle, terms, status
     '<aside class="visit-menu-help" aria-labelledby="visit-menu-help-title">' +
     '<div class="visit-menu-owner"><img src="/assets/kyle-stephens.png" width="48" height="48" alt=""><strong>Kyle Stephens</strong></div>' +
     '<h2 id="visit-menu-help-title">Not sure what you need?</h2>' +
-    '<p>I own Service Boost here in Walnut Creek. Tell me what’s going on and I’ll help you choose a service.</p>' +
+    '<p>Tell me what’s going on, and I’ll help you choose the right service.</p>' +
     '<a href="/request-help">Ask Kyle <img src="/assets/icons/arrow-right.svg" width="16" height="16" alt=""></a></aside></div></section>';
 }
