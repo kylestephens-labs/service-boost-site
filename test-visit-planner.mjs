@@ -167,7 +167,7 @@ test("four price-free category cards lead directly to priced packages", () => {
     ["/computer-troubleshooting", "/smart-home", "/wifi-networking", "/phone-tablet-setup"]);
   assert.doesNotMatch(home, /\$\d/);
   assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
-  for (const [category, prices] of [[229,229,229,229,229,229],[249,249,249,229],[229,229],[199]].entries()) {
+  for (const [category, prices] of [[229,229,229,229,229,229],[249,249,249,229],[229,229,249],[199]].entries()) {
     const choices = visit("#services/" + category);
     assert.deepEqual([...choices.matchAll(/<span class="visit-menu-price">\$(\d+)<\/span>/g)].map(m => Number(m[1])), prices);
     assert.match(choices, /class="visit-menu-inline-help"/);
@@ -244,7 +244,7 @@ test("Wi-Fi groups show router setup and installation before support, with appro
   const labels = [...html.matchAll(/<span class="visit-menu-name">(.*?)<\/span><span class="visit-menu-price[^"]*">(.*?)<\/span>/g)].map(match => match.slice(1));
   assert.deepEqual(labels, [
     ["New WiFi Connection Setup", "$229"], ["Wi-Fi Coverage &amp; Connection Help", "$229"],
-    ["In-Wall Cable Running", "Ask Kyle"],
+    ["In-Wall Cable Running", "$249"],
   ]);
   assert.doesNotMatch(html, /Unavailable for booking/);
   assert.match(visit("#book/2/0"), /New WiFi Connection Setup[\s\S]*<strong>\$229<\/strong>/);
@@ -264,7 +264,7 @@ test("Wi-Fi inquiry cards keep their selected service on legacy routes without o
     const target = service === "cabling" ? service : "coverage";
     assert.match(html, detail);
     assert.ok(html.includes('href="/request-help?service=wifi&amp;network=' + target + '"'));
-    assert.equal(html.includes(">Schedule Service</a>"), service !== "cabling");
+    assert.ok(html.includes(">Schedule Service</a>"));
     assert.doesNotMatch(html, /Schedule a visit/);
     for (const route of ["book", "fit", "contact", "time", "checkout", "done", "detail"]) {
       const legacy = visit("#" + route + "/2/" + service);

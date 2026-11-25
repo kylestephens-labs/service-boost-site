@@ -6,7 +6,7 @@ const wifiInquiries = {
   },
   cabling: {
     title: "In-Wall Cable Running",
-    // The existing $249 rate needs a confirmed standard scope before it can be displayed again.
+    priceLabel: "$249",
     detail: "Describe where the network cable needs to go and what access is available. Kyle reviews the route, access, materials, scope, price, and any applicable qualifications and permits before accepting work. This inquiry covers network cable only.",
   },
 };
@@ -18,10 +18,10 @@ function renderWifiMenu(selection, guide) {
       id,
       title,
       icon: "wifi",
-      priceLabel: priceLabel ?? "Ask Kyle",
+      priceLabel,
       detail: serviceScope(detail),
       href: "/request-help?service=wifi&network=" + id,
-      action: priceLabel ? "Schedule Service" : "Ask Kyle about " + title.toLowerCase(),
+      action: "Schedule Service",
     };
   }
   return renderServiceMenu(2, selection, {
