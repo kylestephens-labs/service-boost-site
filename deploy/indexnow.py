@@ -46,8 +46,8 @@ def sync(fetch_url=fetch, send=notify, state=STATE):
     if fetch_url(f'{ORIGIN}/{key}.txt').decode().strip() != key:
         raise ValueError('Production does not serve the ownership key')
     current = page_hashes(fetch_url(ORIGIN + '/sitemap.xml'), fetch_url)
-    previous = json.loads(state.read_text()) if state.exists() else {}
-    changed = [url for url, digest in current.items() if previous.get(url) != digest]
+    previous = json.loads(state.read_text()) if state.exists() else None
+    changed = [url for url, digest in current.items() if previous is not None and previous.get(url) != digest]
     if changed:
         send(changed, key)
     if current != previous:

@@ -11,6 +11,7 @@ jobs:
       github.event.deployment_status.creator.login == 'vercel[bot]' &&
       github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
+    cache-mode: write
     concurrency: indexnow-live
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683

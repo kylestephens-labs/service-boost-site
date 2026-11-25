@@ -22,13 +22,17 @@ class NotificationTest(unittest.TestCase):
             state = Path(folder) / 'pages.json'
             self.assertTrue(indexnow.sync(replies.__getitem__, record, state))
             self.assertFalse(indexnow.sync(replies.__getitem__, record, state))
+            self.assertEqual(sent, [])
             replies[urls[1]] = b'updated'
             def fail(batch, _key):
                 raise OSError('unavailable')
             with self.assertRaises(OSError):
                 indexnow.sync(replies.__getitem__, fail, state)
             self.assertTrue(indexnow.sync(replies.__getitem__, record, state))
-            self.assertEqual(sent, [urls, [urls[1]]])
+            self.assertEqual(sent, [[urls[1]]])
+            state.unlink()
+            self.assertTrue(indexnow.sync(replies.__getitem__, record, state))
+            self.assertEqual(sent, [[urls[1]]])
 
     def test_foreign_url_rejected_before_fetch(self):
         with self.assertRaises(ValueError):
