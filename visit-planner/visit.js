@@ -40,7 +40,6 @@ const cities =
   "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon".split(
     ", ",
   );
-document.body.classList.add("menu");
 const tasks = services.map((s, j) => [
   [
     [
@@ -108,10 +107,8 @@ tasks[1] = new Array(1);
 addSmartHomeSupport(tasks[1], prep[1]);
 
 const root = document.querySelector("main");
+const homeMarkup = root.innerHTML;
 let cardToRefocus;
-function pick(n) {
-  location.hash = "services/" + n;
-}
 function renderVisitGuide(category) {
   const entries = tasks[category].map(([name, , , , , , question], id) =>
     '<p><b>' + esc(name) + '</b> · ' + esc(question) + '<br>' + esc(prep[category][id]) +
@@ -143,18 +140,7 @@ function render() {
   document.body.classList.toggle("booking-page", page === "book");
   document.body.classList.toggle("visit-menu-page", page === "services");
   if (page === "home") {
-    const cards = services.map(([name, icon], id) =>
-      `<button class="card" onclick="pick(${id})"><img alt="" src="assets/icons/${icon}.svg"><h3>${name}</h3><span class="category-arrow" aria-hidden="true">→</span></button>`
-    ).join("");
-    root.innerHTML =
-      `<section class="hybrid-hero"><div><h1>Get your tech working <span>&amp; get back to what matters.</span></h1><p>Local onsite tech help for your home or home office.</p><button id="hero-service-cta">Choose a service</button></div></section>` +
-      `<div id="services" class="bar"><h2 tabindex="-1">Services</h2></div><div id="pricing" class="cards">${cards}</div><p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>
-       <section id="about" class="founder"><img src="assets/kyle-stephens.png" alt="Kyle Stephens"><div><h2>Hi, I’m Kyle.</h2><p>I own Service Boost in Walnut Creek. You’ll work directly with me.</p></div></section>
-       <section id="process" aria-label="How to book a visit"><ol class="booking-steps">
-         <li><span class="step-icon"><img src="assets/icons/message-circle.svg" alt=""></span>Choose a service<img class="step-arrow" src="assets/icons/arrow-right.svg" alt=""></li>
-         <li><span class="step-icon"><img src="assets/icons/file-text.svg" alt=""></span>Choose a time<img class="step-arrow" src="assets/icons/arrow-right.svg" alt=""></li>
-         <li><span class="step-icon"><img src="assets/icons/user.svg" alt=""></span>Book your visit</li>
-       </ol></section>`;
+    root.innerHTML = homeMarkup;
     return;
   }
   if (page === "services") {

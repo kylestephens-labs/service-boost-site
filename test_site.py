@@ -14,7 +14,10 @@ AUTO_CONCEPTS = ['auto-repair.html', 'auto-repair/services.html',
                  'auto-repair/about.html', 'auto-repair/contact.html']
 INDUSTRY_CONCEPTS = ['restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html']
 CONCEPTS = ['landscape.html', 'salon.html'] + AUTO_CONCEPTS + INDUSTRY_CONCEPTS
-PRODUCTION = ['index.html', 'request-help.html', 'web-design.html', 'partners.html', 'partner-report.html', 'partner-inquiry.html']
+SERVICE_ROUTES = ['/computer-troubleshooting', '/printer-setup', '/wifi-networking', '/smart-home']
+SERVICE_PAGES = [path[1:] + '.html' for path in SERVICE_ROUTES]
+PRODUCTION = ['index.html', 'request-help.html', 'web-design.html', 'partners.html',
+              'partner-report.html', 'partner-inquiry.html'] + SERVICE_PAGES
 
 
 class Page(HTMLParser):
@@ -74,19 +77,63 @@ class SiteContracts(unittest.TestCase):
         robots.parse((public / 'robots.txt').read_text().splitlines())
         self.assertEqual(robots.site_maps(), ['https://www.serviceboost.co/sitemap.xml'])
         for bot in ['Googlebot', 'bingbot', 'OAI-SearchBot']:
-            for path in ['/', '/web-design', '/tech-support.css', '/dental']:
+            for path in ['/', '/web-design', '/tech-support.css', '/dental'] + SERVICE_ROUTES:
                 self.assertTrue(robots.can_fetch(bot, 'https://www.serviceboost.co' + path))
         sitemap = ElementTree.parse(public / 'sitemap.xml')
         urls = [node.text for node in sitemap.findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
-        self.assertEqual(urls, ['https://www.serviceboost.co/', 'https://www.serviceboost.co/web-design',
-                                'https://www.serviceboost.co/partners'])
-        for filename in ['index.html', 'web-design.html']:
+        self.assertEqual(urls, ['https://www.serviceboost.co' + path
+                                for path in ['/', '/web-design', '/partners'] + SERVICE_ROUTES])
+        for filename in ['index.html', 'web-design.html'] + SERVICE_PAGES:
             self.assertFalse(any(a.get('name') == 'robots' and 'noindex' in a.get('content', '')
                                  for _, a in Page('public-site/' + filename).nodes))
         # Crawlers must still be able to read the existing noindex on fictional concepts.
         for filename in CONCEPTS:
             self.assertTrue(any(a.get('name') == 'robots' and 'noindex' in a.get('content', '')
                                 for _, a in Page('public-site/' + filename).nodes))
+
+    def test_service_pages_are_crawlable_and_link_to_existing_customer_flows(self):
+        home = Page('index.html')
+        self.assertEqual([a['href'] for tag, a in home.nodes if tag == 'a' and a.get('class') == 'card'],
+                         ['/computer-troubleshooting', '/smart-home', '/wifi-networking', '/#services/3'])
+        self.assertIn('/printer-setup', [a.get('href') for tag, a in home.nodes if tag == 'a'])
+        expected = {
+            '/computer-troubleshooting': (['/#book/0/2'], ['$229', 'even if it remains unresolved', 'Outside scope']),
+            '/printer-setup': (['/#book/0/1', '/#book/0/2'], ['$199', '$229', 'up to two computers', 'Outside scope']),
+            '/wifi-networking': (['/#book/2/0'], ['$229', 'existing internet line', 'qualifications and permits']),
+            '/smart-home': (['/#book/1/1', '/#book/1/2', '/#book/1/3', '/#book/1/4'],
+                            ['$249 shown', '$229', 'confirms scope, price, and availability', 'New wiring and electrical work']),
+        }
+        titles = []
+        for route, filename in zip(SERVICE_ROUTES, SERVICE_PAGES):
+            with self.subTest(route=route):
+                page = Page(filename)
+                source = (ROOT / 'public-site' / filename).read_text()
+                content = source.split('<main>', 1)[1].split('</main>', 1)[0]
+                titles.append(re.search(r'<title>([^<]+)</title>', source).group(1))
+                self.assertEqual(sum(tag == 'h1' for tag, _ in page.nodes), 1)
+                self.assertEqual([a['href'] for tag, a in page.nodes if a.get('rel') == 'canonical'],
+                                 ['https://www.serviceboost.co' + route])
+                self.assertIn('Service area', content)
+                self.assertIn('Walnut Creek, Pleasant Hill, Concord', content)
+                self.assertNotIn('<details', content)
+                self.assertFalse(any(tag in ('script', 'iframe', 'form') for tag, _ in page.nodes))
+                links = [a.get('href', '') for tag, a in page.nodes if tag == 'a']
+                self.assertEqual([link for link in links if '/#book/' in link], expected[route][0])
+                self.assertIn('/#services', links)
+                self.assertIn('/request-help', links)
+                for phrase in expected[route][1]:
+                    self.assertIn(phrase, content)
+                for other in SERVICE_ROUTES:
+                    if other != route:
+                        self.assertIn(other, links)
+        self.assertEqual(len(set(titles)), len(SERVICE_ROUTES))
+        wifi = Page('wifi-networking.html')
+        self.assertEqual([a['href'] for tag, a in wifi.nodes if '&network=' in a.get('href', '')],
+                         ['/request-help?service=wifi&network=' + choice for choice in ('extension', 'cabling', 'connectivity')])
+        smart = Page('smart-home.html')
+        self.assertEqual([a['href'] for tag, a in smart.nodes if '&installation=' in a.get('href', '')],
+                         ['/request-help?service=smart-home&installation=' + choice for choice in
+                          ('doorbell-installation', 'thermostat-installation', 'garage-installation')])
 
     def test_business_identity_markup_matches_public_contact(self):
         source = (ROOT / 'public-site/index.html').read_text()
@@ -244,7 +291,7 @@ class SiteContracts(unittest.TestCase):
             self.assertIn('Nothing will be sent, saved or booked.', (ROOT / filename).read_text())
 
     def test_local_assets_and_section_links_resolve(self):
-        for filename in ['index.html', 'request-help.html', 'web-design.html', 'partner-report.html'] + CONCEPTS:
+        for filename in ['index.html', 'request-help.html', 'web-design.html', 'partner-report.html'] + SERVICE_PAGES + CONCEPTS:
             page = Page(filename)
             ids = {attrs.get('id') for _, attrs in page.nodes}
             all_ids = [attrs['id'] for _, attrs in page.nodes if 'id' in attrs]
@@ -260,7 +307,7 @@ class SiteContracts(unittest.TestCase):
                     self.assertIn(href[1:], ids, f'{filename}: {href}')
                 if tag == 'a' and href.startswith('/'):
                     route = href.split('?')[0].split('#')[0]
-                    target = ROOT / ('index.html' if route == '/' else route.lstrip('/') + '.html')
+                    target = ROOT / 'public-site' / ('index.html' if route == '/' else route.lstrip('/') + '.html')
                     self.assertTrue(target.is_file(), f'{filename}: {href}')
                     if filename not in PRODUCTION:
                         self.assertIn('data-preserve-ref', attrs)

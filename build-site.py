@@ -3,6 +3,7 @@ from pathlib import Path
 import shutil
 import argparse
 from html import escape
+from string import Template
 
 root = Path(__file__).resolve().parent
 parser = argparse.ArgumentParser()
@@ -23,6 +24,7 @@ shutil.copytree(root / 'auto-repair', output / 'auto-repair')
 
 # Shared markup and styles keep contact controls identical on every real offering.
 header = (root / 'site-header.html').read_text()
+mobile_header = (root / 'site-mobile-header.html').read_text()
 if review_visits:
     (output / 'config.js').write_text("window.SERVICE_BOOST_QUOTE_ENDPOINT = '';\nwindow.SERVICE_BOOST_BOOKING_ENABLED = false;\n")
     home = output / 'index.html'
@@ -31,14 +33,40 @@ if review_visits:
 for asset in ('visit.css', 'booking.css', 'service-menu.css', 'booking.js', 'service-menu.js', 'computer-menu.js',
               'smart-home.js', 'wifi-menu.js', 'visit.js', 'service-cta.js'):
     shutil.copyfile(root / 'visit-planner' / asset, output / asset)
-for name, route in [('index.html', '/'), ('request-help.html', '/request-help'),
+
+service_pages = {
+    'computer-troubleshooting': ('Computer troubleshooting',
+                                 'On-site help diagnosing one computer issue in Walnut Creek and nearby communities.'),
+    'printer-setup': ('Printer setup and troubleshooting',
+                      'Connect a working printer or get help diagnosing one printer issue.'),
+    'wifi-networking': ('Home Wi-Fi and networking',
+                        'On-site router setup and help with connection problems, weak Wi-Fi, or network cabling.'),
+    'smart-home': ('Smart-home installation and support',
+                   'Ask about compatible smart-home installation or book help with an existing device.'),
+}
+service_sources = root / 'service-pages'
+service_layout = Template((service_sources / 'layout.html').read_text())
+for slug, (title, description) in service_pages.items():
+    related = ''.join(f'<li><a href="/{other}">{escape(details[0])}</a></li>'
+                      for other, details in service_pages.items() if other != slug)
+    (output / f'{slug}.html').write_text(service_layout.substitute(
+        title=escape(title), description=escape(description),
+        canonical=f'https://www.serviceboost.co/{slug}',
+        robots='<meta name="robots" content="noindex">' if review_visits else '',
+        content=(service_sources / f'{slug}.html').read_text(), related=related,
+    ))
+
+header_routes = [('index.html', '/'), ('request-help.html', '/request-help'),
                     ('web-design.html', '/web-design'), ('partners.html', '/partners'),
-                    ('partner-report.html', '/partner-report'), ('partner-inquiry.html', '/partners')]:
+                    ('partner-report.html', '/partner-report'), ('partner-inquiry.html', '/partners')]
+header_routes.extend((f'{slug}.html', f'/{slug}') for slug in service_pages)
+for name, route in header_routes:
     page = output / name
     source = page.read_text()
     assert source.count('<!-- site-header -->') == 1, name
     current_header = header.replace(f'href="{route}">', f'href="{route}" aria-current="page">')
     source = source.replace('<!-- site-header -->', current_header)
+    source = source.replace('<!-- site-mobile-header -->', mobile_header.rstrip())
     source = source.replace('</head>', '<link rel="stylesheet" href="/site-header.css">\n</head>')
     page.write_text(source)
 

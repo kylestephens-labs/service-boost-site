@@ -497,3 +497,44 @@
     transition: none;
   }
 }
+
+.service-page .visit-menu-shell {
+  max-width: 760px;
+}
+
+.service-page-section + .service-page-section {
+  margin-top: 28px;
+}
+
+.service-page-section > h2 {
+  margin-bottom: 10px;
+}
+
+.service-page-offer {
+  padding: clamp(16px, 3vw, 24px);
+}
+
+.service-page-offer .visit-menu-detail {
+  padding: 0;
+  border: 0;
+}
+
+.service-page-offer h3 {
+  margin: 0 0 8px;
+}
+
+.service-page-offer .service-page-price {
+  margin-bottom: 10px;
+  color: var(--visit-menu-blue);
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.service-page-offer .visit-menu-action {
+  margin-top: 14px;
+}
+
+.service-page-intro {
+  margin: 0 0 12px;
+}
