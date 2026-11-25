@@ -116,7 +116,7 @@ class SiteContracts(unittest.TestCase):
                 'smart-home', ['/request-help?service=smart-home&installation=' + choice for choice in
                                ('doorbell-installation', 'thermostat-installation', 'garage-installation')] +
                 ['/#book/1/1', '/#book/1/2', '/#book/1/3', '/#book/1/4'],
-                ['$249<small>Confirm with Kyle', '$229', 'confirms scope, price, and availability',
+                ['$249', '$229', 'confirms scope, price, and availability',
                  'New wiring and electrical work', 'his findings and next steps'],
             ),
         }
@@ -154,7 +154,8 @@ class SiteContracts(unittest.TestCase):
                 if service == 'wifi':
                     self.assertNotIn('$249', content)
                 if service == 'smart-home':
-                    self.assertEqual(content.count('<small>Confirm with Kyle</small>'), 3)
+                    self.assertNotIn('Confirm with Kyle', content)
+                    self.assertEqual(content.count('>Schedule Service</a>'), 3)
         self.assertEqual(len(set(titles)), len(SERVICE_ROUTES))
 
     def test_business_identity_markup_matches_public_contact(self):
