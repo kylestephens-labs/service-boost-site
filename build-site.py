@@ -1,6 +1,7 @@
 """Copy only public website assets into the static deployment directory."""
 from pathlib import Path
 import shutil
+import os
 import argparse
 from html import escape
 from string import Template
@@ -13,6 +14,9 @@ output = root / ('visit-preview' if review_visits else 'public-site')
 if output.exists():
     shutil.rmtree(output)
 output.mkdir()
+if not review_visits and os.environ.get('VERCEL_ENV') == 'production':
+    key = (root / 'deploy/indexnow-key.txt').read_text().strip()
+    (output / f'{key}.txt').write_text(key + '\n')
 for name in ('robots.txt', 'sitemap.xml', 'index.html', 'request-help.html', 'web-design.html', 'landscape.html', 'salon.html', 'auto-repair.html',
              'restaurant.html', 'dental.html', 'contractor.html', 'real-estate.html',
              'style.css', 'homepage.css', 'concepts.css', 'auto-repair.css', 'industry-concepts.css', 'portfolio.css',

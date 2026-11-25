@@ -15,7 +15,7 @@ jobs:
       - run: node --check partners.js
       - run: node --check partner-inquiry.js
       - run: node --test test-attribution.mjs test-tech-help.mjs test-partners.mjs
-      - run: python3 -m unittest test_site.py
+      - run: python3 -m unittest test_site.py deploy.test_indexnow
       - run: python3 build-site.py
       - run: node --test test-visit-planner.mjs
       - run: python3 build-site.py --review-visits
