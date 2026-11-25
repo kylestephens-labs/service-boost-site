@@ -97,11 +97,28 @@ class SiteContracts(unittest.TestCase):
                          ['/computer-troubleshooting', '/smart-home', '/wifi-networking', '/#services/3'])
         self.assertIn('/printer-setup', [a.get('href') for tag, a in home.nodes if tag == 'a'])
         expected = {
-            '/computer-troubleshooting': (['/#book/0/2'], ['$229', 'even if it remains unresolved', 'Outside scope']),
-            '/printer-setup': (['/#book/0/1', '/#book/0/2'], ['$199', '$229', 'up to two computers', 'Outside scope']),
-            '/wifi-networking': (['/#book/2/0'], ['$229', 'existing internet line', 'qualifications and permits']),
-            '/smart-home': (['/#book/1/1', '/#book/1/2', '/#book/1/3', '/#book/1/4'],
-                            ['$249 shown', '$229', 'confirms scope, price, and availability', 'New wiring and electrical work']),
+            '/computer-troubleshooting': (
+                'computer', ['/#book/0/2', '/#book/0/4', '/#book/0/5', '/#book/0/0', '/#book/0/3', '/request-help'],
+                ['$229', 'even if the issue remains unresolved', 'Parts, hardware repairs, data recovery',
+                 'Make sure you can access the computer', 'Request a quote'],
+            ),
+            '/printer-setup': (
+                'printer', ['/#book/0/1', '/#book/0/2'],
+                ['$199', '$229', 'up to two computers', 'Ink, hardware repairs and network repairs'],
+            ),
+            '/wifi-networking': (
+                'wifi', ['/#book/2/0'] + ['/request-help?service=wifi&network=' + choice
+                                         for choice in ('extension', 'cabling', 'connectivity')],
+                ['$229', 'existing internet line', 'Confirm internet service is active and the modem is accessible',
+                 'qualifications and permits', 'which devices have connection problems'],
+            ),
+            '/smart-home': (
+                'smart-home', ['/request-help?service=smart-home&installation=' + choice for choice in
+                               ('doorbell-installation', 'thermostat-installation', 'garage-installation')] +
+                ['/#book/1/1', '/#book/1/2', '/#book/1/3', '/#book/1/4'],
+                ['$249<small>Confirm with Kyle', '$229', 'confirms scope, price, and availability',
+                 'New wiring and electrical work', 'his findings and next steps'],
+            ),
         }
         titles = []
         for route, filename in zip(SERVICE_ROUTES, SERVICE_PAGES):
@@ -113,27 +130,32 @@ class SiteContracts(unittest.TestCase):
                 self.assertEqual(sum(tag == 'h1' for tag, _ in page.nodes), 1)
                 self.assertEqual([a['href'] for tag, a in page.nodes if a.get('rel') == 'canonical'],
                                  ['https://www.serviceboost.co' + route])
-                self.assertIn('Service area', content)
-                self.assertIn('Walnut Creek, Pleasant Hill, Concord', content)
-                self.assertNotIn('<details', content)
+                self.assertIn('Walnut Creek and nearby communities', content)
+                self.assertNotIn('Walnut Creek, Pleasant Hill, Concord', content)
                 self.assertFalse(any(tag in ('script', 'iframe', 'form') for tag, _ in page.nodes))
-                links = [a.get('href', '') for tag, a in page.nodes if tag == 'a']
-                self.assertEqual([link for link in links if '/#book/' in link], expected[route][0])
+                service, actions, terms = expected[route]
+                links = [a['href'] for tag, a in page.nodes if tag == 'a' and 'href' in a]
                 self.assertIn('/#services', links)
-                self.assertIn('/request-help', links)
-                for phrase in expected[route][1]:
+                self.assertEqual(links.count('/request-help?service=' + service), 2)
+                self.assertEqual(set(links).intersection(SERVICE_ROUTES),
+                                 {'/printer-setup'} if service == 'computer' else set())
+                disclosures = [a for tag, a in page.nodes if tag == 'details' and a.get('class') == 'visit-menu-service']
+                self.assertEqual(len(disclosures), len(actions))
+                self.assertTrue(all(a.get('name') == 'services' and 'open' not in a for a in disclosures))
+                self.assertEqual([a['href'] for tag, a in page.nodes
+                                  if tag == 'a' and a.get('class') == 'visit-menu-action'], actions)
+                for card in re.findall(r'<details\b[^>]*>(.*?)</details>', content, re.S):
+                    self.assertIn('<summary', card)
+                    self.assertEqual(card.count('class="visit-menu-action"'), 1)
+                for phrase in terms:
                     self.assertIn(phrase, content)
-                for other in SERVICE_ROUTES:
-                    if other != route:
-                        self.assertIn(other, links)
+                if service == 'computer':
+                    self.assertNotIn('60-minute', content)
+                if service == 'wifi':
+                    self.assertNotIn('$249', content)
+                if service == 'smart-home':
+                    self.assertEqual(content.count('<small>Confirm with Kyle</small>'), 3)
         self.assertEqual(len(set(titles)), len(SERVICE_ROUTES))
-        wifi = Page('wifi-networking.html')
-        self.assertEqual([a['href'] for tag, a in wifi.nodes if '&network=' in a.get('href', '')],
-                         ['/request-help?service=wifi&network=' + choice for choice in ('extension', 'cabling', 'connectivity')])
-        smart = Page('smart-home.html')
-        self.assertEqual([a['href'] for tag, a in smart.nodes if '&installation=' in a.get('href', '')],
-                         ['/request-help?service=smart-home&installation=' + choice for choice in
-                          ('doorbell-installation', 'thermostat-installation', 'garage-installation')])
 
     def test_business_identity_markup_matches_public_contact(self):
         source = (ROOT / 'public-site/index.html').read_text()
