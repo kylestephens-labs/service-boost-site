@@ -1,7 +1,7 @@
 const computerServiceTitles = {
   0: "Set up a new computer",
-  1: "Set up or reconnect a printer",
-  2: "Troubleshoot a computer or printer",
+  1: "Printer Setup & Troubleshooting",
+  2: "Computer troubleshooting",
 };
 
 function renderComputerMenu(selection, guide) {

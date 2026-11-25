@@ -45,8 +45,9 @@ function initializeTechHelp() {
     'garage-installation': ['Smart Garage Controller Installation', 'Controller and opener models, whether the opener works, and existing Wi-Fi.'],
   };
   const networkRequests = {
-    connectivity: ['Connectivity Support', 'What connection issue are you seeing?', 'Share which devices are affected, when it happens, and whether other devices can connect.'],
-    extension: ['Wi-Fi Signal Extension', 'Where is Wi-Fi weak?', 'List the affected rooms, your router model, and any extender or mesh equipment you have.'],
+    coverage: ['Wi-Fi Coverage & Connection Help', 'Where is Wi-Fi weak or dropping?', 'Share the affected rooms or devices, when it happens, and your router or mesh equipment.'],
+    connectivity: ['Wi-Fi Coverage & Connection Help', 'What connection issue are you seeing?', 'Share which devices are affected, when it happens, and whether other devices can connect.'],
+    extension: ['Wi-Fi Coverage & Connection Help', 'Where is Wi-Fi weak?', 'List the affected rooms, your router model, and any extender or mesh equipment you have.'],
     cabling: ['In-Wall Cable Running', 'Where does the network cable need to go?', 'Share the start and end points, access to walls or ceilings, and any materials you already have.'],
   };
   const query = new URLSearchParams(location.search);

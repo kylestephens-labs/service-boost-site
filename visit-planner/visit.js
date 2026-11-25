@@ -53,12 +53,12 @@ const tasks = services.map((s, j) => [
 ]);
 tasks[0].push(
   [
-    "Printer setup or reconnection",
+    "Printer Setup & Troubleshooting",
     "printer",
-    199,
-    "Connect one working printer to an existing working network for up to two computers.",
-    "Install its driver|Connect up to two computers|Print a test page",
-    "Ink, hardware repairs and network repairs",
+    229,
+    "Set up or reconnect one working printer on an existing working network for up to two computers, or troubleshoot one printer issue. For setup, Kyle installs the driver and prints a test page. The $229 covers one visit even if the issue remains unresolved. Kyle will explain the findings and agree on any extra work and price with you first.",
+    "For setup: install the driver, connect up to two computers and print a test page|For troubleshooting: diagnose one issue, try a safe adjustment if appropriate and explain findings",
+    "Ink, hardware repairs, network repairs, parts, data recovery and additional issues",
     "Do you have a compatible printer, ink and access to the computer?",
 
   ],
@@ -119,8 +119,16 @@ function renderVisitGuide(category) {
 }
 function render() {
   let [page, c, t] = location.hash.slice(1).split("/");
+  if (page === "device" && c === "1" && /^[1-3]$/.test(t)) {
+    document.body.classList.toggle("booking-page", false);
+    document.body.classList.toggle("visit-menu-page", true);
+    root.innerHTML = renderDeviceIntake(Number(t));
+    document.getElementById("device-intake-title")?.focus();
+    return;
+  }
   const requestedPage = page;
   const visitRoute = ["services","book","fit","contact","time","checkout","done","detail"].includes(page);
+  if (visitRoute && Number(c) === 2 && ["extension", "connectivity"].includes(t)) t = "coverage";
   const wifiInquiry = visitRoute && /^\d+$/.test(c) && Number(c) === 2 && Object.hasOwn(wifiInquiries, t);
   if (wifiInquiry) page = "services";
   if (visitRoute && /^\d+$/.test(c) && Number(c) === 1 && /^\d+$/.test(t) && Number(t) === 0) {
