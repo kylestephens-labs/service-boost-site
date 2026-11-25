@@ -155,8 +155,8 @@ class SiteContracts(unittest.TestCase):
                     self.assertNotIn('60-minute', content)
                 if service == 'wifi':
                     cards = re.findall(r'<details\b[^>]*>(.*?)</details>', content, re.S)
-                    for card, label, action in zip(cards, ['$229', '$229', 'Ask Kyle'],
-                                                   ['Schedule router setup', 'Schedule Service', 'Ask Kyle']):
+                    for card, label, action in zip(cards, ['$229', '$229', '$249'],
+                                                   ['Schedule router setup', 'Schedule Service', 'Schedule Service']):
                         self.assertIn('>' + label + '</span>', card)
                         self.assertIn('>' + action + '</a>', card)
                 if service == 'smart-home':
