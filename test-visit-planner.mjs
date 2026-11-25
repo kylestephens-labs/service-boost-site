@@ -33,7 +33,8 @@ test("service shortcut focuses the heading and honors the user's motion preferen
 
 // Exercise route guards with no network, storage, SMTP or payment adapter.
 function planner(globals = {}) {
-  const main = { innerHTML: "" };
+  const homepage = readFileSync(new URL("./index.html", import.meta.url), "utf8");
+  const main = { innerHTML: homepage.match(/<main id="app">([\s\S]*?)<\/main>/)[1] };
   const ctx = vm.createContext({
     URL, window: { SERVICE_BOOST_BOOKING_ENABLED: false }, ...globals,
     location: { hash: "", origin: globals.origin || "http://localhost" },
@@ -160,6 +161,8 @@ test("four price-free category cards lead directly to priced packages", () => {
   const {visit} = planner();
   const home = visit("#home");
   assert.equal((home.match(/class="card"/g) || []).length, 4);
+  assert.deepEqual([...home.matchAll(/<a class="card" href="([^"]+)"/g)].map(match => match[1]),
+    ["/computer-troubleshooting", "/smart-home", "/wifi-networking", "/#services/3"]);
   assert.doesNotMatch(home, /\$\d/);
   assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
   for (const [category, prices] of [[229,199,229,229,229,229],[249,249,249,229,229,229,229],[229],[199]].entries()) {

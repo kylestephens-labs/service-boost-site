@@ -3,6 +3,9 @@
   "cleanUrls": true,
   "buildCommand": "python3 build-site.py",
   "outputDirectory": "public-site",
+  "git": {
+    "deploymentEnabled": {"codex/crawlable-service-pages": false}
+  },
   "headers": [{
     "source": "/(.*)",
     "headers": [

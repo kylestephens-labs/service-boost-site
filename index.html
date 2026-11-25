@@ -37,12 +37,28 @@
 }
 </script>
 </head>
-<body>
+<body class="menu">
     <div class="home-scroll">
     <!-- site-header -->
-    <div class="mobile-header"><a class="mobile-brand" href="/" aria-label="Service Boost home"><img src="/assets/brand.svg" width="32" height="32" alt=""><span>Service Boost</span></a><a class="mobile-call" href="tel:+19282257944">Call Kyle</a><a class="mobile-text" href="sms:+19282257944?body=Hi%20Kyle%2C%20I%20need%20tech%20help.">Text Kyle</a><details class="mobile-menu"><summary>Menu</summary><nav aria-label="Mobile navigation"><a href="/">Home</a><a href="/partners">For IT providers</a></nav></details></div>
+    <!-- site-mobile-header -->
     <!-- preview-notice -->
-    <main id="app"></main>
+    <main id="app">
+      <section class="hybrid-hero"><div><h1>Get your tech working <span>&amp; get back to what matters.</span></h1><p>Local onsite tech help for your home or home office.</p><a class="btn" id="hero-service-cta" href="#services">Choose a service</a></div></section>
+      <div id="services" class="bar"><h2 tabindex="-1">Services</h2></div>
+      <div id="pricing" class="cards">
+        <a class="card" href="/computer-troubleshooting"><img alt="" src="/assets/icons/device-laptop.svg"><h3>Computer and printer support</h3><span class="category-arrow" aria-hidden="true">→</span></a>
+        <a class="card" href="/smart-home"><img alt="" src="/assets/icons/smart-home.svg"><h3>Smart home</h3><span class="category-arrow" aria-hidden="true">→</span></a>
+        <a class="card" href="/wifi-networking"><img alt="" src="/assets/icons/wifi.svg"><h3>Wi-Fi &amp; network</h3><span class="category-arrow" aria-hidden="true">→</span></a>
+        <a class="card" href="/#services/3"><img alt="" src="/assets/icons/device-mobile.svg"><h3>Mobile devices</h3><span class="category-arrow" aria-hidden="true">→</span></a>
+      </div>
+      <p class="assisted-link"><a href="/request-help">Not sure what you need? Ask Kyle</a></p>
+      <section id="about" class="founder"><img src="/assets/kyle-stephens.png" alt="Kyle Stephens"><div><h2>Hi, I’m Kyle.</h2><p>I own Service Boost in Walnut Creek. You’ll work directly with me.</p></div></section>
+      <section id="process" aria-label="How to book a visit"><ol class="booking-steps">
+        <li><span class="step-icon"><img src="/assets/icons/message-circle.svg" alt=""></span>Choose a service<img class="step-arrow" src="/assets/icons/arrow-right.svg" alt=""></li>
+        <li><span class="step-icon"><img src="/assets/icons/file-text.svg" alt=""></span>Choose a time<img class="step-arrow" src="/assets/icons/arrow-right.svg" alt=""></li>
+        <li><span class="step-icon"><img src="/assets/icons/user.svg" alt=""></span>Book your visit</li>
+      </ol></section>
+    </main>
     <div class="home-tail">
       <section id="tech-faq" class="tech-faq" aria-labelledby="tech-faq-title">
         <h2 id="tech-faq-title">Frequently asked questions</h2>
@@ -69,7 +85,7 @@
         <details class="more-faq"><summary>More FAQs</summary>
         <details>
           <summary>What can you help me with?</summary>
-          <p>I help set up computers, reconnect printers, configure routers, set up phones and tablets, and connect compatible smart-home devices. Choose a category to see the available services and what’s included. Not sure which one fits? <a href="/request-help">Ask Kyle</a>.</p>
+          <p>I help set up computers, <a href="/printer-setup">set up and troubleshoot printers</a>, configure routers, set up phones and tablets, and connect compatible smart-home devices. Choose a category to see the available services and what’s included. Not sure which one fits? <a href="/request-help">Ask Kyle</a>.</p>
         </details>
         <details>
           <summary>Do you help homes and small businesses?</summary>
