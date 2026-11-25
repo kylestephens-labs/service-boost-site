@@ -1,6 +1,7 @@
 const wifiInquiries = {
   extension: {
     title: "Wi-Fi Signal Extension",
+    priceLabel: "$249",
     detail: "Tell Kyle where Wi-Fi is weak and what equipment you have. He’ll review your setup and discuss options and pricing.",
   },
   cabling: {
@@ -10,21 +11,22 @@ const wifiInquiries = {
   },
   connectivity: {
     title: "Connectivity Support",
+    priceLabel: "$229",
     detail: "Tell Kyle which devices are having connection problems and when it happens. He’ll review the issue and confirm the scope and price before scheduling.",
   },
 };
 
 function renderWifiMenu(selection, guide) {
   function inquiry(id) {
-    const { title, detail } = wifiInquiries[id];
+    const { title, detail, priceLabel } = wifiInquiries[id];
     return {
       id,
       title,
       icon: "wifi",
-      priceLabel: "Ask Kyle",
+      priceLabel: priceLabel ?? "Ask Kyle",
       detail: serviceScope(detail),
       href: "/request-help?service=wifi&network=" + id,
-      action: "Ask Kyle about " + title.toLowerCase(),
+      action: priceLabel ? "Schedule Service" : "Ask Kyle about " + title.toLowerCase(),
     };
   }
   return renderServiceMenu(2, selection, {

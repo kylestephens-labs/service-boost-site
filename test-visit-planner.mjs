@@ -165,7 +165,7 @@ test("four price-free category cards lead directly to priced packages", () => {
     ["/computer-troubleshooting", "/smart-home", "/wifi-networking", "/phone-tablet-setup"]);
   assert.doesNotMatch(home, /\$\d/);
   assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
-  for (const [category, prices] of [[229,199,229,229,229,229],[249,249,249,229,229,229,229],[229],[199]].entries()) {
+  for (const [category, prices] of [[229,199,229,229,229,229],[249,249,249,229,229,229,229],[229,249,229],[199]].entries()) {
     const choices = visit("#services/" + category);
     assert.deepEqual([...choices.matchAll(/<span class="visit-menu-price">\$(\d+)<\/span>/g)].map(m => Number(m[1])), prices);
     assert.match(choices, /class="visit-menu-inline-help"/);
@@ -241,13 +241,13 @@ test("retired pairing routes never book or alias another service; support IDs st
   for (const [i, name] of names.entries()) assert.ok(visit("#book/1/" + (i + 1)).includes(name));
 });
 
-test("Wi-Fi groups show router setup and installation before support, with prices only for router setup", () => {
+test("Wi-Fi groups show router setup and installation before support, with approved prices", () => {
   const {visit} = planner();
   const html = visit("#services/2");
   const labels = [...html.matchAll(/<span class="visit-menu-name">(.*?)<\/span><span class="visit-menu-price[^"]*">(.*?)<\/span>/g)].map(match => match.slice(1));
   assert.deepEqual(labels, [
-    ["New WiFi Connection Setup", "$229"], ["Wi-Fi Signal Extension", "Ask Kyle"],
-    ["In-Wall Cable Running", "Ask Kyle"], ["Connectivity Support", "Ask Kyle"],
+    ["New WiFi Connection Setup", "$229"], ["Wi-Fi Signal Extension", "$249"],
+    ["In-Wall Cable Running", "Ask Kyle"], ["Connectivity Support", "$229"],
   ]);
   assert.ok(html.indexOf("<h2>Setup &amp; installation</h2>") < html.indexOf("<h2>Support</h2>"));
   assert.doesNotMatch(html, /Unavailable for booking/);
@@ -266,7 +266,7 @@ test("Wi-Fi inquiry cards keep their selected service on legacy routes without o
     const html = visit("#services/2/" + service);
     assert.match(html, detail);
     assert.ok(html.includes('href="/request-help?service=wifi&amp;network=' + service + '"'));
-    assert.doesNotMatch(html, /Unavailable for booking|\$249/);
+    assert.equal(html.includes(">Schedule Service</a>"), service !== "cabling");
     assert.doesNotMatch(html, /Schedule a visit/);
     for (const route of ["book", "fit", "contact", "time", "checkout", "done", "detail"]) {
       const legacy = visit("#" + route + "/2/" + service);
