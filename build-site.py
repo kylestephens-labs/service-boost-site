@@ -59,6 +59,8 @@ for slug, (title, description, service) in service_pages.items():
     subtitle = escape(description + (' in ' if service == 'mobile' else ' Visits in ') + 'Walnut Creek and nearby communities.')
     hero_intro = ('<a class="service-page-printer-link" href="/printer-setup">Looking for printer help?</a>' if service == 'computer'
                   else f'<p class="visit-menu-subtitle">{subtitle}</p>')
+    if service in ('smart-home', 'wifi'):
+        hero_intro = ''
     (output / f'{slug}.html').write_text(service_layout.substitute(
         title=escape(title), heading='Mobile devices' if service == 'mobile' else escape(title),
         subtitle=subtitle, hero_intro=hero_intro,

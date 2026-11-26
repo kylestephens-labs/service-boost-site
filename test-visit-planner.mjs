@@ -133,13 +133,13 @@ test("all packages display approved prices and only the computer lesson booking 
   for (const [path, price] of [
     ["0/0",229], ["0/1",229], ["0/2",229],
     ["0/3",229], ["0/4",229], ["0/5",229],
-    ["1/1",249], ["1/2",249], ["1/3",249], ["1/4",229], ["2/0",229], ["3/0",199],
+    ["1/1",249], ["1/2",249], ["1/3",249], ["1/4",249], ["2/0",229], ["3/0",199],
   ]) {
     const html = visit("#services/" + path);
     const needsIntake = /^1\/[123]$/.test(path);
     const next = needsIntake ? "#device/" : "#book/";
     assert.ok(html.includes('href="' + next + path + '">' + (needsIntake ? "Schedule Service" : "Schedule a visit")));
-    assert.ok(html.includes('<span class="visit-menu-price">$' + price + '</span>'));
+    assert.ok(html.includes(path.startsWith("1/") || path.startsWith("2/") ? "<strong>$" + price + "</strong>" : '<span class="visit-menu-price">$' + price + '</span>'));
     assert.doesNotMatch(html, /minutes?|Visit duration/);
     const booking = visit("#book/" + path);
     assert.ok(booking.includes("<strong>$" + price + "</strong>"));
@@ -167,7 +167,7 @@ test("four price-free category cards lead directly to priced packages", () => {
     ["/computer-troubleshooting", "/smart-home", "/wifi-networking", "/phone-tablet-setup"]);
   assert.doesNotMatch(home, /\$\d/);
   assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
-  for (const [category, prices] of [[229,229,229,229,229,229],[249,249,249,229],[229,229,249],[199]].entries()) {
+  for (const [category, prices] of [[229,229,229,229,229,229],[],[],[199]].entries()) {
     const choices = visit("#services/" + category);
     assert.deepEqual([...choices.matchAll(/<span class="visit-menu-price">\$(\d+)<\/span>/g)].map(m => Number(m[1])), prices);
     assert.match(choices, /class="visit-menu-inline-help"/);
@@ -241,11 +241,10 @@ test("retired pairing routes never book or alias another service; support IDs st
 test("Wi-Fi groups show router setup and installation before support, with approved prices", () => {
   const {visit} = planner();
   const html = visit("#services/2");
-  const labels = [...html.matchAll(/<span class="visit-menu-name">(.*?)<\/span><span class="visit-menu-price[^"]*">(.*?)<\/span>/g)].map(match => match.slice(1));
-  assert.deepEqual(labels, [
-    ["New WiFi Connection Setup", "$229"], ["Wi-Fi Coverage &amp; Connection Help", "$229"],
-    ["In-Wall Cable Running", "$249"],
-  ]);
+  assert.deepEqual([...html.matchAll(/class="visit-menu-name">([^<]+)/g)].map(m => m[1]),
+    ["New WiFi Connection Setup", "Wi-Fi Coverage &amp; Connection Help", "In-Wall Cable Running"]);
+  assert.match(html, /Router setup and coverage: <strong>\$229<\/strong>/);
+  assert.match(html, /In-wall cabling: <strong>\$249<\/strong>/);
   assert.doesNotMatch(html, /Unavailable for booking/);
   assert.match(visit("#book/2/0"), /New WiFi Connection Setup[\s\S]*<strong>\$229<\/strong>/);
   assert.match(visit("#services/2/0"), /ISP repair, cable runs and whole-home coverage guarantees/);

@@ -118,7 +118,7 @@ class SiteContracts(unittest.TestCase):
             ),
             '/smart-home': (
                 'smart-home', ['/#device/1/1', '/#device/1/2', '/#device/1/3', '/#book/1/4'],
-                ['$249', '$229', 'checks compatibility, scope and availability',
+                ['$249', 'checks compatibility, scope and availability',
                  'New wiring and electrical work', 'his findings and next steps'],
             ),
         }
@@ -132,12 +132,12 @@ class SiteContracts(unittest.TestCase):
                 self.assertEqual(sum(tag == 'h1' for tag, _ in page.nodes), 1)
                 self.assertEqual([a['href'] for tag, a in page.nodes if a.get('rel') == 'canonical'],
                                  ['https://www.serviceboost.co' + route])
-                self.assertIn('Walnut Creek and nearby communities', source if route == '/computer-troubleshooting' else content)
+                self.assertIn('Walnut Creek and nearby communities', source if route in ('/computer-troubleshooting', '/smart-home', '/wifi-networking') else content)
                 if route == '/computer-troubleshooting':
                     self.assertRegex(content, r'</h1>\s*<a[^>]+href="/printer-setup"')
                     self.assertNotIn('Computer won’t start', content)
                     self.assertNotIn('class="visit-menu-price">$229', content)
-                    self.assertEqual(content.count('<strong>$229</strong>'), 6)
+                    self.assertEqual(content.count('<strong>$229</strong>'), 1)
                 self.assertNotIn('Walnut Creek, Pleasant Hill, Concord', content)
                 self.assertFalse(any(tag in ('script', 'iframe', 'form') for tag, _ in page.nodes))
                 service, actions, terms = expected[route]
@@ -158,12 +158,13 @@ class SiteContracts(unittest.TestCase):
                     self.assertIn(phrase, content)
                 if service == 'computer':
                     self.assertNotIn('60-minute', content)
+                if service in ('smart-home', 'wifi'):
+                    self.assertNotIn('class="visit-menu-subtitle"', content)
+                    self.assertNotIn('class="visit-menu-price"', content)
+                    self.assertNotIn('class="visit-menu-next"', content)
                 if service == 'wifi':
-                    cards = re.findall(r'<details\b[^>]*>(.*?)</details>', content, re.S)
-                    for card, label, action in zip(cards, ['$229', '$229', '$249'],
-                                                   ['Schedule router setup', 'Schedule Service', 'Schedule Service']):
-                        self.assertIn('>' + label + '</span>', card)
-                        self.assertIn('>' + action + '</a>', card)
+                    self.assertIn('Router setup and coverage: <strong>$229</strong>', content)
+                    self.assertIn('In-wall cabling: <strong>$249</strong>', content)
                 if service == 'smart-home':
                     self.assertNotIn('Confirm with Kyle', content)
                     self.assertEqual(content.count('>Schedule Service</a>'), 3)

@@ -19,7 +19,7 @@ function scheduledService(category, id, { title, scope, showExclusions = true } 
   };
 }
 
-function renderServiceCard(category, selection, { id, title, icon, priceLabel, detail, href, action }, headingTag) {
+function renderServiceCard(category, selection, { id, title, icon, priceLabel, detail, href, action }, headingTag, showPrice) {
   const open = selection === String(id);
   const titleId = "visit-menu-card-" + category + "-" + id;
   const regionId = "visit-menu-scope-" + category + "-" + id;
@@ -31,7 +31,7 @@ function renderServiceCard(category, selection, { id, title, icon, priceLabel, d
       ' onclick="cardToRefocus = this.id; location.hash = \'' + target + '\'">' +
     '<span class="visit-menu-icon"><img src="/assets/icons/' + esc(icon) + '.svg" width="22" height="22" alt=""></span>' +
     '<span class="visit-menu-name">' + esc(title) + '</span>' +
-    '<span class="' + priceClass + '">' + esc(priceLabel) + '</span>' +
+    (showPrice ? '<span class="' + priceClass + '">' + esc(priceLabel) + '</span>' : '') +
     '<img class="visit-menu-chevron" src="/assets/icons/chevron-right.svg" width="16" height="16" alt="">' +
     '</button></' + headingTag + '>' +
     '<div class="visit-menu-detail" role="region" id="' + regionId + '" aria-labelledby="' + titleId + '"' + (open ? '>' : ' hidden>') +
@@ -39,10 +39,10 @@ function renderServiceCard(category, selection, { id, title, icon, priceLabel, d
     '</div></article>';
 }
 
-function renderServiceMenu(category, selection, { title, subtitle, terms, status, groups, guide = "" }) {
+function renderServiceMenu(category, selection, { title, subtitle, terms, status, groups, rates = [], guide = "" }) {
   const heading = Array.isArray(title) ? title.map(line => '<span>' + esc(line) + '</span>').join(" ") : esc(title);
   const group = ({ heading, note, cards }) => {
-    const list = cards.map(card => renderServiceCard(category, selection, card, heading ? "h3" : "h2")).join("");
+    const list = cards.map(card => renderServiceCard(category, selection, card, heading ? "h3" : "h2", !rates.length)).join("");
     if (!heading) return list;
     return '<section class="visit-menu-group"><h2>' + esc(heading) + '</h2>' +
       (note ? '<p class="visit-menu-group-note">' + esc(note) + '</p>' : '') + list + '</section>';
@@ -50,10 +50,12 @@ function renderServiceMenu(category, selection, { title, subtitle, terms, status
   return '<section class="selection visit-menu-shell">' +
     '<div class="visit-menu-hero"><a class="visit-menu-back" href="#home"><img src="/assets/icons/chevron-left.svg" width="14" height="14" alt="">All services</a>' +
     '<h1>' + heading + '</h1>' +
-    '<p class="visit-menu-subtitle">' + esc(subtitle) + '</p>' +
+    (subtitle ? '<p class="visit-menu-subtitle">' + esc(subtitle) + '</p>' : '') +
     (terms ? '<p class="visit-menu-terms"><img src="/assets/icons/circle-check.svg" width="18" height="18" alt="">' + esc(terms) + '</p>' : '') +
     (status ? '<p class="visit-menu-status" role="status">' + esc(status) + '</p>' : '') + '</div>' +
     '<div class="visit-menu-layout"><div class="visit-menu-list">' +
+    (rates.length ? '<div class="service-menu-heading menu-rates">' + rates.map(([label, price]) =>
+      '<p class="shared-rate">' + esc(label) + ': <strong>' + esc(price) + '</strong></p>').join("") + '</div>' : '') +
     groups.map(group).join("") + guide +
     '<p class="visit-menu-inline-help"><span>Not sure what you need?</span> <a href="/request-help">Ask Kyle</a></p></div>' +
     '<aside class="visit-menu-help" aria-labelledby="visit-menu-help-title">' +
