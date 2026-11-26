@@ -931,10 +931,3 @@ body:has(#hero-service-cta) main { min-height: 0; padding-block: 0; }
 
 .menu .card { text-decoration: none; }
 .menu .card h3 { margin: 0; }
-.category-example {
-  display: block;
-  color: #48556d;
-  font-size: .95rem;
-  line-height: 1.45;
-  margin-top: .25rem;
-}
