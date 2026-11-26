@@ -31,11 +31,11 @@ function renderBooking(root, service, id, preparation, cities) {
   const url = bookingURL(id);
   const diagnostic = description.includes("unresolved");
   root.innerHTML = `<div class="booking-layout">
-    <section class="booking-service" aria-labelledby="booking-title">
+    <div class="booking-service">
       <a class="booking-change" href="#services/${id}">Change service</a>
-      <h1 id="booking-title" tabindex="-1">${esc(name)}</h1>
-      <p class="booking-price"><strong>$${price}</strong><span>Fixed price</span></p>
-      <p class="booking-payment">Pay after your visit · No card required</p>
+      <h1 id="booking-title" tabindex="-1">Choose an arrival time</h1>
+      <p class="booking-price"><span>${esc(name)}</span><strong>$${price}</strong></p>
+      <p class="booking-payment">Pay after your visit · No card required · Pacific time</p>
       ${diagnostic ? '<p class="booking-important">' + esc(description) + '</p>' : ""}
       <details class="booking-details"><summary>Service details</summary>
         ${diagnostic ? "" : "<p>" + esc(description) + "</p>"}
@@ -46,15 +46,14 @@ function renderBooking(root, service, id, preparation, cities) {
         <p>Outside these cities or unsure about your setup? <a href="/request-help">Ask Kyle before booking</a>.</p>
         <p>Extra work requires your approval. Pay after your visit; Kyle will confirm payment options. Cancel or reschedule using your Calendly confirmation or contact Kyle. There is no cancellation fee.</p>
       </details>
-    </section>
-    <section class="booking-calendar" aria-labelledby="calendar-title">
-      <h2 id="calendar-title">Choose an arrival time</h2>
-      <p class="booking-timezone">Pacific time</p>
+    </div>
+    <section class="booking-calendar" aria-label="Available arrival times">
       ${enabled ? '<div id="booking-widget" class="booking-widget"><p role="status">Loading available times…</p></div>' : '<p class="booking-disabled">Review preview: scheduling is disabled. No appointment can be booked here.</p>'}
       <p class="booking-help"><a href="/request-help">Not sure? Ask Kyle</a></p>
       ${enabled ? '<details class="booking-fallback"><summary>Calendar not loading?</summary><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Open scheduling in a new tab</a></details>' : ""}
     </section>
   </div>`;
+  root.querySelector?.("#booking-title")?.focus({preventScroll: true});
   if (!enabled) return;
   const host = document.getElementById("booking-widget");
   loadCalendly().then(provider => {

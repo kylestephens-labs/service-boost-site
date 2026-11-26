@@ -573,3 +573,20 @@
     max-width: 4.75rem;
   }
 }
+
+.shared-rate {
+  margin: 0 0 12px;
+  color: var(--visit-menu-blue);
+  font-weight: 700;
+}
+.service-page .visit-menu-toggle:has(.visit-menu-name:only-child) {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.visit-menu-next {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+.visit-menu-next strong { font-variant-numeric: tabular-nums; }

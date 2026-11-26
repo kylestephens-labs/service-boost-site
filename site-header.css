@@ -40,3 +40,30 @@ header.global-header {
   .global-header .global-nav a { font-size:16px; gap:8px; }
   .global-header .global-contact img { width:20px; height:20px; }
 }
+
+.global-header .global-contact[href^="tel"],
+.mobile-header .mobile-call {
+  padding-inline: 12px;
+  background: #f6f8ff;
+  border: 1px solid #b6c8f0;
+  border-radius: 99px;
+  color: #2049b8;
+}
+.mobile-header :is(.mobile-call, .mobile-text, summary) {
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+  font-size: 14px;
+}
+.mobile-header :is(.mobile-call, .mobile-text)::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background: url("/assets/icons/phone.svg") center / contain no-repeat;
+}
+.mobile-header .mobile-text { padding-inline: 5px; color: #2049b8; }
+.mobile-header .mobile-text::before { background-image: url("/assets/icons/message-circle.svg"); }
+.mobile-header summary { border: 1px solid #d9dfeb; border-radius: 9px; padding-inline: 8px; }
+.mobile-header :focus-visible { outline: 3px solid #2057ed; outline-offset: 2px; }
