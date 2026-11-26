@@ -67,3 +67,7 @@ header.global-header {
 .mobile-header .mobile-text::before { background-image: url("/assets/icons/message-circle.svg"); }
 .mobile-header summary { border: 1px solid #d9dfeb; border-radius: 9px; padding-inline: 8px; }
 .mobile-header :focus-visible { outline: 3px solid #2057ed; outline-offset: 2px; }
+
+@media (min-width: 761px) {
+  body:has(#hero-service-cta) .global-brand { font-size: 2rem; }
+}
