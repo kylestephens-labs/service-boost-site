@@ -7,7 +7,7 @@ function addSmartHomeSupport(packages, guidance) {
   ];
   for (const [name, device, focus, exclusions] of devices) {
     const question = "Can you access " + device + " and its app?";
-    packages.push([name + " Support", "smart-home", name === "Smart Hub & Speaker" ? 229 : 249,
+    packages.push([name + " Support", "smart-home", 249,
       "The visit covers time and diagnosis for one issue even if it remains unresolved. You and Kyle agree on any extra work and price before proceeding.",
       "Diagnose one issue on " + device + ": " + focus + "|Explain findings and next steps",
       "Devices, subscriptions and replacement parts" + exclusions, question]);
@@ -37,7 +37,7 @@ function renderSmartHomeMenu(selection, guide) {
   const legacyIndex = smartInstallIds.indexOf(selection);
   return renderServiceMenu(1, legacyIndex < 0 ? selection : String(legacyIndex + 1), {
     title: "Smart home",
-    subtitle: "On-site smart home installation and support in Walnut Creek and nearby communities.",
+    rates: [["Fixed price", cards[0].priceLabel]],
     status: selection === "retired" ? "That service is no longer offered. Choose a service below." : "",
     terms: "Pay after your visit on fixed-price services.",
     groups: [{ cards }],

@@ -26,7 +26,7 @@ function renderWifiMenu(selection, guide) {
   }
   return renderServiceMenu(2, selection, {
     title: "Wi-Fi & network",
-    subtitle: "On-site router setup and network help in Walnut Creek and nearby communities.",
+    rates: [["Router setup and coverage", wifiInquiries.coverage.priceLabel], ["In-wall cabling", wifiInquiries.cabling.priceLabel]],
     terms: "Pay after your visit on fixed-price services.",
     groups: [{ cards: [scheduledService(2, 0), inquiry("coverage"), inquiry("cabling")] }],
     guide,
