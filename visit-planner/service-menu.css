@@ -612,3 +612,12 @@
 .menu-rates { flex-direction: column; align-items: flex-end; text-align: right; }
 
 .visit-menu-toggle .visit-menu-chevron { grid-column: -2; }
+
+.payment-footnote {
+  display: block;
+  margin-top: .25rem;
+  color: var(--visit-menu-muted);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.4;
+}

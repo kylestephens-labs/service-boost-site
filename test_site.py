@@ -140,6 +140,8 @@ class SiteContracts(unittest.TestCase):
                     self.assertEqual(content.count('<strong>$229</strong>'), 1)
                 self.assertNotIn('Walnut Creek, Pleasant Hill, Concord', content)
                 self.assertFalse(any(tag in ('script', 'iframe', 'form') for tag, _ in page.nodes))
+                self.assertRegex(content, r'Fixed price: <strong>\$\d+</strong><small class="payment-footnote">\* Payment due after your visit\.</small>')
+                self.assertNotIn('class="visit-menu-terms"', content)
                 service, actions, terms = expected[route]
                 links = [a['href'] for tag, a in page.nodes if tag == 'a' and 'href' in a]
                 self.assertIn('/#services', links)

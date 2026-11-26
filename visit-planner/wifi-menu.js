@@ -25,8 +25,7 @@ function renderWifiMenu(selection, guide) {
   }
   return renderServiceMenu(2, selection, {
     title: "Wi-Fi & network",
-    rates: [["Fixed price", router.priceLabel]],
-    terms: "Pay after your visit on fixed-price services.",
+    fixedPrice: router.priceLabel,
     groups: [{ cards: [router, inquiry("coverage"), inquiry("cabling")] }],
     guide,
   });

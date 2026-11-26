@@ -37,9 +37,8 @@ function renderSmartHomeMenu(selection, guide) {
   const legacyIndex = smartInstallIds.indexOf(selection);
   return renderServiceMenu(1, legacyIndex < 0 ? selection : String(legacyIndex + 1), {
     title: "Smart home",
-    rates: [["Fixed price", cards[0].priceLabel]],
     status: selection === "retired" ? "That service is no longer offered. Choose a service below." : "",
-    terms: "Pay after your visit on fixed-price services.",
+    fixedPrice: cards[0].priceLabel,
     groups: [{ cards }],
     guide,
   });

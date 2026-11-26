@@ -39,10 +39,10 @@ function renderServiceCard(category, selection, { id, title, icon, priceLabel, d
     '</div></article>';
 }
 
-function renderServiceMenu(category, selection, { title, subtitle, terms, status, groups, rates = [], guide = "" }) {
+function renderServiceMenu(category, selection, { title, subtitle, fixedPrice, status, groups, guide = "" }) {
   const heading = Array.isArray(title) ? title.map(line => '<span>' + esc(line) + '</span>').join(" ") : esc(title);
   const group = ({ heading, note, cards }) => {
-    const list = cards.map(card => renderServiceCard(category, selection, card, heading ? "h3" : "h2", !rates.length)).join("");
+    const list = cards.map(card => renderServiceCard(category, selection, card, heading ? "h3" : "h2", card.priceLabel !== fixedPrice)).join("");
     if (!heading) return list;
     return '<section class="visit-menu-group"><h2>' + esc(heading) + '</h2>' +
       (note ? '<p class="visit-menu-group-note">' + esc(note) + '</p>' : '') + list + '</section>';
@@ -51,11 +51,10 @@ function renderServiceMenu(category, selection, { title, subtitle, terms, status
     '<div class="visit-menu-hero"><a class="visit-menu-back" href="#home"><img src="/assets/icons/chevron-left.svg" width="14" height="14" alt="">All services</a>' +
     '<h1>' + heading + '</h1>' +
     (subtitle ? '<p class="visit-menu-subtitle">' + esc(subtitle) + '</p>' : '') +
-    (terms ? '<p class="visit-menu-terms"><img src="/assets/icons/circle-check.svg" width="18" height="18" alt="">' + esc(terms) + '</p>' : '') +
     (status ? '<p class="visit-menu-status" role="status">' + esc(status) + '</p>' : '') + '</div>' +
     '<div class="visit-menu-layout"><div class="visit-menu-list">' +
-    (rates.length ? '<div class="service-menu-heading menu-rates">' + rates.map(([label, price]) =>
-      '<p class="shared-rate">' + esc(label) + ': <strong>' + esc(price) + '</strong></p>').join("") + '</div>' : '') +
+    '<div class="service-menu-heading menu-rates"><p class="shared-rate">Fixed price: <strong>' + esc(fixedPrice) +
+    '</strong><small class="payment-footnote">* Payment due after your visit.</small></p></div>' +
     groups.map(group).join("") + guide +
     '<p class="visit-menu-inline-help"><span>Not sure what you need?</span> <a href="/request-help">Ask Kyle</a></p></div>' +
     '<aside class="visit-menu-help" aria-labelledby="visit-menu-help-title">' +
