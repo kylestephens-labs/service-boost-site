@@ -159,12 +159,12 @@ test("legacy homepage sections have a rendered scroll target", () => {
   }
 });
 
-test("four price-free category cards lead directly to priced packages", () => {
+test("home links to four local categories and remote help", () => {
   const {visit} = planner();
   const home = visit("#home");
-  assert.equal((home.match(/class="card"/g) || []).length, 4);
+  assert.equal((home.match(/class="card"/g) || []).length, 5);
   assert.deepEqual([...home.matchAll(/<a class="card" href="([^"]+)"/g)].map(match => match[1]),
-    ["/computer-troubleshooting", "/smart-home", "/wifi-networking", "/phone-tablet-setup"]);
+    ["/computer-troubleshooting", "/smart-home", "/wifi-networking", "/phone-tablet-setup", "/remote-tech-help"]);
   assert.doesNotMatch(home, /\$\d/);
   assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
   for (const [category, price] of [229,249,249,199].entries()) {

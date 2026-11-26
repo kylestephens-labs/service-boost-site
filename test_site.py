@@ -1,6 +1,7 @@
 """Static integration contracts for the production site and isolated demos."""
 from html.parser import HTMLParser
 from pathlib import Path
+import os
 import json
 import re
 import subprocess
@@ -36,6 +37,23 @@ class SiteContracts(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
+
+    def test_remote_booking_uses_one_dedicated_event_with_two_intents(self):
+        build = [sys.executable, str(ROOT / 'build-site.py')]
+        env = dict(os.environ, VERCEL_ENV='production')
+        self.addCleanup(subprocess.run, build, check=True)
+        for bad_url in ('', 'https://calendly.com/kyle-serviceboost/book-a-visit'):
+            result = subprocess.run(build, env=dict(env, REMOTE_CALENDLY_EVENT_URL=bad_url),
+                                    capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('remote event', result.stderr)
+        event = 'https://calendly.com/kyle-serviceboost/test-only'
+        subprocess.run(build, env=dict(env, REMOTE_CALENDLY_EVENT_URL=event), check=True)
+        nodes = Page('public-site/remote-tech-help.html').nodes
+        self.assertEqual([a['href'] for tag, a in nodes if a.get('class') == 'primary'],
+                         [event + '?utm_source=serviceboost&utm_content=remote-' + intent
+                          for intent in ('fix', 'improve')])
+        self.assertFalse(any(tag in ('dialog', 'form') for tag, _ in nodes))
 
     def test_tech_home_links_to_dedicated_intake_and_direct_contact(self):
         page = Page('index.html')
@@ -94,7 +112,7 @@ class SiteContracts(unittest.TestCase):
     def test_service_pages_are_crawlable_and_link_to_existing_customer_flows(self):
         home = Page('index.html')
         self.assertEqual([a['href'] for tag, a in home.nodes if tag == 'a' and a.get('class') == 'card'],
-                         ['/computer-troubleshooting', '/smart-home', '/wifi-networking', '/phone-tablet-setup'])
+                         ['/computer-troubleshooting', '/smart-home', '/wifi-networking', '/phone-tablet-setup', '/remote-tech-help'])
         self.assertIn('/printer-setup', [a.get('href') for tag, a in home.nodes if tag == 'a'])
         expected = {
             '/computer-troubleshooting': (
