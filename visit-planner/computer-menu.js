@@ -26,7 +26,7 @@ function renderComputerMenu(selection, guide) {
   return renderServiceMenu(0, selection, {
     title: ["Computer and", "printer support"],
     subtitle: "On-site setup and troubleshooting in Walnut Creek and nearby communities.",
-    terms: "Fixed prices where shown. Pay after your visit.",
+    fixedPrice: "$" + tasks[0][0][2],
     groups: [
       { heading: "Setup & installation", cards: [visit(0), visit(1), visit(3), folder] },
       { heading: "Help & learning", cards: [visit(2), visit(4), visit(5)] },

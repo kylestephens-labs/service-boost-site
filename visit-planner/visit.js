@@ -1,4 +1,3 @@
-const paymentNote = "Fixed-price services · Pay after your visit";
 const services = [
   [
     "Computer and printer support",
@@ -163,7 +162,7 @@ function render() {
       root.innerHTML = renderServiceMenu(3, t, {
         title: "Mobile devices",
         subtitle: "On-site phone and tablet setup in Walnut Creek and nearby communities.",
-        terms: paymentNote,
+        fixedPrice: "$" + tasks[3][0][2],
         groups: [{ cards: [scheduledService(3, 0)] }],
         guide,
       });

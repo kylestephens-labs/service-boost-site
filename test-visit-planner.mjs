@@ -139,7 +139,7 @@ test("all packages display approved prices and only the computer lesson booking 
     const needsIntake = /^1\/[123]$/.test(path);
     const next = needsIntake ? "#device/" : "#book/";
     assert.ok(html.includes('href="' + next + path + '">' + (needsIntake ? "Schedule Service" : "Schedule a visit")));
-    assert.ok(html.includes(path.startsWith("1/") || path.startsWith("2/") ? "<strong>$" + price + "</strong>" : '<span class="visit-menu-price">$' + price + '</span>'));
+    assert.ok(html.includes("<strong>$" + price + "</strong>"));
     assert.doesNotMatch(html, /minutes?|Visit duration/);
     const booking = visit("#book/" + path);
     assert.ok(booking.includes("<strong>$" + price + "</strong>"));
@@ -167,17 +167,11 @@ test("four price-free category cards lead directly to priced packages", () => {
     ["/computer-troubleshooting", "/smart-home", "/wifi-networking", "/phone-tablet-setup"]);
   assert.doesNotMatch(home, /\$\d/);
   assert.doesNotMatch(home, /Fixed-price services · Pay after your visit/);
-  for (const [category, prices] of [[229,229,229,229,229,229],[],[],[199]].entries()) {
+  for (const [category, price] of [229,249,249,199].entries()) {
     const choices = visit("#services/" + category);
-    assert.deepEqual([...choices.matchAll(/<span class="visit-menu-price">\$(\d+)<\/span>/g)].map(m => Number(m[1])), prices);
+    assert.ok(choices.includes('Fixed price: <strong>$' + price + '</strong><small class="payment-footnote">* Payment due after your visit.</small>'));
     assert.match(choices, /class="visit-menu-inline-help"/);
     assert.match(choices, /<aside class="visit-menu-help"/);
-    assert.match(choices, [
-      /Fixed prices where shown\. Pay after your visit\./,
-      /Pay after your visit on fixed-price services/,
-      /Pay after your visit on fixed-price services/,
-      /Fixed-price services · Pay after your visit/,
-    ][category]);
     assert.match(visit("#fit/" + category + "/" + (category === 1 ? 1 : 0)), /Pay after your visit · No card required/);
     assert.doesNotMatch(choices, /<input/);
   }
