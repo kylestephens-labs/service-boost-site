@@ -132,7 +132,12 @@ class SiteContracts(unittest.TestCase):
                 self.assertEqual(sum(tag == 'h1' for tag, _ in page.nodes), 1)
                 self.assertEqual([a['href'] for tag, a in page.nodes if a.get('rel') == 'canonical'],
                                  ['https://www.serviceboost.co' + route])
-                self.assertIn('Walnut Creek and nearby communities', content)
+                self.assertIn('Walnut Creek and nearby communities', source if route == '/computer-troubleshooting' else content)
+                if route == '/computer-troubleshooting':
+                    self.assertRegex(content, r'</h1>\s*<a[^>]+href="/printer-setup"')
+                    self.assertNotIn('Computer won’t start', content)
+                    self.assertNotIn('class="visit-menu-price">$229', content)
+                    self.assertEqual(content.count('<strong>$229</strong>'), 6)
                 self.assertNotIn('Walnut Creek, Pleasant Hill, Concord', content)
                 self.assertFalse(any(tag in ('script', 'iframe', 'form') for tag, _ in page.nodes))
                 service, actions, terms = expected[route]
