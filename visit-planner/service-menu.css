@@ -590,3 +590,21 @@
   margin-top: 14px;
 }
 .visit-menu-next strong { font-variant-numeric: tabular-nums; }
+
+.computer-menu-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding-inline-end: 16px;
+  margin-bottom: 12px;
+}
+.computer-menu-heading h2,
+.computer-menu-heading .shared-rate { margin: 0; }
+.computer-menu-heading .shared-rate {
+  margin-inline-start: auto;
+  font-size: clamp(1.25rem, 2.6vw, 1.85rem);
+  line-height: 1.2;
+}
+.computer-menu-heading strong { font-size: 1.2em; }

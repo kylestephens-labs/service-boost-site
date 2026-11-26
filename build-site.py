@@ -56,9 +56,12 @@ service_pages = {
 service_sources = root / 'service-pages'
 service_layout = Template((service_sources / 'layout.html').read_text())
 for slug, (title, description, service) in service_pages.items():
+    subtitle = escape(description + (' in ' if service == 'mobile' else ' Visits in ') + 'Walnut Creek and nearby communities.')
+    hero_intro = ('<a class="service-page-printer-link" href="/printer-setup">Looking for printer help?</a>' if service == 'computer'
+                  else f'<p class="visit-menu-subtitle">{subtitle}</p>')
     (output / f'{slug}.html').write_text(service_layout.substitute(
         title=escape(title), heading='Mobile devices' if service == 'mobile' else escape(title),
-        subtitle=escape(description + (' in ' if service == 'mobile' else ' Visits in ') + 'Walnut Creek and nearby communities.'),
+        subtitle=subtitle, hero_intro=hero_intro,
         canonical=f'https://www.serviceboost.co/{slug}',
         robots='<meta name="robots" content="noindex">' if review_visits else '',
         content=(service_sources / f'{slug}.html').read_text(),
