@@ -109,7 +109,7 @@ class SiteContracts(unittest.TestCase):
             '/wifi-networking': (
                 'wifi', ['/#book/2/0'] + ['/request-help?service=wifi&network=' + choice
                                          for choice in ('coverage', 'cabling')],
-                ['$229', 'existing internet line', 'Confirm internet service is active and the modem is accessible',
+                ['$249', 'existing internet line', 'Confirm internet service is active and the modem is accessible',
                  'qualifications and permits', 'which devices have connection problems'],
             ),
             '/phone-tablet-setup': (
@@ -163,8 +163,8 @@ class SiteContracts(unittest.TestCase):
                     self.assertNotIn('class="visit-menu-price"', content)
                     self.assertNotIn('class="visit-menu-next"', content)
                 if service == 'wifi':
-                    self.assertIn('Router setup and coverage: <strong>$229</strong>', content)
-                    self.assertIn('In-wall cabling: <strong>$249</strong>', content)
+                    self.assertNotIn('$229', content)
+                    self.assertEqual(content.count('Fixed price: <strong>$249</strong>'), 1)
                 if service == 'smart-home':
                     self.assertNotIn('Confirm with Kyle', content)
                     self.assertEqual(content.count('>Schedule Service</a>'), 3)

@@ -18,7 +18,7 @@ const services = [
   [
     "Wi-Fi &amp; network",
     "wifi",
-    229,
+    249,
     "Set up one router on your existing internet line.",
     "Configure one supported router|Connect up to two devices|Test connectivity at the router",
     "ISP repair, cable runs and whole-home coverage guarantees",

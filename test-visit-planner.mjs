@@ -133,7 +133,7 @@ test("all packages display approved prices and only the computer lesson booking 
   for (const [path, price] of [
     ["0/0",229], ["0/1",229], ["0/2",229],
     ["0/3",229], ["0/4",229], ["0/5",229],
-    ["1/1",249], ["1/2",249], ["1/3",249], ["1/4",249], ["2/0",229], ["3/0",199],
+    ["1/1",249], ["1/2",249], ["1/3",249], ["1/4",249], ["2/0",249], ["3/0",199],
   ]) {
     const html = visit("#services/" + path);
     const needsIntake = /^1\/[123]$/.test(path);
@@ -243,10 +243,10 @@ test("Wi-Fi groups show router setup and installation before support, with appro
   const html = visit("#services/2");
   assert.deepEqual([...html.matchAll(/class="visit-menu-name">([^<]+)/g)].map(m => m[1]),
     ["New WiFi Connection Setup", "Wi-Fi Coverage &amp; Connection Help", "In-Wall Cable Running"]);
-  assert.match(html, /Router setup and coverage: <strong>\$229<\/strong>/);
-  assert.match(html, /In-wall cabling: <strong>\$249<\/strong>/);
+  assert.doesNotMatch(html, /\$229/);
+  assert.match(html, /Fixed price: <strong>\$249<\/strong>/);
   assert.doesNotMatch(html, /Unavailable for booking/);
-  assert.match(visit("#book/2/0"), /New WiFi Connection Setup[\s\S]*<strong>\$229<\/strong>/);
+  assert.match(visit("#book/2/0"), /New WiFi Connection Setup[\s\S]*<strong>\$249<\/strong>/);
   assert.match(visit("#services/2/0"), /ISP repair, cable runs and whole-home coverage guarantees/);
 });
 
