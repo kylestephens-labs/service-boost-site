@@ -16,16 +16,21 @@ class ParityTests(unittest.TestCase):
     book = test_engine.BookingTests.book
 
     def test_legacy_local_blocks_remote_and_retains_buffer_after_bad_refresh(self):
-        start = self.slots('0/1')[0]
-        record = [('local', start)]
-        replace_legacy_snapshot(self.app, record, record)
-        # A remote-only date override permits a start inside a legacy travel buffer.
-        self.app.events['remote']['overrides'][self.day.isoformat()] = [[600, 720]]
-        self.assertNotIn(start + 7200, self.slots('remote-fix'))
-        with self.assertRaises(CalendarUnavailable):
-            replace_legacy_snapshot(self.app, record, [])
+        # 11 am–1 pm Saturday, with an independently verified historic
+        # after-buffer of 30 minutes. The current local default is 60.
+        start = self.slots('0/1')[1]
+        end = start + 7200
+        record = [('local', start, end)]
+        blocks = {record[0]: (start, end + 1800)}
+        replace_legacy_snapshot(self.app, record, record, blocks)
+        self.app.events['remote']['overrides'][self.day.isoformat()] = [[780, 900]]
+        self.assertNotIn(end, self.slots('remote-fix'))
+        self.assertIn(end + 1800, self.slots('remote-fix'))
+        for matched, evidence in (([], blocks), (record, {})):
+            with self.assertRaises(CalendarUnavailable):
+                replace_legacy_snapshot(self.app, record, matched, evidence)
         with self.assertRaises(Conflict):
-            self.book('a', 'remote-fix', start + 7200)
+            self.book('a', 'remote-fix', end)
 
     def test_closed_override_is_per_event(self):
         self.app.events['local']['overrides'][self.day.isoformat()] = []

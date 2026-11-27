@@ -4,24 +4,30 @@ from collections import Counter
 from engine import CalendarUnavailable
 
 
-def legacy_intervals(expected, matched, rules):
-    """Both inputs contain only (event kind, UTC start second), including duplicates.
+def legacy_intervals(expected, matched, verified_blocks):
+    """Reconcile (event kind, UTC start, UTC end) without attendee information.
 
-    expected is the active Calendly inventory, matched the independently reconciled
-    calendar blocks. A mismatch stops replacement of the entire interval snapshot.
+    verified_blocks maps each historic event to independently evidenced occupancy
+    bounds, including its actual before/after buffers or a verified transition
+    hold. Unknown bounds block handoff. Current event rules are never applied.
     """
     expected = tuple(expected)
-    if Counter(expected) != Counter(matched):
-        raise CalendarUnavailable('Existing appointment inventory differs.')
+    if Counter(expected) != Counter(matched) or set(expected) != set(verified_blocks):
+        raise CalendarUnavailable('Legacy inventory or buffer evidence is incomplete.')
     occupied = []
-    for kind, start in expected:
-        rule = rules[kind]
-        occupied.append((start - rule.before * 60, start + (rule.minutes + rule.after) * 60))
+    for event in expected:
+        kind, start, end = event
+        bounds = verified_blocks[event]
+        if (kind not in ('local', 'remote') or not isinstance(bounds, (list, tuple))
+                or len(bounds) != 2 or not all(type(t) is int for t in (*bounds, start, end))
+                or not bounds[0] <= start < end <= bounds[1]):
+            raise CalendarUnavailable('Unverified legacy busy interval.')
+        occupied.append(bounds)
     return occupied
 
 
-def replace_legacy_snapshot(engine, expected, matched):
-    occupied = legacy_intervals(expected, matched, engine.rules)
+def replace_legacy_snapshot(engine, expected, matched, verified_blocks):
+    occupied = legacy_intervals(expected, matched, verified_blocks)
     with engine.transaction(True) as db:
         db.execute('DELETE FROM legacy_busy')
         db.executemany('INSERT INTO legacy_busy VALUES (?,?)', occupied)
