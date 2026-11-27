@@ -6,6 +6,7 @@ import re
 import secrets
 import sqlite3
 from contextlib import closing, contextmanager
+from pathlib import Path
 from dataclasses import dataclass
 from datetime import datetime, time, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -13,8 +14,7 @@ from zoneinfo import ZoneInfo
 PACIFIC = ZoneInfo("America/Los_Angeles")
 UTC = timezone.utc
 DAY = timedelta(days=1)
-SPLIT = ((8, 10), (11, 13), (14, 16), (17, 19))
-WEEK = (((17, 21),), SPLIT, (), ((17, 21),), SPLIT, SPLIT, SPLIT)
+CONFIG = Path(__file__).with_name("calendly.v1.json")
 
 
 @dataclass(frozen=True)
@@ -39,7 +39,7 @@ class PreviewProvider:
     """Busy intervals only. All calendar effects and mock messages stay in the preview DB."""
     available = True
 
-    def freebusy(self, db, omit):
+    def freebusy(self, db, omit, first, last):
         if not self.available:
             raise CalendarUnavailable()
         return list(db.execute('SELECT start,end FROM busy')) + list(db.execute(
@@ -56,18 +56,26 @@ class PreviewProvider:
 
 
 class Scheduler:
-    def __init__(self, path, catalog, provider=None, clock=None, rules=None, overrides=None, commute_clear=None):
-        self.overrides = overrides or {}
+    def __init__(self, path, catalog, provider=None, clock=None, rules=None, commute_clear=None, configuration=CONFIG, external_busy=None, delivery=None):
+        config = json.loads(Path(configuration).read_text())
+        if config['version'] != 1 or config['timezone'] != PACIFIC.key:
+            raise ValueError('Unsupported schedule configuration.')
+        self.events = config['events']
+        self.schedules = config['schedules']
+        self.external_busy = external_busy
         self.commute_clear = commute_clear or {}
         self.path = path
         self.catalog = catalog
         self.provider = provider or PreviewProvider()
+        self.delivery = delivery or self.provider
         self.clock = clock or (lambda: datetime.now(UTC))
-        self.rules = rules or {'local': Rule(120, after=60, step=60), 'remote': Rule(45)}
+        self.rules = rules or {kind: Rule(**{key: values[key] for key in Rule.__dataclass_fields__})
+                               for kind, values in self.events.items()}
         with closing(sqlite3.connect(path)) as db:
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS settings(secret TEXT);
                 CREATE TABLE IF NOT EXISTS busy(start INTEGER,end INTEGER);
+                CREATE TABLE IF NOT EXISTS legacy_busy(lo INTEGER,hi INTEGER);
                 CREATE TABLE IF NOT EXISTS bookings(id TEXT PRIMARY KEY, service TEXT, start INTEGER,
                     lo INTEGER, hi INTEGER, active INTEGER, version INTEGER, details TEXT, price TEXT, attribution TEXT);
                 CREATE TABLE IF NOT EXISTS requests(key TEXT PRIMARY KEY, digest TEXT, booking TEXT);
@@ -101,16 +109,24 @@ class Scheduler:
         rule = self.rules[self.catalog[service]['kind']]
         now = self.clock()
         today = now.astimezone(PACIFIC).date()
-        busy = self.provider.freebusy(db, omit)
+        event = self.events[self.catalog[service]['kind']]
+        week = self.schedules[event['schedule']]['weekly_minutes_from_midnight']
+        begin = datetime.combine(first, time(), PACIFIC).astimezone(UTC) - timedelta(minutes=rule.before)
+        end = datetime.combine(first + days * DAY, time(), PACIFIC).astimezone(UTC) + timedelta(minutes=rule.after)
+        busy = self.provider.freebusy(db, omit, begin, end)
+        busy.extend(db.execute('SELECT lo,hi FROM legacy_busy WHERE lo < ? AND hi > ?',
+                               (end.timestamp(), begin.timestamp())))
+        if self.external_busy:
+            busy.extend(self.external_busy.intervals(begin, end))
         busy.extend(db.execute('SELECT lo,hi FROM bookings WHERE active=1 AND id!=?', (omit,)))
         result = []
         for offset in range(days):
             day = first + offset * DAY
             if not today <= day <= today + rule.horizon * DAY:
                 continue
-            for start_hour, end_hour in self.overrides.get(day, WEEK[day.weekday()]):
+            for opening, closing in event['overrides'].get(day.isoformat(), week[day.weekday()]):
                 midnight = datetime.combine(day, time(), PACIFIC)
-                for minute in range(start_hour*60, end_hour*60-rule.minutes+1, rule.step):
+                for minute in range(opening, closing-rule.minutes+1, rule.step):
                     start = midnight + timedelta(minutes=minute)
                     # Do not offer office-day hours until the return commute ends.
                     if day.weekday() in (0, 2, 3) and (day not in self.commute_clear or
@@ -159,6 +175,7 @@ class Scheduler:
                            active=not cancel, remote=item['kind']=='remote',
                            service=service, name=item['name'], price=item['price'], manage=self.token(booking), to=details['email'],
                            conference=('https://meet.invalid/' + booking if item['kind']=='remote' and not cancel else ''),
+                           end=start+rule.minutes*60, location=details.get('address', ''),
                            guests=details.get('guests',''))
             db.execute('INSERT INTO outbox VALUES(?,?,?)',(booking,version,json.dumps(payload)))
             db.execute('INSERT INTO requests VALUES(?,?,?)',(key,digest,booking))
@@ -169,5 +186,5 @@ class Scheduler:
         # provider has accepted its stable booking/version ID.
         with self.transaction(True) as db:
             for row in db.execute('SELECT * FROM outbox ORDER BY rowid').fetchall():
-                self.provider.deliver(db,row['booking'],row['version'],json.loads(row['payload']))
+                self.delivery.deliver(db,row['booking'],row['version'],json.loads(row['payload']))
                 db.execute('DELETE FROM outbox WHERE booking=? AND version=?',(row['booking'],row['version']))

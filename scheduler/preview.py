@@ -1,6 +1,7 @@
 """Run the isolated booking preview on Kyle's Mac: python3 scheduler/preview.py"""
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -21,7 +22,8 @@ ROOT = HERE.parent
 
 
 def prepare(directory):
-    subprocess.run([sys.executable, 'build-site.py', '--review-visits'], cwd=ROOT, check=True)
+    subprocess.run([sys.executable, 'build-site.py', '--review-visits'], cwd=ROOT, check=True,
+                   env={**os.environ, 'SERVICE_BOOST_OWNED_SCHEDULER': 'mock'})
     shutil.copytree(ROOT/'visit-preview', directory)
     result = subprocess.check_output(['node', str(HERE/'catalog.mjs')], text=True)
     catalog = {item['id']:item for item in json.loads(result)}
