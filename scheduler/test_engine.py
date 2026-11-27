@@ -72,6 +72,38 @@ class BookingTests(unittest.TestCase):
         with self.assertRaises(Conflict):
             self.book('a','0/1',start)
 
+    def test_timeout_after_provider_accepts_uses_same_delivery_id(self):
+        events, deliveries = set(), set()
+        original = self.provider.deliver
+        def ambiguous(db, booking, version, state):
+            events.add(booking)
+            identity = (booking, version)
+            if identity not in deliveries:
+                deliveries.add(identity)
+                raise TimeoutError('Response lost after acceptance')
+            original(db, booking, version, state)
+        self.provider.deliver = ambiguous
+        self.book('a','remote-fix',self.slots('remote-fix')[0])
+        with self.assertRaises(TimeoutError):
+            self.app.flush()
+        self.app.flush()
+        self.assertEqual(len(events),1)
+        self.assertEqual(len(deliveries),1)
+        with self.app.transaction() as db:
+            self.assertEqual(db.execute('SELECT count(*) FROM outbox').fetchone()[0],0)
+            message=db.execute('SELECT payload FROM messages').fetchone()[0]
+            self.assertIn('https://meet.invalid/',message)
+
+    def test_durable_retry_after_process_restart(self):
+        start=self.slots('0/1')[0]
+        token=self.book('a','0/1',start)
+        self.app=Scheduler(self.app.path,self.items,self.provider,lambda:self.now)
+        self.assertEqual(self.book('a','0/1',start),token)
+        self.app.flush()
+        with self.app.transaction() as db:
+            self.assertEqual(db.execute('SELECT count(*) FROM events').fetchone()[0],1)
+            self.assertEqual(db.execute('SELECT count(*) FROM messages').fetchone()[0],1)
+
     def test_management_and_token(self):
         start,next_time,*_=self.slots('0/1')
         token=self.book('a','0/1',start)
