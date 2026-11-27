@@ -143,12 +143,14 @@ class BookingTests(unittest.TestCase):
         self.day+=timedelta(days=121)
         self.assertEqual(self.slots('remote-fix'),[])
 
-    def test_office_and_commute_fail_closed(self):
-        self.day=datetime(2026,11,30).date()
-        self.assertFalse(self.slots('remote-fix'))
-        self.app.commute_clear[self.day]=time(18,15)
-        self.assertTrue(self.slots('remote-fix'))
-        self.assertTrue(all(datetime.fromtimestamp(s,PACIFIC).time()>=time(18,15) for s in self.slots('remote-fix')))
+    def test_weekday_evening_parity(self):
+        for number in (30, 3):
+            self.day = datetime(2026, 11 if number == 30 else 12, number).date()
+            for service in self.items:
+                self.assertEqual(datetime.fromtimestamp(self.slots(service)[0], PACIFIC).time(), time(17))
+        self.day = datetime(2026, 12, 2).date()
+        for service in self.items:
+            self.assertEqual(self.slots(service), [])
 
     def test_required_intake_and_no_client_price(self):
         for item in self.items.values():

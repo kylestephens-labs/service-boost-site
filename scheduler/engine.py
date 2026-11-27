@@ -56,14 +56,13 @@ class PreviewProvider:
 
 
 class Scheduler:
-    def __init__(self, path, catalog, provider=None, clock=None, rules=None, commute_clear=None, configuration=CONFIG, external_busy=None, delivery=None):
+    def __init__(self, path, catalog, provider=None, clock=None, rules=None, configuration=CONFIG, external_busy=None, delivery=None):
         config = json.loads(Path(configuration).read_text())
         if config['version'] != 1 or config['timezone'] != PACIFIC.key:
             raise ValueError('Unsupported schedule configuration.')
         self.events = config['events']
         self.schedules = config['schedules']
         self.external_busy = external_busy
-        self.commute_clear = commute_clear or {}
         self.path = path
         self.catalog = catalog
         self.provider = provider or PreviewProvider()
@@ -128,10 +127,6 @@ class Scheduler:
                 midnight = datetime.combine(day, time(), PACIFIC)
                 for minute in range(opening, closing-rule.minutes+1, rule.step):
                     start = midnight + timedelta(minutes=minute)
-                    # Do not offer office-day hours until the return commute ends.
-                    if day.weekday() in (0, 2, 3) and (day not in self.commute_clear or
-                            start < datetime.combine(day,self.commute_clear[day],PACIFIC)):
-                        continue
                     epoch = int(start.timestamp())
                     lo, hi = epoch-rule.before*60, epoch+(rule.minutes+rule.after)*60
                     if start < now + timedelta(hours=rule.notice):
