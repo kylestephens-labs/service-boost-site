@@ -8,9 +8,18 @@ let operationKey = crypto.randomUUID();
 const zone = el('zone');
 const zones = new Set(['America/Los_Angeles', Intl.DateTimeFormat().resolvedOptions().timeZone,
   ...(Intl.supportedValuesOf?.('timeZone') || ['America/New_York','America/Chicago','Europe/London','UTC'])]);
-for (const name of zones) zone.add(new Option(name.replaceAll('_',' '),name));
+const zoneNames = {
+  'America/Los_Angeles':'Pacific Time (US & Canada)', 'America/New_York':'Eastern Time (US & Canada)',
+  'America/Denver':'Mountain Time (US & Canada)', 'America/Chicago':'Central Time (US & Canada)',
+  'UTC':'Coordinated Universal Time'
+};
+for (const name of zones) zone.add(new Option(zoneNames[name] || name.replaceAll('_',' ').replace('/', ' / '),name));
 zone.value = 'America/Los_Angeles';
 const format = (stamp, options) => new Intl.DateTimeFormat('en-US',{timeZone:zone.value,...options}).format(stamp * 1000);
+function appointment(stamp) {
+  return format(stamp,{weekday:'long',month:'long',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}) +
+    ' · ' + zone.selectedOptions[0].text;
+}
 function dateKey(stamp) {
   const parts = new Intl.DateTimeFormat('en-US',{timeZone:zone.value,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(stamp*1000);
   const val = type => parts.find(p => p.type===type).value;
@@ -39,7 +48,7 @@ function draw() {
   const date=new Date(first);
   while(date.getUTCMonth()===first.getUTCMonth()) {
     const key=date.toISOString().slice(0,10), number=date.getUTCDate();
-    const node=available.has(key)?button(number,()=>{day=key;selected=0;draw();el('times').querySelector('button')?.focus();}):document.createElement('span');
+    const node=available.has(key)?button(number,()=>{day=key;selected=0;draw();el('times-title').focus();}):document.createElement('span');
     node.textContent=number;
     if(node.tagName==='BUTTON') {
       node.setAttribute('aria-label',date.toLocaleDateString('en-US',{dateStyle:'full',timeZone:'UTC'}));
@@ -47,18 +56,38 @@ function draw() {
     }
     grid.append(node);date.setUTCDate(number+1);
   }
-  const times=el('times');times.replaceChildren();
-  if(day || !slots.length) {
-    const h=document.createElement('h3');h.textContent=day?'Choose a time':'No times available';times.append(h);
-  }
-  for(const stamp of slots.filter(s=>dateKey(s)===day)) {
-    const b=button(format(stamp,{hour:'numeric',minute:'2-digit'}),()=>{
-      selected=stamp;operationKey=crypto.randomUUID();draw();el('continue').focus();
+  const times = el('times');
+  times.hidden = !day && slots.length > 0;
+  el('times-title').textContent = day
+    ? new Date(day+'T12:00:00Z').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',timeZone:'UTC'})
+    : 'No times available';
+  const rows = el('rows');
+  rows.replaceChildren();
+  for (const stamp of slots.filter(s=>dateKey(s)===day)) {
+    const row = document.createElement('div');
+    row.className = 'time-row';
+    const slot = button(format(stamp,{hour:'numeric',minute:'2-digit'}),()=>{
+      selected = stamp;
+      operationKey = crypto.randomUUID();
+      draw();
+      el('continue').focus();
     });
-    b.setAttribute('aria-pressed',String(stamp===selected));times.append(b);
+    slot.setAttribute('aria-pressed',String(stamp===selected));
+    row.append(slot);
+    if (stamp===selected) {
+      const next = button(token?'Confirm new time':'Next',()=>{
+        if (token) return submit('move');
+        el('chosen').textContent = appointment(selected);
+        display('intake');
+        el('intake').querySelector('h2').scrollIntoView({block:'nearest'});
+      });
+      next.id = 'continue';
+      next.className = 'primary';
+      next.setAttribute('aria-label',next.textContent+' · '+format(stamp,{hour:'numeric',minute:'2-digit'}));
+      row.append(next);
+    }
+    rows.append(row);
   }
-  el('continue').hidden=!selected;
-  el('chosen').textContent=selected?format(selected,{dateStyle:'full',timeStyle:'short'}):'';
 }
 function showCalendar() {
   const ref=slots[0] || Date.now()/1000;
@@ -66,10 +95,10 @@ function showCalendar() {
   selected=0;day='';display('calendar');draw();
 }
 function showReceipt() {
-  display('receipt');el('chosen').textContent=format(current.start,{dateStyle:'full',timeStyle:'short'});
+  display('receipt');el('receipt-time').textContent=appointment(current.start);
   el('outcome').textContent=current.active?'Preview appointment confirmed':'Preview appointment cancelled';
-  el('delivery').textContent=current.active?'Your confirmation is in the simulated email outbox. Keep this page link to manage the preview appointment.':'The time is available again.';
-  if(current.active && current.conference) el('delivery').textContent+=' Video meeting assigned (simulated).';
+  el('delivery').textContent=current.active?'Keep this page link to manage your preview appointment.':'The time is available again.';
+
   if(!current.delivered) el('delivery').textContent='Your request is saved. Confirmation delivery is pending.';
   el('cancel').hidden=el('move').hidden=!current.active;el('confirmCancel').hidden=true;
 }
@@ -80,7 +109,12 @@ async function load() {
   const remote=item.kind==='remote';
   el('service').textContent=item.name;el('mode').textContent=remote?'Remote Tech Help · Google Meet':'In-home service';
   el('price').textContent='$'+item.price+(remote?' · Up to 45 minutes':'')+' · Pay after '+(remote?'the session':'your visit');
-  el('terms').textContent=item.terms;el('scope').hidden=remote;
+  el('terms').textContent=remote ? item.terms.split('Pay after the session. ').at(-1) : item.terms;
+  el('policy').textContent=remote
+    ? (item.id==='remote-fix'?'No charge if I can’t fix it or explain the issue and give you a clear next step.':'No charge if I can’t make the agreed improvement or give you a useful plan.')
+    : (/unresolved/i.test(item.terms)?'The visit fee applies even if the issue remains unresolved.':'');
+  el('policy').hidden=!el('policy').textContent;
+  el('required-mark').hidden=!remote;
   el('limits').textContent=[item.exclusions,item.prep].filter(Boolean).join(' ');
   el('when').textContent=remote?'Choose a date and time':'Choose an arrival time';
   el('question').textContent=remote?'What would you like help fixing or improving?':'Anything else Kyle should know? (optional)';
@@ -106,10 +140,21 @@ async function submit(action) {
 for(const [id,step] of [['prev',-1],['next',1]])el(id).onclick=()=>{
   month.setUTCMonth(month.getUTCMonth()+step);selected=0;day='';draw();
 };
-zone.onchange=showCalendar;
-el('continue').onclick=()=>token?submit('move'):display('intake');
+let previousZone=zone.value;
+zone.onchange=()=>{
+  const newZone=zone.value;
+  zone.value=previousZone;
+  const anchor=selected || slots.find(stamp=>dateKey(stamp)===day);
+  zone.value=newZone;
+  previousZone=newZone;
+  if(anchor){
+    day=dateKey(anchor);
+    month=new Date(day.slice(0,7)+'-01T12:00:00Z');
+  }
+  draw();
+};
 el('intake').onsubmit=e=>{e.preventDefault();submit('book');};
-el('change').onclick=()=>{display('calendar');draw();};
+el('change').onclick=()=>{display('calendar');draw();el('rows').querySelector('[aria-pressed=true]')?.focus();};
 el('move').onclick=showCalendar;
 el('cancel').onclick=()=>{el('confirmCancel').hidden=false;el('confirmCancel').focus();};
 el('confirmCancel').onclick=()=>submit('cancel');

@@ -3,17 +3,18 @@
 <body>
 <header><a href="/"><img src="/assets/brand.svg" alt="">Service Boost</a><span>Booking preview</span></header>
 <main><a id="back" href="/#services">‹ All services</a><div class="layout">
-<aside><div class="owner"><img src="/assets/kyle-stephens.png" alt="">Kyle Stephens</div><h1 id="service">Your appointment</h1><p id="mode"></p><p id="price"></p><p id="terms"></p><details id="scope"><summary>Visit details</summary><p id="limits"></p></details><p id="chosen"></p></aside>
-<section aria-live="polite"><p id="error" role="alert"></p><div id="calendar" hidden>
-<h2 id="when" tabindex="-1">Choose a date and time</h2><label>Time zone <select id="zone"></select></label>
+<aside><div class="owner"><img src="/assets/kyle-stephens.png" alt="">Kyle Stephens</div><h1 id="service">Your appointment</h1><p id="mode"></p><p id="price"></p><p id="policy"></p><details id="scope"><summary>Service details and terms</summary><p id="terms"></p><p id="limits"></p></details></aside>
+<section><p id="error" role="alert"></p><div id="calendar" hidden>
+<h2 id="when" tabindex="-1">Choose a date and time</h2><div class="picker"><div class="date-column">
 <nav><button id="prev" aria-label="Previous month">‹</button><h3 id="month"></h3><button id="next" aria-label="Next month">›</button></nav>
-<div class="grid" id="days"></div><div id="times"></div><button class="primary" id="continue" hidden>Next</button></div>
-<form id="intake" hidden><h2 tabindex="-1">Your details</h2><p>Preview only. Use sample details.</p>
-<label>Name<input name="name" autocomplete="off" maxlength="120" required></label>
-<label>Email<input name="email" type="email" maxlength="254" required></label>
-<div id="local"><label>Home address<input name="address" maxlength="250"></label><label>Phone<input name="phone" type="tel" maxlength="50"></label></div>
-<label><span id="question"></span><textarea name="notes" maxlength="2000" rows="3"></textarea></label>
+<div class="grid" id="days"></div><label class="timezone">Time zone<select id="zone"></select></label></div>
+<div id="times" hidden><h3 id="times-title" tabindex="-1"></h3><div id="rows"></div></div></div></div>
+<form id="intake" hidden><h2 tabindex="-1">Your details</h2><div class="appointment"><strong id="chosen"></strong><button type="button" id="change">Change time</button></div><p class="hint">Use sample details in this preview. Fields marked * are required.</p>
+<label>Name *<input name="name" autocomplete="off" maxlength="120" required></label>
+<label>Email *<input name="email" type="email" maxlength="254" required></label>
+<div id="local"><label>Home address *<input name="address" maxlength="250"></label><label>Phone *<input name="phone" type="tel" maxlength="50"></label></div>
+<label><span id="question"></span><span id="required-mark"> *</span><textarea name="notes" maxlength="2000" rows="3"></textarea></label>
 <details id="guests"><summary>Add guests (optional)</summary><label>Guest emails<input name="guests" type="email" multiple></label></details>
-<button type="button" id="change">Change time</button><button class="primary">Confirm preview booking</button></form>
-<div id="receipt" hidden><h2 tabindex="-1" id="outcome"></h2><p id="delivery"></p><button id="move">Reschedule</button><button id="cancel">Cancel appointment</button><button id="confirmCancel" hidden>Confirm cancellation</button></div>
-</section></div><footer>Preview uses sample availability. Calendar and email delivery are simulated.</footer></main></body></html>
+<button class="primary">Confirm preview booking</button></form>
+<div id="receipt" hidden><h2 tabindex="-1" id="outcome"></h2><p id="receipt-time" class="appointment"></p><p id="delivery"></p><button id="move">Reschedule</button><button id="cancel">Cancel appointment</button><button id="confirmCancel" hidden>Confirm cancellation</button></div>
+</section></div><footer>Preview only. No real appointment or email will be sent.</footer></main></body></html>

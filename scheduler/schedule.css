@@ -11,3 +11,18 @@ button,input,select,textarea{font:inherit}button{border:1px solid #bdccea;color:
 nav{display:flex;align-items:center;justify-content:space-between}.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;text-align:center;align-items:center}.grid span{font-size:15px;color:#65728c}.grid button{padding:0;border:0;border-radius:50%;font-weight:650;background:#ecf2ff}.grid button[aria-pressed=true]{background:#214abb}
 label{display:block;font-weight:600;margin:14px 0}input,textarea,select{display:block;width:100%;min-height:44px;border:1px solid #aab8d1;border-radius:8px;background:white;padding:8px;color:inherit}#times button{margin:0 5px 6px 0}#receipt button{margin:8px 8px 0 0}summary{cursor:pointer}footer{margin:18px 0} :focus-visible{outline:3px solid #3466d7;outline-offset:2px}[hidden]{display:none!important}
 @media(max-width:720px){.layout{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid #d6dfef}main{padding:0 12px;margin:18px auto}.owner img{width:36px;height:36px}h1{margin-top:12px}aside,section{padding:18px}header{padding:12px}header a{font-size:20px}header img{width:34px}.grid{gap:1px}}
+main{max-width:1180px}
+.layout{grid-template-columns:minmax(275px,.75fr) minmax(0,1.7fr)}
+.picker{display:grid;gap:24px}
+.date-column{max-width:430px;width:100%}.timezone{margin:20px 0 0;font-size:15px;color:#43516c}.timezone select{max-width:100%;width:auto;font-size:16px}
+#times-title{font-size:19px;margin:12px 0 16px;scroll-margin-block:18px}
+.time-row{display:flex;gap:7px;margin:0 0 7px}
+#times .time-row button{flex:1;margin:0;min-height:46px;font-size:16px;font-weight:700}
+#times .time-row button[aria-pressed=true]{background:#333f61;color:#fff;border-color:#333f61}
+.grid button[aria-pressed=true]{background:#214abb;color:white}
+.appointment{background:#eff4ff;border-radius:10px;padding:12px 15px;color:#19294a;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+#change{border:0;background:transparent;text-decoration:underline;padding:0 4px;font-weight:700;font-size:16px}
+.hint,#policy{font-size:16px}label{font-size:17px}
+@media(min-width:1050px){.picker:has(#times:not([hidden])){grid-template-columns:minmax(290px,1.45fr) minmax(185px,1fr)}}
+@media(max-width:720px){.layout{grid-template-columns:1fr}.date-column{max-width:100%}.picker{gap:8px}aside h1{font-size:26px}aside p{margin:6px 0}aside #policy{line-height:1.35}aside summary{font-size:16px;min-height:36px;padding-top:6px}.timezone select{width:100%}#times-title{margin-top:20px}}
+@media(max-width:420px){.time-row:has(#continue){flex-direction:column;gap:3px}.time-row:has(#continue) button{width:100%}}
