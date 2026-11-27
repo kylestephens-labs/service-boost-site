@@ -100,3 +100,23 @@ class ParityTests(unittest.TestCase):
         self.assertEqual([operations.count(m) for m in ['POST','PATCH','DELETE']], [1,1,1])
         self.assertEqual(len(mail), 3)
         self.assertFalse(events)
+
+    def test_full_horizon_uses_contiguous_freebusy_windows(self):
+        from datetime import datetime, timezone
+        begin = datetime(2026, 11, 27, 12, 0, 0, 123456, tzinfo=timezone.utc)
+        end = begin + timedelta(days=120)
+        windows = []
+        def transport(request, timeout):
+            payload = json.loads(request.data)
+            first, last = (datetime.fromisoformat(payload[k]) for k in ('timeMin', 'timeMax'))
+            self.assertLessEqual(last-first, timedelta(days=30))
+            if windows:
+                self.assertEqual(first, windows[-1][1])
+            windows.append((first,last))
+            return io.BytesIO(json.dumps(dict(timeMin=payload['timeMin'], timeMax=payload['timeMax'],
+                calendars={'test': {'busy': []}})).encode())
+        client = GoogleFreeBusy(['test'], lambda: 'mock', transport)
+        self.assertEqual(client.intervals(begin, end), [])
+        self.assertEqual(len(windows), 5)
+        self.assertLessEqual(windows[0][0], begin)
+        self.assertGreaterEqual(windows[-1][1], end)

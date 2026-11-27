@@ -1,6 +1,6 @@
 """Read only the busy intervals returned by the Google Calendar freeBusy endpoint."""
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from urllib.request import Request, urlopen
 
 from engine import CalendarUnavailable
@@ -22,6 +22,20 @@ class GoogleFreeBusy:
         self.transport = transport
 
     def intervals(self, begin, end):
+        # Request whole-second ranges covering the entire window. Google may
+        # truncate fractional seconds and rejects a single 120-day query.
+        cursor = begin.replace(microsecond=0)
+        limit = end.replace(microsecond=0)
+        if limit < end:
+            limit += timedelta(seconds=1)
+        busy = []
+        while cursor < limit:
+            stop = min(limit, cursor + timedelta(days=30))
+            busy.extend(self._window(cursor, stop))
+            cursor = stop
+        return busy
+
+    def _window(self, begin, end):
         payload = dict(timeMin=begin.isoformat(), timeMax=end.isoformat(),
                        items=[{'id': key} for key in self.ids])
         try:
