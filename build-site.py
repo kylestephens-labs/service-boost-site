@@ -72,7 +72,7 @@ for slug, (title, description, service) in service_pages.items():
     ))
 
 # A remote appointment must never use the in-home appointment as a fallback.
-remote_event = os.environ.get('REMOTE_CALENDLY_EVENT_URL', '').strip().rstrip('/')
+remote_event = os.environ.get('REMOTE_CALENDLY_EVENT_URL', 'https://calendly.com/kyle-serviceboost/remote-tech-help').strip().rstrip('/')
 if remote_event and (not re.fullmatch(r'https://calendly\.com/kyle-serviceboost/[a-z0-9]+(?:-[a-z0-9]+)*', remote_event)
                      or remote_event.endswith('/book-a-visit')):
     raise SystemExit('Expected a dedicated remote event URL for kyle-serviceboost.')
