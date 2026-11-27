@@ -100,7 +100,7 @@ class SiteContracts(unittest.TestCase):
         sitemap = ElementTree.parse(public / 'sitemap.xml')
         urls = [node.text for node in sitemap.findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
         self.assertEqual(urls, ['https://www.serviceboost.co' + path
-                                for path in ['/', '/web-design', '/partners'] + SERVICE_ROUTES])
+                                for path in ['/', '/web-design', '/partners'] + SERVICE_ROUTES + ['/remote-tech-help']])
         for filename in ['index.html', 'web-design.html'] + SERVICE_PAGES:
             self.assertFalse(any(a.get('name') == 'robots' and 'noindex' in a.get('content', '')
                                  for _, a in Page('public-site/' + filename).nodes))
