@@ -3,6 +3,7 @@ from pathlib import Path
 import shutil
 import os
 import argparse
+import re
 from html import escape
 from string import Template
 
@@ -70,7 +71,27 @@ for slug, (title, description, service) in service_pages.items():
         inquiry=f'/request-help?service={service}',
     ))
 
-header_routes = [('index.html', '/'), ('request-help.html', '/request-help'),
+# A remote appointment must never use the in-home appointment as a fallback.
+remote_event = os.environ.get('REMOTE_CALENDLY_EVENT_URL', 'https://calendly.com/kyle-serviceboost/remote-tech-help').strip().rstrip('/')
+if remote_event and (not re.fullmatch(r'https://calendly\.com/kyle-serviceboost/[a-z0-9]+(?:-[a-z0-9]+)*', remote_event)
+                     or remote_event.endswith('/book-a-visit')):
+    raise SystemExit('Expected a dedicated remote event URL for kyle-serviceboost.')
+if not remote_event and not review_visits and os.environ.get('VERCEL_ENV') == 'production':
+    raise SystemExit('Set REMOTE_CALENDLY_EVENT_URL to the verified remote event before release.')
+
+def remote_action(intent):
+    if review_visits or not remote_event:
+        return 'role="link" aria-disabled="true"'
+    return f'href="{remote_event}?utm_source=serviceboost&amp;utm_content=remote-{intent}"'
+
+remote_ready = bool(remote_event) and not review_visits
+(output / 'remote-tech-help.html').write_text(Template((service_sources / 'remote-tech-help.html').read_text()).substitute(
+    fix_action=remote_action('fix'), improve_action=remote_action('improve'),
+    robots='' if remote_ready else '<meta name="robots" content="noindex">',
+    status='' if remote_ready else '<p>Remote scheduling is unavailable in this preview.</p>',
+))
+
+header_routes = [('remote-tech-help.html', '/remote-tech-help'), ('index.html', '/'), ('request-help.html', '/request-help'),
                     ('web-design.html', '/web-design'), ('partners.html', '/partners'),
                     ('partner-report.html', '/partner-report'), ('partner-inquiry.html', '/partners')]
 header_routes.extend((f'{slug}.html', f'/{slug}') for slug in service_pages)
