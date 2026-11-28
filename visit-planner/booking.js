@@ -15,15 +15,15 @@ function renderBooking(root, service, id, preparation, cities) {
   const enabled = window.SERVICE_BOOST_BOOKING_ENABLED === true;
 
   const diagnostic = description.includes("unresolved");
-  root.innerHTML = `<div class="booking-layout">
+  root.innerHTML = `<a class="booking-change" href="#services/${id}">Change service</a>
+  <div class="booking-layout">
     <div class="booking-service">
-      <a class="booking-change" href="#services/${id}">Change service</a>
-      <h1 id="booking-title" tabindex="-1">Choose an arrival time</h1>
-      <p class="booking-price"><span>${esc(name)}</span><strong>$${price}</strong></p>
-      <p class="booking-payment">Pay after your visit · No card required · Pacific time</p>
-      ${diagnostic ? '<p class="booking-important">' + esc(description) + '</p>' : ""}
+      <p class="booking-owner">Kyle Stephens</p>
+      <h2 class="booking-name">${esc(name)}</h2>
+      <p class="booking-payment"><strong>$${price}</strong> · Pay after your visit</p>
       <details class="booking-details"><summary>Service details</summary>
-        ${diagnostic ? "" : "<p>" + esc(description) + "</p>"}
+        <p>${esc(description)}</p>
+        <p>No card required.</p>
         <h2>Included</h2><ul>${included.split("|").map(item => "<li>" + esc(item) + "</li>").join("")}</ul>
         <h2>Outside scope</h2><p>${esc(excluded)}</p>
         <h2>Before booking</h2><p>${esc(requirement)} ${esc(preparation)}</p>
@@ -33,10 +33,17 @@ function renderBooking(root, service, id, preparation, cities) {
       </details>
     </div>
     <section class="booking-calendar" aria-label="Available arrival times">
+      <h1 id="booking-title" tabindex="-1">Choose an arrival time</h1>
+      ${diagnostic ? '<p class="booking-important">The visit fee applies even if the issue remains unresolved.</p>' : ""}
       ${enabled ? `<div class="booking-options">
-        <a href="${bookingURL("standard", id)}">Tuesday, Friday, Saturday or Sunday visits</a>
-        <a href="${bookingURL("evening", id)}">Monday or Thursday evening visits</a>
-      </div>` : '<p class="booking-disabled">Review preview: scheduling is disabled. No appointment can be booked here.</p>'}
+        <a href="${bookingURL("standard", id)}" target="visit-schedule">Tuesday, Friday, Saturday or Sunday</a>
+        <a href="${bookingURL("evening", id)}" target="visit-schedule">Monday or Thursday evening · 5–8 PM</a>
+      </div>
+      <iframe name="visit-schedule" title="Google Calendar appointment times and booking form" src="${bookingURL("standard", id)}"></iframe>
+      <details class="booking-details"><summary>Open directly in Google Calendar</summary>
+        <p><a href="${bookingURL("standard", id)}">Tuesday, Friday, Saturday or Sunday visits</a></p>
+        <p><a href="${bookingURL("evening", id)}">Monday or Thursday evening visits</a></p>
+      </details>` : '<p class="booking-disabled">Review preview: scheduling is disabled. No appointment can be booked here.</p>'}
       <p class="booking-help"><a href="/request-help">Not sure? Ask Kyle</a></p>
     </section>
   </div>`;
