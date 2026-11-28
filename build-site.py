@@ -36,12 +36,7 @@ if review_visits:
     home = output / 'index.html'
     home.write_text(home.read_text().replace('<!-- preview-notice -->', '<div class="strip"><div>Review preview</div></div>')
                     .replace('</head>', '<meta name="robots" content="noindex"></head>'))
-production_booking = (
-    'https://script.google.com/macros/s/'
-    'AKfycbxzWsNXi4OajSJtV_w-hW2h41PEbsfZHoH-wdOcrPoPpVDbRtYHV2f1dT_RtkikhcCD/exec'
-    if os.environ.get('VERCEL_ENV') == 'production' else ''
-)
-workspace_booking = '' if review_visits else os.environ.get('WORKSPACE_BOOKING_URL', production_booking)
+workspace_booking = '' if review_visits else os.environ.get('WORKSPACE_BOOKING_URL', '')
 if workspace_booking:
     if not re.fullmatch(r'https://script\.google\.com/macros/s/[A-Za-z0-9_-]+/exec', workspace_booking):
         raise ValueError('Set WORKSPACE_BOOKING_URL to a versioned Google web app deployment.')
