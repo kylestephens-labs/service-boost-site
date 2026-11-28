@@ -24,6 +24,20 @@ function doGet(request) {
   view.serviceId = Object.prototype.hasOwnProperty.call(CATALOG,id) ? id : '';
   return view.evaluate().setTitle('Schedule with Kyle | Service Boost').addMetaTag('viewport','width=device-width, initial-scale=1');
 }
+// The first-party picker calls these same booking operations without Google account cookies.
+function doPost(request) {
+  let response;
+  try {
+    if (!request.postData || request.postData.length > 32000) throw Error('Invalid booking request.');
+    const {method,args} = JSON.parse(request.postData.contents);
+    const actions = {availability,reserve,bookingStatus,cancelVisit,moveVisit};
+    if (!Array.isArray(args) || !Object.prototype.hasOwnProperty.call(actions,method)) throw Error('Invalid booking request.');
+    response = {result:actions[method](...args)};
+  } catch (error) {
+    response = {error:'Unable to complete this request. Please retry or contact Kyle.'};
+  }
+  return ContentService.createTextOutput(JSON.stringify(response)).setMimeType(ContentService.MimeType.JSON);
+}
 function include_(name) { return HtmlService.createHtmlOutputFromFile(name).getContent(); }
 function signed_(secret,value) {
   return Utilities.base64EncodeWebSafe(Utilities.computeHmacSha256Signature(value,secret)).replace(/=+$/,'');
@@ -162,7 +176,7 @@ function finishReservation_(cfg,r,prop) {
     const token=r.id+'.'+signed_(cfg.secret,'manage:'+r.id);
     if(r.status==='confirmed')return {token,start:r.start};
     const d=r.delivery,guests=(d.guests||'').split(',').map(x=>x.trim()).filter(Boolean);
-    const base=ScriptApp.getService().getUrl()+'?service='+encodeURIComponent(id);
+    const base=(cfg.p.getProperty('CUSTOMER_PAGE') || ScriptApp.getService().getUrl())+'?service='+encodeURIComponent(id);
     const reference=guests.length ? 'shared.'+r.id : token;
     const links='\n\nReschedule: '+base+'&action=move#'+reference+'\nCancel: '+base+'&action=cancel#'+reference;
     const interval={start:r.start,end:r.end,window:r.end-r.start===6*HOUR};

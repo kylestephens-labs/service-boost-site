@@ -110,3 +110,10 @@ test('interrupted cancellation releases the remaining hold during recovery',()=>
   assert.equal(f.events.size,1);
   f.context.Calendar.Events.remove=remove;f.call('recoverBookings_()');assert.equal(f.events.size,0);
 });
+test('first-party transport only dispatches customer booking methods',()=>{
+  const f=bookingFixture();
+  f.context.ContentService={MimeType:{JSON:'json'},createTextOutput:text=>({setMimeType:()=>JSON.parse(text)})};
+  const call=(method,args)=>f.call('doPost('+JSON.stringify({postData:{length:200,contents:JSON.stringify({method,args})}})+')');
+  assert.ok(call('availability',['0/2',new Date().toISOString().slice(0,7)]).result.item.price);
+  for(const method of ['settings_','recoverBookings_','constructor','toString'])assert.ok(call(method,[]).error);
+});

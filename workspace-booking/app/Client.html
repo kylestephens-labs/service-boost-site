@@ -111,7 +111,18 @@ function showReceipt() {
   if(!current.delivered) el('delivery').textContent='Your request is saved. Confirmation delivery is pending.';
   el('move').hidden=!current.active;el('cancel').hidden=!['confirmed','pending'].includes(current.status);el('confirmCancel').hidden=true;
 }
-function rpc(name,...args) {
+async function rpc(name,...args) {
+  if (window.SERVICE_BOOST_WORKSPACE_BOOKING) {
+    const response = await fetch(window.SERVICE_BOOST_WORKSPACE_BOOKING, {
+      method:'POST',credentials:'omit',referrerPolicy:'no-referrer',
+      headers:{'Content-Type':'text/plain;charset=UTF-8'},
+      body:JSON.stringify({method:name,args})
+    });
+    if (!response.ok) throw Error('Scheduling is temporarily unavailable. Please contact Kyle.');
+    const data = await response.json();
+    if (data.error) throw Error(data.error);
+    return data.result;
+  }
   return new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[name](...args));
 }
 let generation=0;
@@ -153,7 +164,9 @@ async function submit(action) {
   try {
     if(action==='book'){
       const result=await rpc('reserve',service,selected*1000,Object.fromEntries(new FormData(el('intake'))),operationKey);
-      token=result.token;google.script.history.replace(null,{service},token);
+      token=result.token;
+      if(window.SERVICE_BOOST_WORKSPACE_BOOKING)history.replaceState(null,'','#'+token);
+      else google.script.history.replace(null,{service},token);
     } else if(action==='move') await rpc('moveVisit',token,selected*1000);
     else await rpc('cancelVisit',token);
     operationKey=crypto.randomUUID();await load();
@@ -188,7 +201,7 @@ async function openBooking() {
     initialAction='';
   } catch(e){el('error').textContent=e.message;}
 }
-google.script.url.getLocation(loc=>{
+function openLocation(loc){
   service=loc.parameter.service;token=loc.hash;initialAction=loc.parameter.action;
   if(token.startsWith('shared.')){
     const id=token.slice(7);
@@ -199,4 +212,6 @@ google.script.url.getLocation(loc=>{
       el('unlock').hidden=true;el('error').textContent='';await openBooking();
     };
   }else openBooking();
-});
+}
+if(window.SERVICE_BOOST_WORKSPACE_BOOKING)openLocation({parameter:Object.fromEntries(params),hash:location.hash.slice(1)});
+else google.script.url.getLocation(openLocation);

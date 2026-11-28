@@ -36,12 +36,18 @@ if review_visits:
     home = output / 'index.html'
     home.write_text(home.read_text().replace('<!-- preview-notice -->', '<div class="strip"><div>Review preview</div></div>')
                     .replace('</head>', '<meta name="robots" content="noindex"></head>'))
-workspace_booking = '' if review_visits else os.environ.get('WORKSPACE_BOOKING_URL', '')
+public_booking = 'https://script.google.com/macros/s/AKfycbxzWsNXi4OajSJtV_w-hW2h41PEbsfZHoH-wdOcrPoPpVDbRtYHV2f1dT_RtkikhcCD/exec'
+workspace_booking = '' if review_visits else os.environ.get('WORKSPACE_BOOKING_URL', public_booking if os.environ.get('VERCEL_ENV') == 'production' else '')
 if workspace_booking:
     if not re.fullmatch(r'https://script\.google\.com/macros/s/[A-Za-z0-9_-]+/exec', workspace_booking):
         raise ValueError('Set WORKSPACE_BOOKING_URL to a versioned Google web app deployment.')
     with (output / 'config.js').open('a') as config:
         config.write('\nwindow.SERVICE_BOOST_WORKSPACE_BOOKING = ' + json.dumps(workspace_booking) + ';\n')
+    picker_dir = root / 'workspace-booking/app'
+    picker = (picker_dir / 'Picker.html').read_text().replace("<base target='_top'>", '<meta name="robots" content="noindex"><script src="/config.js"></script>')
+    for component in ('Style', 'Client'):
+        picker = picker.replace(f"<?!= include_('{component}') ?>", (picker_dir / f'{component}.html').read_text())
+    (output / 'schedule.html').write_text(picker)
 for asset in ('visit.css', 'booking.css', 'service-menu.css', 'booking.js', 'service-menu.js', 'computer-menu.js',
               'smart-home.js', 'wifi-menu.js', 'visit.js', 'service-cta.js'):
     shutil.copyfile(root / 'visit-planner' / asset, output / asset)
@@ -85,7 +91,7 @@ def remote_action(intent):
     if review_visits:
         return 'role="link" aria-disabled="true"'
     if workspace_booking:
-        return f'href="{workspace_booking}?service=remote-{intent}"'
+        return f'href="/schedule?service=remote-{intent}"'
     return f'href="{remote_event}?utm_source=serviceboost&amp;utm_content=remote-{intent}"'
 
 remote_ready = not review_visits

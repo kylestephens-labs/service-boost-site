@@ -15,7 +15,7 @@ function renderBooking(root, service, id, preparation, cities) {
   const enabled = window.SERVICE_BOOST_BOOKING_ENABLED === true;
 
   if (enabled && window.SERVICE_BOOST_WORKSPACE_BOOKING) {
-    const destination = new URL(window.SERVICE_BOOST_WORKSPACE_BOOKING);
+    const destination = new URL("/schedule", window.location.origin);
     destination.searchParams.set("service", id);
     window.location.replace(destination.href);
     return;
