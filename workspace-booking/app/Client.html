@@ -1,8 +1,6 @@
 'use strict';
 const el = id => document.getElementById(id);
-const params = new URLSearchParams(location.search);
-let service = params.get('service');
-let token = location.hash.slice(1);
+let service, token;
 let initialAction='';
 let slots = [], selected = 0, day = '', month, current, item;
 let operationKey = crypto.randomUUID();
@@ -16,12 +14,12 @@ const zoneNames = {
 };
 for (const name of zones) zone.add(new Option(zoneNames[name] || name.replaceAll('_',' ').replace('/', ' / '),name));
 zone.value = 'America/Los_Angeles';
-const format = (stamp, options) => new Intl.DateTimeFormat('en-US',{timeZone:zone.value,...options}).format(stamp * 1000);
+const format = (stamp, options) => new Intl.DateTimeFormat('en-US',{timeZone:zone.value,...options}).format(stamp);
 function arrivalLabel(stamp) {
-  const weekday = new Intl.DateTimeFormat('en-US', {timeZone:'America/Los_Angeles',weekday:'short'}).format(stamp*1000);
+  const weekday = new Intl.DateTimeFormat('en-US', {timeZone:'America/Los_Angeles',weekday:'short'}).format(stamp);
   const clock = {hour:'numeric', minute:'2-digit'};
   if (item.kind === 'local' && ['Mon','Thu'].includes(weekday)) {
-    return format(stamp, clock) + '–' + format(stamp + 3*3600, clock) + ' arrival window';
+    return format(stamp, clock) + '–' + format(stamp + 3*3600000, clock) + ' arrival window';
   }
   return format(stamp, clock);
 }
@@ -30,7 +28,7 @@ function appointment(stamp) {
     ' · ' + zone.selectedOptions[0].text;
 }
 function dateKey(stamp) {
-  const parts = new Intl.DateTimeFormat('en-US',{timeZone:zone.value,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(stamp*1000);
+  const parts = new Intl.DateTimeFormat('en-US',{timeZone:zone.value,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(stamp);
   const val = type => parts.find(p => p.type===type).value;
   return [val('year'),val('month'),val('day')].join('-');
 }
@@ -47,8 +45,8 @@ function draw() {
   const first = new Date(prefix+'-01T12:00:00Z');
   const available = new Set(slots.map(dateKey));
   el('month').textContent = first.toLocaleDateString('en-US',{month:'long',year:'numeric',timeZone:'UTC'});
-  el('prev').disabled = prefix<=dateKey(Date.now()/1000).slice(0,7);
-  el('next').disabled = prefix>=dateKey(Date.now()/1000+120*86400).slice(0,7);
+  el('prev').disabled = prefix<=dateKey(Date.now()).slice(0,7);
+  el('next').disabled = prefix>=dateKey(Date.now()+120*86400000).slice(0,7);
   const grid=el('days');grid.replaceChildren();
   for (const label of ['Su','Mo','Tu','We','Th','Fr','Sa']) {
     const span=document.createElement('span');span.textContent=label;grid.append(span);
@@ -99,8 +97,6 @@ function draw() {
   }
 }
 function showCalendar() {
-  const ref=current?.start || Date.now()/1000;
-  month ??=new Date(dateKey(ref).slice(0,7)+'-01T12:00:00Z');
   selected=0;day='';display('calendar');draw();
 }
 function showReceipt() {
@@ -130,16 +126,16 @@ async function readMonth() {
   const version=++generation;
   const data=await rpc('availability',service,month.toISOString().slice(0,7));
   if(version!==generation)return;
-  item=data.item;slots=data.slots.map(s=>s.start/1000);draw();
+  item=data.item;slots=data.slots.map(s=>s.start);draw();
 }
 async function load() {
   if(token){
     const r=await rpc('bookingStatus',token);
     el('key-note').hidden=!r.shared || r.status==='cancelled';
     if(r.shared)el('private-code').textContent=token.split('.')[1];
-    service=r.service;item=r.item;current={active:r.status==='confirmed',status:r.status,delivered:r.status==='confirmed'||r.status==='cancelled',start:r.start/1000};
+    service=r.service;item=r.item;current={active:r.status==='confirmed',status:r.status,delivered:r.status==='confirmed'||r.status==='cancelled',start:r.start};
   }
-  month ??=new Date(dateKey(current?.start || Date.now()/1000).slice(0,7)+'-01T12:00:00Z');
+  month ??=new Date(dateKey(current?.start || Date.now()).slice(0,7)+'-01T12:00:00Z');
   if(!current)await readMonth();
   const remote=item.kind==='remote';
   el('service').textContent=item.name;el('mode').textContent=remote?'Remote Tech Help · Google Meet':'In-home service';
@@ -163,11 +159,11 @@ async function submit(action) {
   if(busy)return;busy=true;el('error').textContent='';
   try {
     if(action==='book'){
-      const result=await rpc('reserve',service,selected*1000,Object.fromEntries(new FormData(el('intake'))),operationKey);
+      const result=await rpc('reserve',service,selected,Object.fromEntries(new FormData(el('intake'))),operationKey);
       token=result.token;
       if(window.SERVICE_BOOST_WORKSPACE_BOOKING)history.replaceState(null,'','#'+token);
       else google.script.history.replace(null,{service},token);
-    } else if(action==='move') await rpc('moveVisit',token,selected*1000);
+    } else if(action==='move') await rpc('moveVisit',token,selected);
     else await rpc('cancelVisit',token);
     operationKey=crypto.randomUUID();await load();
   } catch(e){el('error').textContent=e.message;} finally{busy=false;}
@@ -213,5 +209,5 @@ function openLocation(loc){
     };
   }else openBooking();
 }
-if(window.SERVICE_BOOST_WORKSPACE_BOOKING)openLocation({parameter:Object.fromEntries(params),hash:location.hash.slice(1)});
+if(window.SERVICE_BOOST_WORKSPACE_BOOKING)openLocation({parameter:Object.fromEntries(new URLSearchParams(location.search)),hash:location.hash.slice(1)});
 else google.script.url.getLocation(openLocation);

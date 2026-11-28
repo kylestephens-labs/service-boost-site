@@ -117,3 +117,26 @@ test('first-party transport only dispatches customer booking methods',()=>{
   assert.ok(call('availability',['0/2',new Date().toISOString().slice(0,7)]).result.item.price);
   for(const method of ['settings_','recoverBookings_','constructor','toString'])assert.ok(call(method,[]).error);
 });
+
+test('remote half-hour starts keep the Pacific weekday rules across both clock changes',()=>{
+  const fmt = new Intl.DateTimeFormat('en-US',{
+    timeZone:'America/Los_Angeles', weekday:'short', hour:'2-digit', minute:'2-digit', hourCycle:'h23'
+  });
+  for (const monday of ['2027-03-08','2027-11-01']) {
+    const first=Date.parse(monday+'T08:00:00Z');
+    const slots=run(`candidates_({kind:'remote'},${first},${first+7*86400000},${first-86400000})`);
+    const offered=new Map();
+    for (const slot of slots) {
+      const [day,time]=fmt.format(slot.start).replace(',', '').split(' ');
+      if (!offered.has(day)) offered.set(day,[]);
+      offered.get(day).push(time);
+      assert.equal(slot.end-slot.start,3600000);
+      assert.equal(slot.window,false);
+    }
+    const evening=['17:00','17:30','18:00','18:30','19:00','19:30','20:00'];
+    const standard=['08:00','08:30','09:00','11:00','11:30','12:00','14:00','14:30','15:00','17:00','17:30','18:00'];
+    for(const day of ['Mon','Thu']) assert.deepEqual(offered.get(day),evening);
+    for(const day of ['Tue','Fri','Sat','Sun']) assert.deepEqual(offered.get(day),standard);
+    assert.equal(offered.has('Wed'),false);
+  }
+});
