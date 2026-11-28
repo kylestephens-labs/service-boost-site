@@ -178,6 +178,7 @@ async function load() {
     const r=await rpc('bookingStatus',token);
     el('key-note').hidden=!r.shared || r.status==='cancelled';
     if(r.shared)el('private-code').textContent=token.split('.')[1];
+    updateCategoryLink(r.service);
     service=r.service;item=r.item;current={active:r.status==='confirmed',status:r.status,delivered:r.status==='confirmed'||r.status==='cancelled',start:r.start};
   }
   month ??=new Date(dateKey(current?.start || Date.now()).slice(0,7)+'-01T12:00:00Z');
@@ -246,8 +247,25 @@ async function openBooking() {
     initialAction='';
   } catch(e){el('error').textContent=e.message;}
 }
+function updateCategoryLink(id) {
+  const categories = [
+    [/^0\/1$/, 'printer-setup', 'printer help'],
+    [/^0\/(0|[2-5])$/, 'computer-troubleshooting', 'computer help'],
+    [/^1\/[1-7]$/, 'smart-home', 'smart home'],
+    [/^2\/[0-2]$/, 'wifi-networking', 'Wi-Fi & network'],
+    [/^3\/0$/, 'phone-tablet-setup', 'mobile devices'],
+    [/^remote-(fix|improve)$/, 'remote-tech-help', 'remote tech help'],
+  ];
+  const category = categories.find(([pattern]) => pattern.test(id));
+  if (category) {
+    const [, path, label] = category;
+    el('back').href = 'https://www.serviceboost.co/' + path;
+    el('back').textContent = '‹ Back to ' + label;
+  }
+}
 function openLocation(loc){
   service=loc.parameter.service;token=loc.hash;initialAction=loc.parameter.action;
+  updateCategoryLink(service);
   if(token.startsWith('shared.')){
     const id=token.slice(7);
     el('unlock').hidden=false;
