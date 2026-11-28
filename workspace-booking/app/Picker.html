@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="referrer" content="no-referrer"><title>Schedule with Kyle | Service Boost</title><base target='_top'><style><?!= include_('Style') ?></style></head>
+<body>
+<header><a href="https://www.serviceboost.co/"><img src="https://www.serviceboost.co/assets/brand.svg" alt="">Service Boost</a></header>
+<main><a id="back" href="https://www.serviceboost.co/#services">‹ All services</a><div class="layout">
+<aside><div class="owner"><img src="https://www.serviceboost.co/assets/kyle-stephens.png" alt="">Kyle Stephens</div><h1 id="service">Your appointment</h1><p id="mode"></p><p id="price"></p><p id="policy"></p><details id="scope"><summary>Service details and terms</summary><p id="terms"></p><p id="limits"></p></details></aside>
+<section><p id="error" role="alert"></p><div id="calendar" hidden>
+<h2 id="when" tabindex="-1">Choose a date and time</h2><div class="picker"><div class="date-column">
+<nav><button id="prev" aria-label="Previous month">‹</button><h3 id="month"></h3><button id="next" aria-label="Next month">›</button></nav>
+<div class="grid" id="days"></div><label class="timezone">Time zone<select id="zone"></select></label></div>
+<div id="times" hidden><h3 id="times-title" tabindex="-1"></h3><div id="rows"></div></div></div></div>
+<form id="unlock" hidden><h2>Manage your appointment</h2><label>Private booking code<input name="code" required autocomplete="off"></label><button>Continue</button><p>Your code is on the original booking confirmation screen. If you need help, contact Kyle.</p></form><form id="intake" hidden><h2 tabindex="-1">Your details</h2><div class="appointment"><strong id="chosen"></strong><button type="button" id="change">Change time</button></div><p class="hint">Fields marked * are required.</p>
+<label>Name *<input name="name" autocomplete="off" maxlength="120" required></label>
+<label>Email *<input name="email" type="email" maxlength="254" required></label>
+<div id="local"><label>Home address *<input name="address" maxlength="250"></label><label>Phone *<input name="phone" type="tel" maxlength="50"></label></div>
+<label><span id="question"></span><span id="required-mark"> *</span><textarea name="notes" maxlength="2000" rows="3"></textarea></label>
+<details id="guests"><summary>Add guests (optional)</summary><label>Guest emails<input name="guests" type="email" multiple></label></details>
+<button class="primary">Confirm booking</button></form>
+<div id="receipt" hidden><h2 tabindex="-1" id="outcome"></h2><p id="receipt-time" class="appointment"></p><p id="delivery"></p><p id="key-note" hidden>Save your private booking code to manage this shared invitation: <strong id="private-code"></strong></p><button id="move">Reschedule</button><button id="cancel">Cancel appointment</button><button id="confirmCancel" hidden>Confirm cancellation</button></div>
+</section></div><footer><a href="https://www.serviceboost.co/request-help">Need help? Ask Kyle</a></footer></main><script><?!= include_('Client') ?></script></body></html>

@@ -1,0 +1,160 @@
+const CATALOG = {
+  "0/0": {
+    "id": "0/0",
+    "kind": "local",
+    "name": "New computer setup",
+    "price": 229,
+    "terms": "Get one new computer ready for daily use.",
+    "exclusions": "Data migration, hardware repair and account recovery",
+    "prep": "Is this a working Windows PC or Mac with account access? Check that the computer starts and that you can sign into your account.",
+    "included": "Set up one user profile|Connect to working Wi-Fi|Install updates and verify sign-in",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-0-0"
+  },
+  "0/1": {
+    "id": "0/1",
+    "kind": "local",
+    "name": "Printer Setup & Troubleshooting",
+    "price": 229,
+    "terms": "Set up or reconnect one working printer on an existing working network for up to two computers, or troubleshoot one printer issue. For setup, Kyle installs the driver and prints a test page. The $229 covers one visit even if the issue remains unresolved. Kyle will explain the findings and agree on any extra work and price with you first.",
+    "exclusions": "Ink, hardware repairs, network repairs, parts, data recovery and additional issues",
+    "prep": "Do you have a compatible printer, ink and access to the computer? Check the printer model, confirm it has ink, and have your computer ready.",
+    "included": "For setup: install the driver, connect up to two computers and print a test page|For troubleshooting: diagnose one issue, try a safe adjustment if appropriate and explain findings",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-0-1"
+  },
+  "0/2": {
+    "id": "0/2",
+    "kind": "local",
+    "name": "Computer or printer troubleshooting",
+    "price": 229,
+    "terms": "Assess one computer or printer issue. The $229 covers the diagnostic visit and time even if the issue remains unresolved. Kyle will obtain your approval before any extra work.",
+    "exclusions": "Parts, data recovery, additional issues or a guaranteed fix",
+    "prep": "Can you show Kyle one issue on a device you can access? Write down one symptom or error message and confirm you can unlock the affected device.",
+    "included": "Check symptoms and settings|Try a safe adjustment if appropriate|Explain findings and next steps",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-0-2"
+  },
+  "0/3": {
+    "id": "0/3",
+    "kind": "local",
+    "name": "Install and set up software",
+    "price": 229,
+    "terms": "Install one licensed app on one compatible computer.",
+    "exclusions": "Custom integrations and business deployments",
+    "prep": "Do you have the license and a compatible computer? Have the license ready and check the app requirements.",
+    "included": "Install the app|Apply basic settings|Check that it opens",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-0-3"
+  },
+  "0/4": {
+    "id": "0/4",
+    "kind": "local",
+    "name": "Set up or troubleshoot email",
+    "price": 229,
+    "terms": "Connect one existing account in one mail app or investigate one sending or receiving issue.",
+    "exclusions": "Password recovery, mailbox migration and mail-server administration",
+    "prep": "Can you sign in to the existing account? Confirm you can sign in to the account.",
+    "included": "You sign in yourself|Check the account setup or investigate the issue",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-0-4"
+  },
+  "0/5": {
+    "id": "0/5",
+    "kind": "local",
+    "name": "Get a personal computer lesson",
+    "price": 229,
+    "terms": "Practice one everyday task on your computer in a 60-minute lesson.",
+    "exclusions": "Device repair and ongoing support",
+    "prep": "Do you have access to your computer and one task to practice? Choose one task and have your computer ready.",
+    "included": "Practice the task together|Take away a short set of steps to repeat",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-0-5"
+  },
+  "1/1": {
+    "id": "1/1",
+    "kind": "local",
+    "name": "Video Doorbell Support",
+    "price": 249,
+    "terms": "The visit covers time and diagnosis for one issue even if it remains unresolved. You and Kyle agree on any extra work and price before proceeding.",
+    "exclusions": "Devices, subscriptions and replacement parts",
+    "prep": "Can you access one already-installed doorbell and its app? Confirm you can access the device and app, and identify one issue to investigate.",
+    "included": "Diagnose one issue on one already-installed doorbell: app, connectivity or notification issues|Explain findings and next steps",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-1-1"
+  },
+  "1/2": {
+    "id": "1/2",
+    "kind": "local",
+    "name": "Smart Thermostat Support",
+    "price": 249,
+    "terms": "The visit covers time and diagnosis for one issue even if it remains unresolved. You and Kyle agree on any extra work and price before proceeding.",
+    "exclusions": "Devices, subscriptions and replacement parts, HVAC or electrical repair",
+    "prep": "Can you access one already-installed thermostat and its app? Confirm you can access the device and app, and identify one issue to investigate.",
+    "included": "Diagnose one issue on one already-installed thermostat: app, connectivity or settings|Assess the thermostat and check its Wi-Fi connection|Check for app updates and troubleshoot the reported issue|Demonstrate everyday controls and answer questions about using them|Explain findings and next steps",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-1-2"
+  },
+  "1/3": {
+    "id": "1/3",
+    "kind": "local",
+    "name": "Smart Garage Controller Support",
+    "price": 249,
+    "terms": "The visit covers time and diagnosis for one issue even if it remains unresolved. You and Kyle agree on any extra work and price before proceeding.",
+    "exclusions": "Devices, subscriptions and replacement parts, mechanical repair or safety-system adjustments",
+    "prep": "Can you access one already-installed controller and its app? Confirm you can access the device and app, and identify one issue to investigate.",
+    "included": "Diagnose one issue on one already-installed controller: app, connectivity or settings|Explain findings and next steps",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-1-3"
+  },
+  "1/4": {
+    "id": "1/4",
+    "kind": "local",
+    "name": "Smart Hub & Speaker Support",
+    "price": 249,
+    "terms": "The visit covers time and diagnosis for one issue even if it remains unresolved. You and Kyle agree on any extra work and price before proceeding.",
+    "exclusions": "Devices, subscriptions and replacement parts",
+    "prep": "Can you access one hub or speaker and its app? Confirm you can access the device and app, and identify one issue to investigate.",
+    "included": "Diagnose one issue on one hub or speaker: its app or connection to working Wi-Fi|Explain findings and next steps",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-1-4"
+  },
+  "2/0": {
+    "id": "2/0",
+    "kind": "local",
+    "name": "New WiFi Connection Setup",
+    "price": 249,
+    "terms": "Set up one router on your existing internet line.",
+    "exclusions": "ISP repair, cable runs and whole-home coverage guarantees",
+    "prep": "Is your internet service active with an accessible modem? Check that internet service is active at the modem and that you can access the router.",
+    "included": "Configure one supported router|Connect up to two devices|Test connectivity at the router",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-2-0"
+  },
+  "3/0": {
+    "id": "3/0",
+    "kind": "local",
+    "name": "Phone or tablet setup",
+    "price": 199,
+    "terms": "Set up one device and its essential settings.",
+    "exclusions": "Carrier activation, account recovery and data transfer",
+    "prep": "Can you unlock the device and sign into your account? Confirm you can unlock the phone or tablet and sign into the account used for setup.",
+    "included": "Connect one phone or tablet to Wi-Fi|Set up one existing account|Check updates and notifications",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-3-0"
+  },
+  "remote-fix": {
+    "id": "remote-fix",
+    "kind": "remote",
+    "name": "Fix a problem",
+    "price": 99.99,
+    "terms": "We’ll first check whether I can help remotely. If I can’t fix the issue or explain what’s wrong and give you a clear next step, you won’t be charged."
+  },
+  "remote-improve": {
+    "id": "remote-improve",
+    "kind": "remote",
+    "name": "Improve your setup",
+    "price": 99.99,
+    "terms": "If I can’t make the improvement we agree on or give you a useful plan, you won’t be charged."
+  }
+};

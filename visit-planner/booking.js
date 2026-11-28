@@ -14,6 +14,13 @@ function renderBooking(root, service, id, preparation, cities) {
   const [name, , price, description, included, excluded, requirement] = service;
   const enabled = window.SERVICE_BOOST_BOOKING_ENABLED === true;
 
+  if (enabled && window.SERVICE_BOOST_WORKSPACE_BOOKING) {
+    const destination = new URL(window.SERVICE_BOOST_WORKSPACE_BOOKING);
+    destination.searchParams.set("service", id);
+    window.location.replace(destination.href);
+    return;
+  }
+
   const diagnostic = description.includes("unresolved");
   root.innerHTML = `<div class="booking-layout">
     <div class="booking-service">

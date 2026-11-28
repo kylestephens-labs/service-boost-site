@@ -3,6 +3,8 @@ from pathlib import Path
 import shutil
 import os
 import argparse
+import re
+import json
 from html import escape
 from string import Template
 
@@ -34,6 +36,12 @@ if review_visits:
     home = output / 'index.html'
     home.write_text(home.read_text().replace('<!-- preview-notice -->', '<div class="strip"><div>Review preview</div></div>')
                     .replace('</head>', '<meta name="robots" content="noindex"></head>'))
+workspace_booking = '' if review_visits else os.environ.get('WORKSPACE_BOOKING_URL', '')
+if workspace_booking:
+    if not re.fullmatch(r'https://script\.google\.com/macros/s/[A-Za-z0-9_-]+/exec', workspace_booking):
+        raise ValueError('Set WORKSPACE_BOOKING_URL to a versioned Google web app deployment.')
+    with (output / 'config.js').open('a') as config:
+        config.write('\nwindow.SERVICE_BOOST_WORKSPACE_BOOKING = ' + json.dumps(workspace_booking) + ';\n')
 for asset in ('visit.css', 'booking.css', 'service-menu.css', 'booking.js', 'service-menu.js', 'computer-menu.js',
               'smart-home.js', 'wifi-menu.js', 'visit.js', 'service-cta.js'):
     shutil.copyfile(root / 'visit-planner' / asset, output / asset)
@@ -76,6 +84,8 @@ remote_event = 'https://calendar.google.com/calendar/appointments/schedules/AcZs
 def remote_action(intent):
     if review_visits:
         return 'role="link" aria-disabled="true"'
+    if workspace_booking:
+        return f'href="{workspace_booking}?service=remote-{intent}"'
     return f'href="{remote_event}?utm_source=serviceboost&amp;utm_content=remote-{intent}"'
 
 remote_ready = not review_visits
