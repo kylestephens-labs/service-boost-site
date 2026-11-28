@@ -14,9 +14,10 @@ $robots
 .remote-card p, .remote-card ul { font-size:clamp(18px,2vw,20px); line-height:1.5; margin:0 }
 .remote-card ul { padding-left:1.4em; margin:20px 0 }
 .remote-card li + li { margin-top:6px }
-.remote-card footer { border-top:1px solid #d7e0f1; padding-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px }
+.remote-card footer { border-top:1px solid #d7e0f1; padding:20px 0 0; display:flex; align-items:center; flex-wrap:wrap; gap:12px 24px }
 .remote-card footer strong { display:block }
-.remote .primary { display:inline-flex; align-items:center; min-height:44px; padding:10px 18px; border-radius:8px; font-weight:650; text-decoration:none; color:white; background:#204bbd }
+.remote .primary { display:inline-flex; align-items:center; justify-content:center; flex:1 1 250px; max-width:360px; min-height:64px; padding:14px 20px; border-radius:10px; font-size:clamp(20px,2vw,24px); line-height:1.25; font-weight:700; text-align:center; text-decoration:none; color:white; background:#204bbd }
+@media (max-width:640px) { .remote .primary { flex-basis:100%; max-width:none } }
 .remote .primary[aria-disabled] { background:#53647c }
 .remote .intent-icon { width:42px; height:42px; padding:9px; border-radius:10px; background:#edf2ff }
 .remote :focus-visible { outline:3px solid #2057ed; outline-offset:3px }
