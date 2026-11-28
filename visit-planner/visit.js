@@ -104,6 +104,18 @@ const prep = [
 // Keep retired pairing ID 0 empty so existing support IDs 1–4 never shift.
 tasks[1] = new Array(1);
 addSmartHomeSupport(tasks[1], prep[1]);
+// Preserve existing support bookings. New device visits cover installation or support.
+for (const [index, scope] of smartDeviceScopes.entries()) {
+  const [supportName, icon, price, , , exclusions] = tasks[1][index + 1];
+  const terms = scope + " Kyle checks compatibility and scope before installation. For support, the visit covers diagnosis even if the issue remains unresolved. Extra work requires your approval.";
+  tasks[1].push([supportName.replace(/ Support$/, ""), icon, price, terms, "", exclusions, "Have the device and app available."]);
+  prep[1].push("Identify the model and whether you need installation or troubleshooting.");
+}
+tasks[2].push(
+  ["Wi-Fi Coverage & Connection Help", "wifi", 249, "Get help with one coverage or connection issue. Tell Kyle where Wi-Fi is weak or which devices have connection problems.", "", "", "Have your router or mesh equipment available."],
+  ["In-Wall Cable Running", "wifi", 249, "Describe where the network cable needs to go and what access is available. Kyle reviews the route, access, materials, scope, price, and any applicable qualifications and permits before accepting work.", "", "Network cable only. New electrical wiring is outside this service.", "Identify both ends of the proposed cable route."],
+);
+prep[2].push("Note when the problem happens.", "Booking the visit does not confirm that installation can proceed.");
 
 const root = document.querySelector("main");
 const homeMarkup = root.innerHTML;
@@ -119,17 +131,16 @@ function renderVisitGuide(category) {
 function render() {
   let [page, c, t] = location.hash.slice(1).split("/");
   if (page === "device" && c === "1" && /^[1-3]$/.test(t)) {
-    document.body.classList.toggle("booking-page", false);
-    document.body.classList.toggle("visit-menu-page", true);
-    root.innerHTML = renderDeviceIntake(Number(t));
-    document.getElementById("device-intake-title")?.focus();
-    return;
+    page = "book";
+    t = String(Number(t) + 4);
+    history.replaceState(null, "", "#book/1/" + t);
   }
   const requestedPage = page;
   const visitRoute = ["services","book","fit","contact","time","checkout","done","detail"].includes(page);
   if (visitRoute && Number(c) === 2 && ["extension", "connectivity"].includes(t)) t = "coverage";
-  const wifiInquiry = visitRoute && /^\d+$/.test(c) && Number(c) === 2 && Object.hasOwn(wifiInquiries, t);
-  if (wifiInquiry) page = "services";
+  if (visitRoute && c === "2" && ["coverage", "cabling"].includes(t)) {
+    t = t === "coverage" ? "1" : "2";
+  }
   if (visitRoute && /^\d+$/.test(c) && Number(c) === 1 && /^\d+$/.test(t) && Number(t) === 0) {
     page = "services";
     t = "retired";
@@ -142,7 +153,7 @@ function render() {
   const task = /^\d+$/.test(t) && tasks[category][Number(t)] ? Number(t) : tasks[category].findIndex(Boolean);
   if (["fit", "contact", "time", "checkout", "done"].includes(page)) page = "book";
   if (requestedPage !== page && page !== "home" && t !== "retired") {
-    history.replaceState(null, "", "#" + page + "/" + category + "/" + (wifiInquiry ? t : task));
+    history.replaceState(null, "", "#" + page + "/" + category + "/" + task);
   }
   document.body.classList.toggle("booking-page", page === "book");
   document.body.classList.toggle("visit-menu-page", page === "services");

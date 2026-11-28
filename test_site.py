@@ -118,8 +118,7 @@ class SiteContracts(unittest.TestCase):
                 ['$229', 'even if the issue remains unresolved', 'up to two computers', 'Ink, hardware repairs and network repairs'],
             ),
             '/wifi-networking': (
-                'wifi', ['/#book/2/0'] + ['/request-help?service=wifi&network=' + choice
-                                         for choice in ('coverage', 'cabling')],
+                'wifi', ['/#book/2/0', '/#book/2/1', '/#book/2/2'],
                 ['$249', 'existing internet line', 'Confirm internet service is active and the modem is accessible',
                  'qualifications and permits', 'which devices have connection problems'],
             ),
@@ -128,8 +127,8 @@ class SiteContracts(unittest.TestCase):
                                           'Carrier activation, account recovery and data transfer'],
             ),
             '/smart-home': (
-                'smart-home', ['/#device/1/1', '/#device/1/2', '/#device/1/3', '/#book/1/4'],
-                ['$249', 'checks compatibility, scope and availability',
+                'smart-home', ['/#book/1/5', '/#book/1/6', '/#book/1/7', '/#book/1/4'],
+                ['$249', 'checks compatibility and scope',
                  'New wiring and electrical work', 'his findings and next steps'],
             ),
         }

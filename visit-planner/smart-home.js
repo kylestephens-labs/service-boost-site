@@ -23,17 +23,13 @@ const smartDeviceScopes = [
 ];
 
 function renderSmartHomeMenu(selection, guide) {
-  const cards = tasks[1].flatMap((_, id) => {
-    const card = scheduledService(1, id);
-    if (id === 4) return [card];
-    return [{
-      ...card,
-      title: card.title.replace(/ Support$/, ""),
-      detail: serviceScope(smartDeviceScopes[id - 1]) + card.detail,
-      action: "Schedule Service",
-      href: "#device/1/" + id,
-    }];
-  });
+  const cards = [1, 2, 3].map(id => ({
+    ...scheduledService(1, id + 4),
+    id,
+    action: "Schedule Service",
+  }));
+  cards.push(scheduledService(1, 4));
+  if (["5","6","7"].includes(selection)) selection = String(Number(selection) - 4);
   const legacyIndex = smartInstallIds.indexOf(selection);
   return renderServiceMenu(1, legacyIndex < 0 ? selection : String(legacyIndex + 1), {
     title: "Smart home",
@@ -42,21 +38,4 @@ function renderSmartHomeMenu(selection, guide) {
     groups: [{ cards }],
     guide,
   });
-}
-
-function renderDeviceIntake(id) {
-  const name = tasks[1][id][0].replace(/ Support$/, "");
-  return `<section class="visit-menu-shell">
-    <div class="visit-menu-hero">
-      <a class="visit-menu-back" href="/smart-home">Back to smart home</a>
-      <h1 tabindex="-1" id="device-intake-title">${esc(name)}</h1>
-      <p class="visit-menu-subtitle">What do you need help with?</p>
-    </div>
-    <div class="visit-menu-service visit-menu-detail">
-      <p>Kyle checks compatibility before scheduling an installation.</p>
-      <a class="visit-menu-action" href="/request-help?service=smart-home&amp;installation=${smartInstallIds[id - 1]}">Install a device</a>
-      <p>Already installed? Book a visit for help with one issue.</p>
-      <a class="visit-menu-action" href="#book/1/${id}">Troubleshoot an installed device</a>
-    </div>
-  </section>`;
 }

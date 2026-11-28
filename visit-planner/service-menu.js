@@ -13,7 +13,7 @@ function scheduledService(category, id, { title, scope, showExclusions = true } 
     icon,
     priceLabel: "$" + price,
     detail: serviceScope(scope ?? description, includes) +
-      (showExclusions ? '<h4>Outside scope</h4><p class="visit-menu-exclusions">' + esc(exclusions) + '</p>' : ''),
+      (showExclusions && exclusions ? '<h4>Outside scope</h4><p class="visit-menu-exclusions">' + esc(exclusions) + '</p>' : ''),
     href: "#book/" + category + "/" + id,
     action: "Schedule a visit",
   };
