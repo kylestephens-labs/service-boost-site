@@ -93,6 +93,26 @@ function findEvent_(cfg,id) {
   try{return Calendar.Events.get(cfg.calendar,id);}
   catch(e){if (/not found|Resource has been deleted/i.test(String(e))) return null;throw e;}
 }
+// Keep the travel/protection tail on the managed calendar, outside the customer's invitation.
+function attendedEnd_(item,slot) {
+  if(item.kind==='remote')return slot.end;
+  return slot.start+(slot.window ? 3 : 2)*HOUR;
+}
+function protection_(cfg,r,slot,item) {
+  const begin=attendedEnd_(item,slot);
+  if(begin===slot.end)return;
+  const id=eventId_('protection:'+r.id);
+  const interval={start:{dateTime:new Date(begin).toISOString()},end:{dateTime:new Date(slot.end).toISOString()}};
+  const existing=findEvent_(cfg,id);
+  if(existing){
+    if(existing.extendedProperties?.private?.reservation!==r.id)throw Error('Calendar protection needs review.');
+    if(Date.parse(existing.start.dateTime)!==begin || Date.parse(existing.end.dateTime)!==slot.end)
+      Calendar.Events.patch(interval,cfg.calendar,id,{sendUpdates:'none'});
+  } else {
+    Calendar.Events.insert({id,...interval,summary:'Busy',visibility:'private',transparency:'opaque',
+      extendedProperties:{private:{reservation:r.id}}},cfg.calendar,{sendUpdates:'none'});
+  }
+}
 function reserve(id,start,input,key) {
   validKey_(key);
   if (!Number.isSafeInteger(start)) throw Error('Invalid appointment time.');
@@ -114,11 +134,13 @@ function reserve(id,start,input,key) {
     if(r.status==='cancelled')throw Error('This booking was cancelled.');
     const token=r.id+'.'+signed_(cfg.secret,'manage:'+r.id);
     if(r.status==='confirmed')return {token,start:r.start};
+    const interval={start:r.start,end:r.end,window:r.end-r.start===6*HOUR};
+    protection_(cfg,r,interval,item);
     let event=findEvent_(cfg,r.id);
     if(!event){
-      const eventData={id:r.id,summary:(cfg.live?'':'[QA] ')+item.name,
+      const eventData={id:r.id,summary:(cfg.live?'':'[QA] ')+item.name+(interval.window?' · 5–8 p.m. Pacific arrival window':''),
         description:'Service Boost · $'+item.price+' · Pay after '+(item.kind==='local'?'your visit':'the session')+'.',
-        start:{dateTime:new Date(start).toISOString()},end:{dateTime:new Date(r.end).toISOString()},
+        start:{dateTime:new Date(start).toISOString()},end:{dateTime:new Date(attendedEnd_(item,interval)).toISOString()},
         attendees:[...new Set([d.email,...guests])].map(email=>({email})),guestsCanInviteOthers:false,
         extendedProperties:{private:{service:id,requestDigest:digest,customerName:d.name,phone:d.phone||'',notes1:d.notes.slice(0,950),notes2:d.notes.slice(950,1900),notes3:d.notes.slice(1900)}}};
       if(d.address)eventData.location=d.address;
@@ -153,6 +175,13 @@ function cancelVisit(token){
       if(event.extendedProperties?.private?.requestDigest!==r.digest)throw Error('Please contact Kyle.');
       Calendar.Events.remove(cfg.calendar,r.id,{sendUpdates:'all'});
     }
+    if(service_(r.service).kind==='local'){
+      const id=eventId_('protection:'+r.id),hold=findEvent_(cfg,id);
+      if(hold&&hold.status!=='cancelled'){
+        if(hold.extendedProperties?.private?.reservation!==r.id)throw Error('Calendar protection needs review.');
+        Calendar.Events.remove(cfg.calendar,id,{sendUpdates:'none'});
+      }
+    }
     r.status='cancelled';cfg.p.setProperty(prop,JSON.stringify(r));return true;
   });
 }
@@ -169,11 +198,13 @@ function moveVisit(token,start) {
     if(!r.move){
       const slot=openings_(cfg,service_(r.service),start,start+1).find(s=>s.start===start);
       if(!slot)throw Error('That time is unavailable.');
-      r.move={start,end:slot.end};
+      r.move=slot;
       cfg.p.setProperty(prop,JSON.stringify(r));
     }
+    const item=service_(r.service);
+    protection_(cfg,r,r.move,item);
     if(Date.parse(event.start.dateTime)!==start){
-      Calendar.Events.patch({start:{dateTime:new Date(start).toISOString()},end:{dateTime:new Date(r.move.end).toISOString()}},
+      Calendar.Events.patch({summary:(cfg.live?'':'[QA] ')+item.name+(r.move.window?' · 5–8 p.m. Pacific arrival window':''),start:{dateTime:new Date(start).toISOString()},end:{dateTime:new Date(attendedEnd_(item,r.move)).toISOString()}},
         cfg.calendar,r.id,{sendUpdates:'all'});
     }
     r.start=start;r.end=r.move.end;delete r.move;

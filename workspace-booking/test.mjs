@@ -41,3 +41,16 @@ test('one calendar exposes standard arrivals and evenings together',()=>{
   const slots=run(`candidates_({kind:'local'},${start},${start+7*86400000},${start-86400000})`);
   assert.equal(slots.length,18);assert.equal(slots.filter(s=>s.window).length,2);
 });
+test('evening invitation ends at 8 p.m.; private busy tail runs through 11',()=>{
+  const start=Date.parse('2026-12-04T01:00:00Z'),end=start+6*3600000;
+  const ctx=runtime();
+  const holds=[];
+  ctx.Calendar.Events={get(){throw Error('Not found')},insert(event,calendar,options){holds.push({event,options})}};
+  ctx.Utilities.computeDigest=()=>[32];ctx.Utilities.DigestAlgorithm={SHA_256:'sha256'};
+  const publicEnd=run(`const slot={start:${start},end:${end},window:true};protection_({calendar:'qa'},{id:'qa'},slot,{kind:'local'});attendedEnd_({kind:'local'},slot)`,ctx);
+  assert.equal(publicEnd,start+3*3600000);
+  assert.equal(Date.parse(holds[0].event.start.dateTime),publicEnd);
+  assert.equal(Date.parse(holds[0].event.end.dateTime),end);
+  assert.equal(holds[0].event.attendees,undefined);
+  assert.equal(holds[0].options.sendUpdates,'none');
+});
