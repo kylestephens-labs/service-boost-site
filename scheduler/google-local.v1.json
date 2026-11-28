@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "timezone": "America/Los_Angeles",
+  "schedules": {
+    "local": {"weekly_minutes_from_midnight": [
+      [[1020,1380]], [[480,1200]], [], [[1020,1380]], [[480,1200]], [[480,1200]], [[480,1200]]
+    ]},
+    "remote": {"weekly_minutes_from_midnight": [
+      [[1020,1260]], [[480,600],[660,780],[840,960],[1020,1140]], [], [[1020,1260]],
+      [[480,600],[660,780],[840,960],[1020,1140]], [[480,600],[660,780],[840,960],[1020,1140]],
+      [[480,600],[660,780],[840,960],[1020,1140]]
+    ]}
+  },
+  "events": {
+    "local": {"schedule":"local","overrides":{},"minutes":180,"weekday_duration":{"0":360,"3":360},"step":180,"before":0,"after":0,"notice":4,"horizon":120},
+    "remote": {"schedule":"remote","overrides":{},"minutes":60,"step":30,"before":0,"after":0,"notice":4,"horizon":120}
+  }
+}

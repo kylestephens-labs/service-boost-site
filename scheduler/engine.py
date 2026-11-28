@@ -7,7 +7,7 @@ import secrets
 import sqlite3
 from contextlib import closing, contextmanager
 from pathlib import Path
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, time, timedelta, timezone
 from zoneinfo import ZoneInfo
 
@@ -104,6 +104,11 @@ class Scheduler:
             raise ValueError('Invalid management link.')
         return booking
 
+    def rule_for_day(self, kind, day):
+        rule = self.rules[kind]
+        minutes = self.events[kind].get('weekday_duration', {}).get(str(day.weekday()))
+        return rule if minutes is None else replace(rule, minutes=minutes)
+
     def slots(self, db, service, first, days=1, omit=''):
         rule = self.rules[self.catalog[service]['kind']]
         now = self.clock()
@@ -121,6 +126,7 @@ class Scheduler:
         result = []
         for offset in range(days):
             day = first + offset * DAY
+            rule = self.rule_for_day(self.catalog[service]['kind'], day)
             if not today <= day <= today + rule.horizon * DAY:
                 continue
             for opening, closing in event['overrides'].get(day.isoformat(), week[day.weekday()]):
@@ -153,7 +159,6 @@ class Scheduler:
             if row:
                 service, details = row['service'], json.loads(row['details'])
             item = self.catalog[service]
-            rule = self.rules[item['kind']]
             if cancel:
                 if not existing:
                     raise ValueError('Management link required.')
@@ -162,6 +167,7 @@ class Scheduler:
                 day = datetime.fromtimestamp(start, PACIFIC).date()
                 if start not in self.slots(db, service, day, omit=existing):
                     raise Conflict('That time is unavailable. Please choose another.')
+            rule = self.rule_for_day(item['kind'], datetime.fromtimestamp(start, PACIFIC).date())
             version = row['version'] + 1 if row else 1
             db.execute('INSERT OR REPLACE INTO bookings VALUES(?,?,?,?,?,?,?,?,?,?)',
                        (booking, service, start, start-rule.before*60, start+(rule.minutes+rule.after)*60,

@@ -40,6 +40,32 @@ class BookingTests(unittest.TestCase):
         with self.assertRaises(Conflict):
             self.book('a','0/1',local[0])
 
+    def test_combined_week_and_evening_reservation(self):
+        self.app = Scheduler(Path(self.tmp.name)/'combined.sqlite3', self.items, self.provider,
+                             lambda:self.now, configuration=Path(__file__).with_name('google-local.v1.json'))
+        monday = self.day + timedelta(days=2)
+        with self.app.transaction() as db:
+            slots = self.app.slots(db, '0/1', monday, 7)
+        week = [[] for _ in range(7)]
+        for start in slots:
+            local = datetime.fromtimestamp(start, PACIFIC)
+            week[local.weekday()].append(local.hour)
+        standard = [8, 11, 14, 17]
+        self.assertEqual(week, [[17], standard, [], [17], standard, standard, standard])
+        self.day = monday + timedelta(days=3)
+        evening, = self.slots('0/1')
+        remote_before = self.slots('remote-fix')
+        self.assertIn(evening + 3*3600, remote_before)
+        token = self.book('t', '0/1', evening)
+        self.assertFalse(self.slots('0/1'))
+        self.assertFalse(self.slots('remote-fix'))
+        with self.app.transaction() as db:
+            lo, hi = db.execute('SELECT lo,hi FROM bookings').fetchone()
+            self.assertEqual((lo,hi), (evening,evening+6*3600))
+        self.app.apply('c'*24, '0/1', evening, token=token, cancel=True)
+        self.assertEqual(self.slots('remote-fix'), remote_before)
+        self.assertEqual(self.slots('0/1'), [evening])
+
     def test_simultaneous_cross_type(self):
         start=self.slots('0/1')[0]
         gate=Barrier(2)

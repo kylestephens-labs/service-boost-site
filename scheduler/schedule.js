@@ -16,8 +16,16 @@ const zoneNames = {
 for (const name of zones) zone.add(new Option(zoneNames[name] || name.replaceAll('_',' ').replace('/', ' / '),name));
 zone.value = 'America/Los_Angeles';
 const format = (stamp, options) => new Intl.DateTimeFormat('en-US',{timeZone:zone.value,...options}).format(stamp * 1000);
+function arrivalLabel(stamp) {
+  const weekday = new Intl.DateTimeFormat('en-US', {timeZone:'America/Los_Angeles',weekday:'short'}).format(stamp*1000);
+  const clock = {hour:'numeric', minute:'2-digit'};
+  if (item.kind === 'local' && ['Mon','Thu'].includes(weekday)) {
+    return format(stamp, clock) + '–' + format(stamp + 3*3600, clock) + ' arrival window';
+  }
+  return format(stamp, clock);
+}
 function appointment(stamp) {
-  return format(stamp,{weekday:'long',month:'long',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}) +
+  return format(stamp,{weekday:'long',month:'long',day:'numeric',year:'numeric'}) + ' · ' + arrivalLabel(stamp) +
     ' · ' + zone.selectedOptions[0].text;
 }
 function dateKey(stamp) {
@@ -66,7 +74,7 @@ function draw() {
   for (const stamp of slots.filter(s=>dateKey(s)===day)) {
     const row = document.createElement('div');
     row.className = 'time-row';
-    const slot = button(format(stamp,{hour:'numeric',minute:'2-digit'}),()=>{
+    const slot = button(arrivalLabel(stamp),()=>{
       selected = stamp;
       operationKey = crypto.randomUUID();
       draw();
@@ -83,7 +91,7 @@ function draw() {
       });
       next.id = 'continue';
       next.className = 'primary';
-      next.setAttribute('aria-label',next.textContent+' · '+format(stamp,{hour:'numeric',minute:'2-digit'}));
+      next.setAttribute('aria-label',next.textContent+' · '+arrivalLabel(stamp));
       row.append(next);
     }
     rows.append(row);
@@ -108,7 +116,7 @@ async function load() {
   ({item,slots,current}=data);service=item.id;
   const remote=item.kind==='remote';
   el('service').textContent=item.name;el('mode').textContent=remote?'Remote Tech Help · Google Meet':'In-home service';
-  el('price').textContent='$'+item.price+(remote?' · Up to 45 minutes':'')+' · Pay after '+(remote?'the session':'your visit');
+  el('price').textContent='$'+item.price+(remote?' · Up to 60 minutes':'')+' · Pay after '+(remote?'the session':'your visit');
   el('terms').textContent=remote ? item.terms.split('Pay after the session. ').at(-1) : item.terms;
   el('policy').textContent=remote
     ? (item.id==='remote-fix'?'No charge if I can’t fix it or explain the issue and give you a clear next step.':'No charge if I can’t make the agreed improvement or give you a useful plan.')

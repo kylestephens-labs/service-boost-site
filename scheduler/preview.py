@@ -173,7 +173,7 @@ if __name__=='__main__':
     with tempfile.TemporaryDirectory(prefix='sb-scheduling-') as tmp:
         Preview.site=Path(tmp)/'site'
         catalog=prepare(Preview.site)
-        Preview.engine=Scheduler(Path(tmp)/'preview.sqlite3',catalog)
+        Preview.engine=Scheduler(Path(tmp)/'preview.sqlite3',catalog,configuration=HERE/'google-local.v1.json')
         Preview.attempts=deque()
         Preview.limit_lock=threading.Lock()
         server=ThreadingHTTPServer(('127.0.0.1',options.port),Preview)
