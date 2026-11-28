@@ -9,28 +9,34 @@ $robots
 <style>
 .remote main { max-width:1080px; margin:auto; padding:clamp(24px,5vw,64px) clamp(18px,4vw,44px) }
 .remote h1 { font-size:clamp(42px,6vw,72px); margin:0; line-height:1.05; letter-spacing:-.04em }
-.remote .intro { font-size:clamp(19px,2vw,24px); max-width:39em; margin:12px 0 28px }
-.remote-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px }
-.remote-card { display:flex; flex-direction:column; align-items:flex-start; border:1px solid #d7e0f1; border-radius:16px; padding:clamp(18px,3vw,30px); background:white }
-.remote h2 { font-size:clamp(23px,2.4vw,30px); line-height:1.2; margin:0 0 12px }
-.remote p { font-size:18px; line-height:1.5; margin:0 0 18px }
-.remote .primary { display:inline-flex; align-items:center; margin-top:auto; min-height:44px; padding:10px 18px; border-radius:8px; font-weight:650; text-decoration:none; color:white; background:#204bbd }
+.remote-card { max-width:860px; margin:24px 0 0; padding:clamp(20px,4vw,40px); border:1px solid #d7e0f1; border-radius:16px; background:white }
+.remote h2 { font-size:clamp(26px,3.5vw,40px); line-height:1.15; margin:16px 0 12px }
+.remote-card p, .remote-card ul { font-size:clamp(18px,2vw,20px); line-height:1.5; margin:0 }
+.remote-card ul { padding-left:1.4em; margin:20px 0 }
+.remote-card li + li { margin-top:6px }
+.remote-card footer { border-top:1px solid #d7e0f1; padding-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px }
+.remote-card footer strong { display:block }
+.remote .primary { display:inline-flex; align-items:center; min-height:44px; padding:10px 18px; border-radius:8px; font-weight:650; text-decoration:none; color:white; background:#204bbd }
 .remote .primary[aria-disabled] { background:#53647c }
-.remote .intent-icon { width:42px; height:42px; padding:9px; border-radius:10px; background:#edf2ff; margin-bottom:16px }
+.remote .intent-icon { width:42px; height:42px; padding:9px; border-radius:10px; background:#edf2ff }
 .remote :focus-visible { outline:3px solid #2057ed; outline-offset:3px }
-@media(max-width:680px) { .remote-grid { grid-template-columns:1fr; gap:14px } .remote .intro { margin:10px 0 20px } }
 </style></head><body class="visit-menu-page remote"><!-- site-header --><!-- site-mobile-header -->
 <main><a class="visit-menu-back" href="/#services"><img src="/assets/icons/chevron-left.svg" alt="" width="14" height="14">All services</a>
 <h1>Remote Tech Help</h1>
-<p class="intro">Work with me one-on-one from home to solve a tech problem or make your everyday setup easier to use.</p>
-<div class="remote-grid">
-<section class="remote-card"><img class="intent-icon" src="/assets/icons/tool.svg" alt=""><h2>Fix a problem</h2>
-<p>Computer running slowly, an app acting up, or email that won’t sync? We’ll start with a call. If screen sharing or temporary access would help, I’ll ask your permission first.</p>
-<p><strong>$$99.99 for up to 60 minutes. Pay after the session.</strong> We’ll first check whether I can help remotely. If I can’t fix the issue or explain what’s wrong and give you a clear next step, you won’t be charged.</p>
-<a class="primary" $fix_action>Schedule help with a problem</a></section>
-<section class="remote-card"><img class="intent-icon" src="/assets/icons/device-desktop.svg" alt=""><h2>Improve your setup</h2>
-<p>Set up a backup, make your home-office workflow smoother, or learn a practical way to use AI for an everyday task. Tell me what you’d like to do more easily.</p>
-<p><strong>$$99.99 for up to 60 minutes. Pay after the session.</strong> If I can’t make the improvement we agree on or give you a useful plan, you won’t be charged.</p>
-<a class="primary" $improve_action>Schedule help with your setup</a></section></div>
+<section class="remote-card">
+<img class="intent-icon" src="/assets/icons/device-desktop.svg" alt="">
+<h2>Fix a problem or improve your setup</h2>
+<p>Tell me what you’d like help with, and we’ll work through it together on a video call.</p>
+<ul>
+<li>Troubleshoot a slow computer or an app that keeps crashing</li>
+<li>Get your email syncing again</li>
+<li>Set up a backup for your files</li>
+<li>Make your home office easier to use</li>
+<li>Try AI for an everyday task</li>
+<li>Or something else</li>
+</ul>
+<footer><p><strong>$$99.99 for up to 60 minutes.</strong>Pay after the session.</p>
+<a class="primary" $remote_action>Schedule remote help</a></footer>
+</section>
 $status
 </main></body></html>

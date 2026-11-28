@@ -14,10 +14,28 @@ const records = vm.runInContext(`tasks.flatMap((rows, category) => rows.flatMap(
   id: category + '/' + id, kind: 'local', name: row[0], price: row[2], terms: row[3],
   exclusions: row[5], prep: [row[6],prep[category][id]].filter(Boolean).join(' '), included: row[4], cities: cities.join(', '), attribution: 'service-' + category + '-' + id
 })))`, context);
-const remote = readFileSync(new URL('../service-pages/remote-tech-help.html',import.meta.url),'utf8');
-for (const [index,match] of [...remote.matchAll(/<h2>([^<]+)<\/h2>.*?<p><strong>\$\$(\d+\.\d+) (.*?)<\/strong> (.*?)<\/p>/gs)].entries()) {
-  const id = ['remote-fix','remote-improve'][index];
-  records.push({id,kind:'remote',name:match[1],price:Number(match[2]),terms:match[4]});
-}
-if(records.filter(r=>r.kind==='remote').length!==2)throw Error('Review remote service catalog.');
+// Preserve existing IDs for appointment management links.
+records.push(...[
+  {
+    "id": "remote-fix",
+    "kind": "remote",
+    "name": "Fix a problem",
+    "price": 99.99,
+    "terms": "We’ll first check whether I can help remotely. If I can’t fix the issue or explain what’s wrong and give you a clear next step, you won’t be charged."
+  },
+  {
+    "id": "remote-improve",
+    "kind": "remote",
+    "name": "Improve your setup",
+    "price": 99.99,
+    "terms": "If I can’t make the improvement we agree on or give you a useful plan, you won’t be charged."
+  },
+  {
+    "id": "remote-help",
+    "kind": "remote",
+    "name": "Remote Tech Help",
+    "price": 99.99,
+    "terms": "We’ll first check whether I can help remotely. If I can’t fix the issue or explain what’s wrong and give you a clear next step, you won’t be charged. If I can’t make the improvement we agree on or give you a useful plan, you won’t be charged. I’ll ask your permission before screen sharing or using temporary access."
+  }
+]);
 console.log('const CATALOG = '+JSON.stringify(Object.fromEntries(records.map(r=>[r.id,r])),null,2)+';');

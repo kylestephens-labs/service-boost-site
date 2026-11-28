@@ -84,19 +84,19 @@ for slug, (title, description, service) in service_pages.items():
         inquiry=f'/request-help?service={service}',
     ))
 
-# Both remote intents use the dedicated Google Meet schedule.
+# Remote help uses the dedicated Google Meet schedule.
 remote_event = 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ1YGjxU07QopqQD3lVF_FXvTcLO-c_wwSr9hLQmYWThfhECgf8YynI373UfHfIII8RyaP2XQGBo'
 
-def remote_action(intent):
+def remote_action():
     if review_visits:
         return 'role="link" aria-disabled="true"'
     if workspace_booking:
-        return f'href="/schedule?service=remote-{intent}"'
-    return f'href="{remote_event}?utm_source=serviceboost&amp;utm_content=remote-{intent}"'
+        return 'href="/schedule?service=remote-help"'
+    return f'href="{remote_event}?utm_source=serviceboost&amp;utm_content=remote-help"'
 
 remote_ready = not review_visits
 (output / 'remote-tech-help.html').write_text(Template((service_sources / 'remote-tech-help.html').read_text()).substitute(
-    fix_action=remote_action('fix'), improve_action=remote_action('improve'),
+    remote_action=remote_action(),
     robots='' if remote_ready else '<meta name="robots" content="noindex">',
     status='' if remote_ready else '<p>Remote scheduling is unavailable in this preview.</p>',
 ))

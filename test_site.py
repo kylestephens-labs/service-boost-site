@@ -38,14 +38,13 @@ class SiteContracts(unittest.TestCase):
     def setUpClass(cls):
         subprocess.run([sys.executable, str(ROOT / 'build-site.py')], check=True)
 
-    def test_remote_booking_uses_one_dedicated_event_with_two_intents(self):
+    def test_remote_booking_uses_one_dedicated_event(self):
         build = [sys.executable, str(ROOT / 'build-site.py')]
         event = 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ1YGjxU07QopqQD3lVF_FXvTcLO-c_wwSr9hLQmYWThfhECgf8YynI373UfHfIII8RyaP2XQGBo'
         subprocess.run(build, check=True)
         nodes = Page('public-site/remote-tech-help.html').nodes
         self.assertEqual([a['href'] for tag, a in nodes if a.get('class') == 'primary'],
-                         [event + '?utm_source=serviceboost&utm_content=remote-' + intent
-                          for intent in ('fix', 'improve')])
+                         [event + '?utm_source=serviceboost&utm_content=remote-help'])
         self.assertFalse(any(tag in ('dialog', 'form') for tag, _ in nodes))
 
     def test_tech_home_links_to_dedicated_intake_and_direct_contact(self):

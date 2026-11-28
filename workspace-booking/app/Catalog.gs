@@ -216,5 +216,12 @@ const CATALOG = {
     "name": "Improve your setup",
     "price": 99.99,
     "terms": "If I can’t make the improvement we agree on or give you a useful plan, you won’t be charged."
+  },
+  "remote-help": {
+    "id": "remote-help",
+    "kind": "remote",
+    "name": "Remote Tech Help",
+    "price": 99.99,
+    "terms": "We’ll first check whether I can help remotely. If I can’t fix the issue or explain what’s wrong and give you a clear next step, you won’t be charged. If I can’t make the improvement we agree on or give you a useful plan, you won’t be charged. I’ll ask your permission before screen sharing or using temporary access."
   }
 };
