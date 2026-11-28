@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "verified_on": "2026-11-27",
+  "timezone": "America/Los_Angeles",
+  "schedules": {
+    "custom_pacific": {
+      "weekly_minutes_from_midnight": [
+        [[1020,1260]],
+        [[480,600],[660,780],[840,960],[1020,1140]],
+        [],
+        [[1020,1260]],
+        [[480,600],[660,780],[840,960],[1020,1140]],
+        [[480,600],[660,780],[840,960],[1020,1140]],
+        [[480,600],[660,780],[840,960],[1020,1140]]
+      ]
+    }
+  },
+  "events": {
+    "local": {"schedule":"custom_pacific","overrides":{},"minutes":120,"step":60,"before":0,"after":60,"notice":4,"horizon":120},
+    "remote": {"schedule":"custom_pacific","overrides":{},"minutes":45,"step":30,"before":0,"after":0,"notice":4,"horizon":120}
+  }
+}

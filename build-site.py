@@ -10,6 +10,10 @@ root = Path(__file__).resolve().parent
 parser = argparse.ArgumentParser()
 parser.add_argument('--review-visits', action='store_true', help='Build the fixed-price review site into visit-preview.')
 review_visits = parser.parse_args().review_visits
+if os.environ.get('SERVICE_BOOST_OWNED_SCHEDULER', 'off') != 'off' and not (
+        review_visits and os.environ.get('SERVICE_BOOST_OWNED_SCHEDULER') == 'mock'
+        and not os.environ.get('VERCEL_ENV')):
+    raise SystemExit('Owned scheduling is available only in the isolated mock launcher.')
 output = root / ('visit-preview' if review_visits else 'public-site')
 if output.exists():
     shutil.rmtree(output)
