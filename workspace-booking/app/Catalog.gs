@@ -119,6 +119,42 @@ const CATALOG = {
     "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
     "attribution": "service-1-4"
   },
+  "1/5": {
+    "id": "1/5",
+    "kind": "local",
+    "name": "Video Doorbell",
+    "price": 249,
+    "terms": "Install one compatible doorbell you provide in an accessible location, connect it to your app and existing Wi-Fi, and test it. Or get help with one app, connection or notification issue on an installed doorbell. New wiring and electrical work are outside this visit. Kyle checks compatibility and scope before installation. For support, the visit covers diagnosis even if the issue remains unresolved. Extra work requires your approval.",
+    "exclusions": "Devices, subscriptions and replacement parts",
+    "prep": "Have the device and app available. Identify the model and whether you need installation or troubleshooting.",
+    "included": "",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-1-5"
+  },
+  "1/6": {
+    "id": "1/6",
+    "kind": "local",
+    "name": "Smart Thermostat",
+    "price": 249,
+    "terms": "Replace a working thermostat with one compatible model, connect it to your Wi-Fi and app, test it and learn the controls. Or get help with one app, connection or settings issue on your installed thermostat. New wiring, electrical work and HVAC repair are outside this visit. Kyle checks compatibility and scope before installation. For support, the visit covers diagnosis even if the issue remains unresolved. Extra work requires your approval.",
+    "exclusions": "Devices, subscriptions and replacement parts, HVAC or electrical repair",
+    "prep": "Have the device and app available. Identify the model and whether you need installation or troubleshooting.",
+    "included": "",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-1-6"
+  },
+  "1/7": {
+    "id": "1/7",
+    "kind": "local",
+    "name": "Smart Garage Controller",
+    "price": 249,
+    "terms": "Add one compatible controller to a working opener, connect the app and test it. Or get help with one app, connection or settings issue on your installed controller. New wiring, electrical work, opener replacement, mechanical repair and safety-system adjustments are outside this visit. Kyle checks compatibility and scope before installation. For support, the visit covers diagnosis even if the issue remains unresolved. Extra work requires your approval.",
+    "exclusions": "Devices, subscriptions and replacement parts, mechanical repair or safety-system adjustments",
+    "prep": "Have the device and app available. Identify the model and whether you need installation or troubleshooting.",
+    "included": "",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-1-7"
+  },
   "2/0": {
     "id": "2/0",
     "kind": "local",
@@ -130,6 +166,30 @@ const CATALOG = {
     "included": "Configure one supported router|Connect up to two devices|Test connectivity at the router",
     "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
     "attribution": "service-2-0"
+  },
+  "2/1": {
+    "id": "2/1",
+    "kind": "local",
+    "name": "Wi-Fi Coverage & Connection Help",
+    "price": 249,
+    "terms": "Get help with one coverage or connection issue. Tell Kyle where Wi-Fi is weak or which devices have connection problems.",
+    "exclusions": "",
+    "prep": "Have your router or mesh equipment available. Note when the problem happens.",
+    "included": "",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-2-1"
+  },
+  "2/2": {
+    "id": "2/2",
+    "kind": "local",
+    "name": "In-Wall Cable Running",
+    "price": 249,
+    "terms": "Describe where the network cable needs to go and what access is available. Kyle reviews the route, access, materials, scope, price, and any applicable qualifications and permits before accepting work.",
+    "exclusions": "Network cable only. New electrical wiring is outside this service.",
+    "prep": "Identify both ends of the proposed cable route. Booking the visit does not confirm that installation can proceed.",
+    "included": "",
+    "cities": "Walnut Creek, Pleasant Hill, Concord, Lafayette, Orinda, Moraga, Alamo, Danville, Martinez, Clayton, San Ramon",
+    "attribution": "service-2-2"
   },
   "3/0": {
     "id": "3/0",

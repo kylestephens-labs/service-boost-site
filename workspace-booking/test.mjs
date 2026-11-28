@@ -19,6 +19,15 @@ test('hosted catalog matches the shipping menu including inquiry exclusions',()=
   assert.equal(execFileSync('node',[new URL('catalog.mjs',import.meta.url).pathname],{encoding:'utf8'}),catalog);
   assert.equal(run("service_('0/2').price"),229);
   assert.equal(run("service_('remote-improve').price"),99.99);
+  for (const [id,name] of Object.entries({
+    '1/5':'Video Doorbell', '1/6':'Smart Thermostat', '1/7':'Smart Garage Controller',
+    '2/1':'Wi-Fi Coverage & Connection Help', '2/2':'In-Wall Cable Running'
+  })) {
+    const item=run(`service_(${JSON.stringify(id)})`);
+    assert.equal(item.name,name);
+    assert.equal(item.kind,'local');
+    assert.equal(item.price,249);
+  }
   assert.throws(()=>run("service_('1/0')"));
 });
 test('both Pacific offsets have a single protected evening and no Wednesday arrival',()=>{

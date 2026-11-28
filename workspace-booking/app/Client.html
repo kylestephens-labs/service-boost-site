@@ -3,6 +3,7 @@ const el = id => document.getElementById(id);
 let service, token;
 let initialAction='';
 let slots = [], selected = 0, day = '', month, current, item;
+let monthStatus = '';
 let operationKey = crypto.randomUUID();
 const zone = el('zone');
 const zones = new Set(['America/Los_Angeles', Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -27,8 +28,14 @@ function appointment(stamp) {
   return format(stamp,{weekday:'long',month:'long',day:'numeric',year:'numeric'}) + ' · ' + arrivalLabel(stamp) +
     ' · ' + zone.selectedOptions[0].text;
 }
+let dayFormatter;
+let dayZone;
 function dateKey(stamp) {
-  const parts = new Intl.DateTimeFormat('en-US',{timeZone:zone.value,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(stamp);
+  if (dayZone !== zone.value) {
+    dayZone = zone.value;
+    dayFormatter = new Intl.DateTimeFormat('en-US',{timeZone:dayZone,year:'numeric',month:'2-digit',day:'2-digit'});
+  }
+  const parts = dayFormatter.formatToParts(stamp);
   const val = type => parts.find(p => p.type===type).value;
   return [val('year'),val('month'),val('day')].join('-');
 }
@@ -67,7 +74,7 @@ function draw() {
   times.hidden = !day && slots.length > 0;
   el('times-title').textContent = day
     ? new Date(day+'T12:00:00Z').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',timeZone:'UTC'})
-    : 'No times available';
+    : monthStatus || 'No times available';
   const rows = el('rows');
   rows.replaceChildren();
   for (const stamp of slots.filter(s=>dateKey(s)===day)) {
@@ -121,12 +128,43 @@ async function rpc(name,...args) {
   }
   return new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[name](...args));
 }
+// Keep a short-lived, per-page cache of public availability. The server checks again at booking.
+const months = new Map();
+function monthData(key) {
+  const cached = months.get(key);
+  if (cached && Date.now() < cached.expires) return cached.request;
+  const entry = {expires: Date.now() + 60000};
+  entry.request = rpc('availability',service,key).catch(error => {
+    if (months.get(key) === entry) months.delete(key);
+    throw error;
+  });
+  months.set(key,entry);
+  return entry.request;
+}
 let generation=0;
 async function readMonth() {
   const version=++generation;
-  const data=await rpc('availability',service,month.toISOString().slice(0,7));
-  if(version!==generation)return;
-  item=data.item;slots=data.slots.map(s=>s.start);draw();
+  const key=month.toISOString().slice(0,7);
+  monthStatus='Loading available times…';
+  slots=[];
+  el('error').textContent='';
+  draw();
+  try {
+    const data=await monthData(key);
+    if(version!==generation)return;
+    monthStatus='';
+    item=data.item;
+    slots=data.slots.map(slot=>slot.start);
+    draw();
+    const next=new Date(month);
+    next.setUTCMonth(next.getUTCMonth()+1);
+    if (!el('next').disabled) monthData(next.toISOString().slice(0,7)).catch(()=>{});
+  } catch(error) {
+    if(version!==generation)return;
+    monthStatus='Availability could not be loaded.';
+    draw();
+    throw error;
+  }
 }
 async function load() {
   if(token){
@@ -165,11 +203,11 @@ async function submit(action) {
       else google.script.history.replace(null,{service},token);
     } else if(action==='move') await rpc('moveVisit',token,selected);
     else await rpc('cancelVisit',token);
-    operationKey=crypto.randomUUID();await load();
+    months.clear();operationKey=crypto.randomUUID();await load();
   } catch(e){el('error').textContent=e.message;} finally{busy=false;}
 }
 for(const [id,step] of [['prev',-1],['next',1]])el(id).onclick=()=>{
-  month.setUTCMonth(month.getUTCMonth()+step);selected=0;day='';slots=[];draw();readMonth().catch(e=>el('error').textContent=e.message);
+  month.setUTCMonth(month.getUTCMonth()+step);selected=0;day='';readMonth().catch(e=>el('error').textContent=e.message);
 };
 let previousZone=zone.value;
 zone.onchange=()=>{

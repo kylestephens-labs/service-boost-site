@@ -31,8 +31,8 @@ function renderBooking(root, service, id, preparation, cities) {
       ${diagnostic ? '<p class="booking-important">' + esc(description) + '</p>' : ""}
       <details class="booking-details"><summary>Service details</summary>
         ${diagnostic ? "" : "<p>" + esc(description) + "</p>"}
-        <h2>Included</h2><ul>${included.split("|").map(item => "<li>" + esc(item) + "</li>").join("")}</ul>
-        <h2>Outside scope</h2><p>${esc(excluded)}</p>
+        ${included ? "<h2>Included</h2><ul>" + included.split("|").map(item => "<li>" + esc(item) + "</li>").join("") + "</ul>" : ""}
+        ${excluded ? "<h2>Outside scope</h2><p>" + esc(excluded) + "</p>" : ""}
         <h2>Before booking</h2><p>${esc(requirement)} ${esc(preparation)}</p>
         <h2>Service area</h2><p>${esc(cities.join(", "))}.</p>
         <p>Outside these cities or unsure about your setup? <a href="/request-help">Ask Kyle before booking</a>.</p>
