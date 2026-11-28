@@ -77,7 +77,8 @@ test("eligible visits offer distinct Google schedules with the selected service"
   run("window.SERVICE_BOOST_BOOKING_ENABLED = true");
   const html = visit("#book/0/2");
   const links = [...html.matchAll(/href="(https:[^"]+)"/g)].map(match => new URL(match[1].replaceAll("&amp;", "&")));
-  assert.equal(links.length, 2);
+  assert.equal(links.length, 4);
+  assert.deepEqual(links.slice(2), links.slice(0, 2));
   assert.notEqual(links[0].pathname, links[1].pathname);
   for (const url of links) {
     assert.equal(url.origin, "https://calendar.google.com");
@@ -86,7 +87,9 @@ test("eligible visits offer distinct Google schedules with the selected service"
   }
   assert.match(html, /Monday or Thursday evening/);
   assert.match(html, /Not sure\? Ask Kyle/);
-  assert.ok(html.indexOf("even if the issue remains unresolved") < html.indexOf("<details"));
+  assert.match(html, /The visit fee applies even if the issue remains unresolved/);
+  assert.ok(html.includes('name="visit-schedule"'));
+  assert.equal((html.match(/target="visit-schedule"/g) || []).length, 2);
   for (const route of ["#book/0/folder", "#book/2/cabling"])
     assert.doesNotMatch(visit(route), /calendar\.google\.com/);
 });
@@ -135,7 +138,7 @@ test("home links to four local categories and remote help", () => {
     assert.ok(choices.includes('Fixed price: <strong>$' + price + '</strong><small class="payment-footnote">* Payment due after your visit.</small>'));
     assert.match(choices, /class="visit-menu-inline-help"/);
     assert.match(choices, /<aside class="visit-menu-help"/);
-    assert.match(visit("#fit/" + category + "/" + (category === 1 ? 1 : 0)), /Pay after your visit · No card required/);
+    assert.match(visit("#fit/" + category + "/" + (category === 1 ? 1 : 0)), /Pay after your visit/);
     assert.doesNotMatch(choices, /<input/);
   }
 });

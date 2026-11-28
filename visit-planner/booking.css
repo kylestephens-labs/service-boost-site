@@ -1,37 +1,24 @@
 .booking-page .home-tail,.booking-page .site-footer,.booking-page .service-shortcut{display:none!important}
-.booking-page main{max-width:850px;padding:40px 28px 56px;margin:auto}
-.booking-layout{display:block}
-.booking-service{min-width:0}
-.booking-change{display:inline-flex;align-items:center;font-size:.9rem;margin:0 0 16px;min-height:44px}
-.booking-service h1{font-size:2rem;line-height:1.2;letter-spacing:-.025em;margin:0}
-.booking-price{display:flex;justify-content:space-between;gap:14px;align-items:baseline;margin:18px 0 10px}
-.booking-price strong{font-size:1.4rem;line-height:1.2}
-.booking-price span{font-size:1.15rem;font-weight:700}
-.booking-payment{color:#1643b7;font-weight:700;font-size:.9rem;margin:10px 0 20px}
-.booking-important{font-size:.95rem;line-height:1.55;color:#35415a}
-.booking-details{border-top:1px solid #d6deea;border-bottom:1px solid #d6deea;margin-top:20px}
-.booking-details summary{cursor:pointer;padding:16px 0;font-size:.9rem;font-weight:700}
-.booking-details h2{font-size:1rem;margin:18px 0 5px}
-.booking-details p,.booking-details li{font-size:.9rem;line-height:1.6;color:#46526c}
-.booking-details ul{padding-left:20px}
-.booking-calendar{min-width:0;margin-top:16px}
-.booking-options{display:flex;flex-wrap:wrap;gap:12px}
-.booking-options a{display:inline-flex;align-items:center;min-height:44px;padding:10px 16px;background:#204bbd;color:white;border-radius:8px;font-weight:650}
-.booking-options a:focus-visible{outline:3px solid #2057ed;outline-offset:3px}
-.booking-help{font-size:.9rem;margin:12px 0}
-.booking-disabled{background:#edf2fc;padding:24px;line-height:1.6}
+.booking-page main{max-width:1280px;padding:32px 24px 56px;margin:auto}
+.booking-change,.booking-options a,.booking-help a{display:inline-flex;align-items:center;min-height:44px}
+.booking-layout{display:grid;grid-template-columns:minmax(210px,1fr) minmax(0,3fr);background:white;border:1px solid #d6deea;border-radius:16px}
+.booking-service,.booking-calendar{min-width:0;padding:clamp(16px,2vw,32px)}
+.booking-service{border-right:1px solid #d6deea}
+.booking-owner{margin:0 0 12px}
+.booking-name,.booking-calendar h1{margin:0;line-height:1.2}
+.booking-name{font-size:1.35rem}
+.booking-payment{margin:12px 0 16px}
+.booking-payment strong{font-size:1.4rem}
+.booking-details{border-top:1px solid #d6deea}
+.booking-details summary{cursor:pointer;padding:14px 0;font-weight:700}
+.booking-details h2{font-size:1rem;margin:16px 0 4px}
+.booking-details p,.booking-details li,.booking-important{line-height:1.5;color:#46526c}
+.booking-options{display:flex;flex-wrap:wrap;gap:0 16px;margin:8px 0}
+.booking-calendar iframe{width:100%;height:740px;border:0}
+.booking-layout :focus-visible,.booking-change:focus-visible{outline:3px solid #2057ed;outline-offset:2px}
 @media(max-width:760px){
- .booking-page main{padding:24px 16px 36px}
+ .booking-page main{padding:16px 8px 32px}
  .booking-layout{display:block}
- .booking-service{margin-bottom:12px}
- .booking-change{margin-bottom:8px;font-size:.85rem}
- .booking-service h1{font-size:1.6rem}
- .booking-price{margin:12px 0 8px}
- .booking-price strong{font-size:1.25rem}
- .booking-payment{margin:8px 0 12px;font-size:.85rem}
- .booking-important{font-size:.875rem}
- .booking-details{margin-top:12px}
- .booking-details summary{padding:12px 0}
- .booking-calendar{border:0;padding:0}
- .booking-options{flex-direction:column}
+ .booking-service{border-right:0;border-bottom:1px solid #d6deea}
+ .booking-calendar{padding-inline:8px}
 }
