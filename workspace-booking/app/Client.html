@@ -187,7 +187,7 @@ async function load() {
   el('service').textContent=item.name;el('mode').textContent=remote?'Remote Tech Help · Google Meet':'In-home service';
   el('price').textContent='$'+item.price+(remote?' · Up to 60 minutes':'')+' · Pay after '+(remote?'the session':'your visit');
   el('terms').textContent=remote ? item.terms.split('Pay after the session. ').at(-1) : item.terms;
-  el('policy').textContent=remote
+  el('policy').textContent=remote && item.id!=='remote-help'
     ? (item.id==='remote-fix'?'No charge if I can’t fix it or explain the issue and give you a clear next step.':'No charge if I can’t make the agreed improvement or give you a useful plan.')
     : (/unresolved/i.test(item.terms)?'The visit fee applies even if the issue remains unresolved.':'');
   el('policy').hidden=!el('policy').textContent;
@@ -254,7 +254,7 @@ function updateCategoryLink(id) {
     [/^1\/[1-7]$/, 'smart-home', 'smart home'],
     [/^2\/[0-2]$/, 'wifi-networking', 'Wi-Fi & network'],
     [/^3\/0$/, 'phone-tablet-setup', 'mobile devices'],
-    [/^remote-(fix|improve)$/, 'remote-tech-help', 'remote tech help'],
+    [/^remote-(fix|improve|help)$/, 'remote-tech-help', 'remote tech help'],
   ];
   const category = categories.find(([pattern]) => pattern.test(id));
   if (category) {
