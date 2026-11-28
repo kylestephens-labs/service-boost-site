@@ -66,6 +66,8 @@ def clean_details(item, fields):
 
 
 class Preview(SimpleHTTPRequestHandler):
+    shared_claims = None
+
     def __init__(self,*args,**kwargs):
         super().__init__(*args,directory=str(self.site),**kwargs)
 
@@ -155,8 +157,15 @@ class Preview(SimpleHTTPRequestHandler):
             action=data['action']
             if action not in ('book','move','cancel') or bool(token)!=(action!='book'):
                 raise ValueError('Invalid action.')
-            receipt=self.engine.apply(data['key'],service,int(data['start']),details,token,action=='cancel')
-            self.engine.flush()
+            if self.shared_claims is None:
+                receipt=self.engine.apply(data['key'],service,int(data['start']),details,token,action=='cancel')
+                self.engine.flush()
+            elif action == 'book':
+                receipt=self.shared_claims.book(data['key'],service,int(data['start']),details)
+            elif action == 'cancel':
+                receipt=self.shared_claims.cancel(data['key'],service,int(data['start']),token)
+            else:
+                raise CalendarUnavailable()
             return self.json(200,dict(token=receipt))
         except (CalendarUnavailable,TimeoutError):
             self.json(503,{'error':'Calendar unavailable. Retry the same request.'})
