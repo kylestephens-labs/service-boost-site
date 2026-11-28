@@ -2,6 +2,6 @@
   "timeZone": "America/Los_Angeles",
   "runtimeVersion": "V8",
   "dependencies": {"enabledAdvancedServices":[{"userSymbol":"Calendar","version":"v3","serviceId":"calendar"}]},
-  "oauthScopes": ["https://www.googleapis.com/auth/calendar.events.owned","https://www.googleapis.com/auth/calendar.freebusy","https://www.googleapis.com/auth/script.send_mail"],
+  "oauthScopes": ["https://www.googleapis.com/auth/calendar.events.owned","https://www.googleapis.com/auth/calendar.freebusy"],
   "webapp":{"access":"MYSELF","executeAs":"USER_DEPLOYING"}
 }

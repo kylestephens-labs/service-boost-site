@@ -162,12 +162,15 @@ function finishReservation_(cfg,r,prop) {
     const token=r.id+'.'+signed_(cfg.secret,'manage:'+r.id);
     if(r.status==='confirmed')return {token,start:r.start};
     const d=r.delivery,guests=(d.guests||'').split(',').map(x=>x.trim()).filter(Boolean);
+    const base=ScriptApp.getService().getUrl()+'?service='+encodeURIComponent(id);
+    const reference=guests.length ? 'shared.'+r.id : token;
+    const links='\n\nReschedule: '+base+'&action=move#'+reference+'\nCancel: '+base+'&action=cancel#'+reference;
     const interval={start:r.start,end:r.end,window:r.end-r.start===6*HOUR};
     protection_(cfg,r,interval,item);
     let event=findEvent_(cfg,r.id);
     if(!event){
       const eventData={id:r.id,summary:(cfg.live?'':'[QA] ')+item.name+(interval.window?' · 5–8 p.m. Pacific arrival window':''),
-        description:'Service Boost · $'+item.price+' · Pay after '+(item.kind==='local'?'your visit':'the session')+'.',
+        description:'Service Boost · $'+item.price+' · Pay after '+(item.kind==='local'?'your visit':'the session')+'.'+links,
         start:{dateTime:new Date(start).toISOString()},end:{dateTime:new Date(attendedEnd_(item,interval)).toISOString()},
         attendees:[...new Set([d.email,...guests])].map(email=>({email})),guestsCanInviteOthers:false,
         extendedProperties:{private:{service:id,requestDigest:digest,customerName:d.name,phone:d.phone||'',notes1:d.notes.slice(0,950),notes2:d.notes.slice(950,1900),notes3:d.notes.slice(1900)}}};
@@ -177,9 +180,7 @@ function finishReservation_(cfg,r,prop) {
     }
     if(event.status==='cancelled'||event.extendedProperties?.private?.requestDigest!==digest)throw Error('Booking needs review. Please contact Kyle.');
     if(item.kind==='remote'&&!event.hangoutLink)throw Error('Google Meet is being prepared. Retry the same request.');
-    const manage=ScriptApp.getService().getUrl()+'?service='+encodeURIComponent(id)+'#'+token;
-    MailApp.sendEmail(d.email,'Manage your Service Boost appointment','Use your private link to manage this appointment: '+manage);
-    r.status='confirmed';delete r.delivery;cfg.p.setProperty(prop,JSON.stringify(r));
+    r.status='confirmed';r.shared=guests.length>0;delete r.delivery;cfg.p.setProperty(prop,JSON.stringify(r));
     return {token,start:r.start};
 }
 function management_(cfg,token){
@@ -191,7 +192,7 @@ function management_(cfg,token){
 }
 function bookingStatus(token){
   const {r}=management_(settings_(),token);
-  return {service:r.service,item:service_(r.service),start:r.start,status:r.status};
+  return {service:r.service,item:service_(r.service),shared:r.shared,start:r.start,status:r.status};
 }
 function cancelVisit(token){
   return locked_(()=>{

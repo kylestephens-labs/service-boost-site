@@ -3,6 +3,7 @@ const el = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 let service = params.get('service');
 let token = location.hash.slice(1);
+let initialAction='';
 let slots = [], selected = 0, day = '', month, current, item;
 let operationKey = crypto.randomUUID();
 const zone = el('zone');
@@ -123,6 +124,8 @@ async function readMonth() {
 async function load() {
   if(token){
     const r=await rpc('bookingStatus',token);
+    el('key-note').hidden=!r.shared || r.status!=='confirmed';
+    if(r.shared)el('private-code').textContent=token.split('.')[1];
     service=r.service;item=r.item;current={active:r.status==='confirmed',delivered:true,start:r.start/1000};
   }
   month ??=new Date(dateKey(current?.start || Date.now()/1000).slice(0,7)+'-01T12:00:00Z');
@@ -177,4 +180,23 @@ el('change').onclick=()=>{display('calendar');draw();el('rows').querySelector('[
 el('move').onclick=async()=>{try{await readMonth();showCalendar();}catch(e){el('error').textContent=e.message;}};
 el('cancel').onclick=()=>{el('confirmCancel').hidden=false;el('confirmCancel').focus();};
 el('confirmCancel').onclick=()=>submit('cancel');
-google.script.url.getLocation(loc=>{service=loc.parameter.service;token=loc.hash;load().catch(e=>{el('error').textContent=e.message;});});
+async function openBooking() {
+  try {
+    await load();
+    if(current?.active && initialAction==='move')await el('move').onclick();
+    if(current?.active && initialAction==='cancel')el('cancel').onclick();
+    initialAction='';
+  } catch(e){el('error').textContent=e.message;}
+}
+google.script.url.getLocation(loc=>{
+  service=loc.parameter.service;token=loc.hash;initialAction=loc.parameter.action;
+  if(token.startsWith('shared.')){
+    const id=token.slice(7);
+    el('unlock').hidden=false;
+    el('unlock').onsubmit=async e=>{
+      e.preventDefault();token=id+'.'+el('unlock').elements.code.value.trim();
+      try{await rpc('bookingStatus',token);}catch{el('error').textContent='Check your private booking code.';return;}
+      el('unlock').hidden=true;el('error').textContent='';await openBooking();
+    };
+  }else openBooking();
+});

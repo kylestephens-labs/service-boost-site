@@ -82,7 +82,7 @@ test('remote Meet delay is retried durably without duplicating the reservation',
   [...f.events.values()][0].hangoutLink='https://example.invalid/meet';
   f.call('recoverBookings_()');
   const result=f.call(request);
-  assert.equal(f.messages.length,1);assert.equal(f.events.size,1);
+  assert.equal(f.messages.length,0);assert.match([...f.events.values()][0].description,/Reschedule: .*action=move#/);assert.equal(f.events.size,1);
   f.call('cancelVisit('+JSON.stringify(result.token)+')');
   assert.equal(f.events.size,0);
 });
