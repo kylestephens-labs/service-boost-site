@@ -123,10 +123,10 @@ async function readMonth() {
 async function load() {
   if(token){
     const r=await rpc('bookingStatus',token);
-    service=r.service;current={active:r.status==='confirmed',delivered:true,start:r.start/1000};
+    service=r.service;item=r.item;current={active:r.status==='confirmed',delivered:true,start:r.start/1000};
   }
   month ??=new Date(dateKey(current?.start || Date.now()/1000).slice(0,7)+'-01T12:00:00Z');
-  await readMonth();
+  if(!current)await readMonth();
   const remote=item.kind==='remote';
   el('service').textContent=item.name;el('mode').textContent=remote?'Remote Tech Help · Google Meet':'In-home service';
   el('price').textContent='$'+item.price+(remote?' · Up to 60 minutes':'')+' · Pay after '+(remote?'the session':'your visit');
@@ -174,7 +174,7 @@ zone.onchange=()=>{
 };
 el('intake').onsubmit=e=>{e.preventDefault();submit('book');};
 el('change').onclick=()=>{display('calendar');draw();el('rows').querySelector('[aria-pressed=true]')?.focus();};
-el('move').onclick=showCalendar;
+el('move').onclick=async()=>{try{await readMonth();showCalendar();}catch(e){el('error').textContent=e.message;}};
 el('cancel').onclick=()=>{el('confirmCancel').hidden=false;el('confirmCancel').focus();};
 el('confirmCancel').onclick=()=>submit('cancel');
 google.script.url.getLocation(loc=>{service=loc.parameter.service;token=loc.hash;load().catch(e=>{el('error').textContent=e.message;});});

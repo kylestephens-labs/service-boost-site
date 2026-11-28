@@ -98,10 +98,29 @@ function attendedEnd_(item,slot) {
   if(item.kind==='remote')return slot.end;
   return slot.start+(slot.window ? 3 : 2)*HOUR;
 }
+function holdId_(r,slot) {
+  return slot.holdId || r.holdId || eventId_('protection:'+r.id);
+}
+function clearHold_(cfg,r,id) {
+  const hold=findEvent_(cfg,id);
+  if(!hold || hold.status==='cancelled')return;
+  if(hold.extendedProperties?.private?.reservation!==r.id)throw Error('Calendar protection needs review.');
+  Calendar.Events.remove(cfg.calendar,id,{sendUpdates:'none'});
+}
+function limitNewRequests_(cfg,email) {
+  const hour=Math.floor(Date.now()/HOUR);
+  const key='requests:'+hour;
+  const counts=JSON.parse(cfg.p.getProperty(key)||'{"total":0}');
+  const address=signed_(cfg.secret,email.trim().toLowerCase());
+  if(counts.total>=12 || (counts[address]||0)>=3)throw Error('Too many booking requests. Please try again later or ask Kyle.');
+  counts.total++;
+  counts[address]=(counts[address]||0)+1;
+  cfg.p.setProperty(key,JSON.stringify(counts));
+}
 function protection_(cfg,r,slot,item) {
   const begin=attendedEnd_(item,slot);
   if(begin===slot.end)return;
-  const id=eventId_('protection:'+r.id);
+  const id=holdId_(r,slot);
   const interval={start:{dateTime:new Date(begin).toISOString()},end:{dateTime:new Date(slot.end).toISOString()}};
   const existing=findEvent_(cfg,id);
   if(existing){
@@ -126,14 +145,23 @@ function reserve(id,start,input,key) {
     let r=JSON.parse(cfg.p.getProperty(prop)||'null');
     if(r && r.digest!==digest)throw Error('Request changed. Choose a time again.');
     if(!r){
+      limitNewRequests_(cfg,d.email);
       const slot=openings_(cfg,item,start,start+1).find(s=>s.start===start);
       if(!slot)throw Error('That time is unavailable. Please choose another.');
-      r={id:eventId_(key),service:id,digest,start,end:slot.end,status:'pending'};
+      r={id:eventId_(key),service:id,digest,start,end:slot.end,status:'pending',created:Date.now(),delivery:d};
       cfg.p.setProperty(prop,JSON.stringify(r));
     }
+    if(r.status==='pending' && r.attempted && !findEvent_(cfg,r.id))throw Error('Checking the previous booking request. Please contact Kyle before trying again.');
+    if(r.status==='pending'){r.attempted=true;cfg.p.setProperty(prop,JSON.stringify(r));}
+    return finishReservation_(cfg,r,prop);
+  });
+}
+function finishReservation_(cfg,r,prop) {
+    const {service:id,start,digest}=r,item=service_(id);
     if(r.status==='cancelled')throw Error('This booking was cancelled.');
     const token=r.id+'.'+signed_(cfg.secret,'manage:'+r.id);
     if(r.status==='confirmed')return {token,start:r.start};
+    const d=r.delivery,guests=(d.guests||'').split(',').map(x=>x.trim()).filter(Boolean);
     const interval={start:r.start,end:r.end,window:r.end-r.start===6*HOUR};
     protection_(cfg,r,interval,item);
     let event=findEvent_(cfg,r.id);
@@ -151,9 +179,8 @@ function reserve(id,start,input,key) {
     if(item.kind==='remote'&&!event.hangoutLink)throw Error('Google Meet is being prepared. Retry the same request.');
     const manage=ScriptApp.getService().getUrl()+'?service='+encodeURIComponent(id)+'#'+token;
     MailApp.sendEmail(d.email,'Manage your Service Boost appointment','Use your private link to manage this appointment: '+manage);
-    r.status='confirmed';cfg.p.setProperty(prop,JSON.stringify(r));
+    r.status='confirmed';delete r.delivery;cfg.p.setProperty(prop,JSON.stringify(r));
     return {token,start:r.start};
-  });
 }
 function management_(cfg,token){
   const [id,sig]=String(token).split('.');
@@ -164,7 +191,7 @@ function management_(cfg,token){
 }
 function bookingStatus(token){
   const {r}=management_(settings_(),token);
-  return {service:r.service,start:r.start,status:r.status};
+  return {service:r.service,item:service_(r.service),start:r.start,status:r.status};
 }
 function cancelVisit(token){
   return locked_(()=>{
@@ -176,11 +203,8 @@ function cancelVisit(token){
       Calendar.Events.remove(cfg.calendar,r.id,{sendUpdates:'all'});
     }
     if(service_(r.service).kind==='local'){
-      const id=eventId_('protection:'+r.id),hold=findEvent_(cfg,id);
-      if(hold&&hold.status!=='cancelled'){
-        if(hold.extendedProperties?.private?.reservation!==r.id)throw Error('Calendar protection needs review.');
-        Calendar.Events.remove(cfg.calendar,id,{sendUpdates:'none'});
-      }
+      clearHold_(cfg,r,holdId_(r,{}));
+      if(r.move)clearHold_(cfg,r,r.move.holdId);
     }
     r.status='cancelled';cfg.p.setProperty(prop,JSON.stringify(r));return true;
   });
@@ -198,7 +222,7 @@ function moveVisit(token,start) {
     if(!r.move){
       const slot=openings_(cfg,service_(r.service),start,start+1).find(s=>s.start===start);
       if(!slot)throw Error('That time is unavailable.');
-      r.move=slot;
+      r.move={...slot,holdId:Utilities.getUuid().replace(/-/g,'')};
       cfg.p.setProperty(prop,JSON.stringify(r));
     }
     const item=service_(r.service);
@@ -207,7 +231,39 @@ function moveVisit(token,start) {
       Calendar.Events.patch({summary:(cfg.live?'':'[QA] ')+item.name+(r.move.window?' · 5–8 p.m. Pacific arrival window':''),start:{dateTime:new Date(start).toISOString()},end:{dateTime:new Date(attendedEnd_(item,r.move)).toISOString()}},
         cfg.calendar,r.id,{sendUpdates:'all'});
     }
-    r.start=start;r.end=r.move.end;delete r.move;
+    if(item.kind==='local')clearHold_(cfg,r,holdId_(r,{}));
+    r.start=start;r.end=r.move.end;r.holdId=r.move.holdId;delete r.move;
     cfg.p.setProperty(prop,JSON.stringify(r));return true;
   });
+}
+
+// Install a time-driven trigger on this private function in each enabled deployment.
+function recoverBookings_() {
+  const cfg=settings_(),entries=Object.entries(cfg.p.getProperties());
+  let failures=0;
+  for(const [key,value] of entries) {
+    if(key.startsWith('requests:') && Number(key.slice(9)) < Math.floor(Date.now()/HOUR)-1)cfg.p.deleteProperty(key);
+    if(!key.startsWith('reservation:'))continue;
+    const snapshot=JSON.parse(value);
+    try {
+      if(snapshot.move && snapshot.status==='confirmed'){
+        moveVisit(snapshot.id+'.'+signed_(cfg.secret,'manage:'+snapshot.id),snapshot.move.start);
+      }
+      if(snapshot.status==='pending')locked_(()=>{
+      const r=JSON.parse(cfg.p.getProperty(key)||'null');
+      if(!r || r.status!=='pending')return;
+      // An insert may have timed out after Google committed. Reconcile by stable ID.
+      const existing=findEvent_(cfg,r.id);
+      if(existing)finishReservation_(cfg,r,key);
+      else if(Date.now()-(r.created||Date.now())>15*60000){
+        if(service_(r.service).kind==='local')clearHold_(cfg,r,holdId_(r,{}));
+        r.status='cancelled';delete r.delivery;cfg.p.setProperty(key,JSON.stringify(r));
+      }
+      });
+    } catch {
+      // Leave the durable operation queued for the next run. Never log booking details.
+      failures++;
+    }
+  }
+  if(failures)throw Error('Booking recovery has unfinished operations.');
 }

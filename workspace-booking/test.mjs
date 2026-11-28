@@ -54,3 +54,49 @@ test('evening invitation ends at 8 p.m.; private busy tail runs through 11',()=>
   assert.equal(holds[0].event.attendees,undefined);
   assert.equal(holds[0].options.sendUpdates,'none');
 });
+
+function bookingFixture() {
+  const context=runtime({qa:{busy:[]}});
+  const events=new Map(),values=new Map(),messages=[];
+  const properties={
+    getProperty:k=>values.get(k),setProperty:(k,v)=>values.set(k,v),
+    deleteProperty:k=>values.delete(k),getProperties:()=>Object.fromEntries(values)
+  };
+  Object.assign(context,{properties,ScriptApp:{getService:()=>({getUrl:()=>'https://example.invalid/exec'})},
+    MailApp:{sendEmail:(...args)=>messages.push(args)}});
+  context.Calendar.Events={
+    get:(_,id)=>{if(!events.has(id))throw Error('Not found');return events.get(id)},
+    insert:e=>{if(events.has(e.id))throw Error('Duplicate ID');events.set(e.id,e);return e},
+    patch:(patch,_,id)=>Object.assign(events.get(id),patch),remove:(_,id)=>events.delete(id)
+  };
+  context.Utilities.getUuid=()=> 'b'.repeat(32);
+  run("settings_=()=>({p:properties,calendar:'qa',conflicts:['qa'],secret:'qa',live:true});locked_=fn=>fn();signed_=(s,v)=>v.replace(/[^a-z0-9]/gi,'');eventId_=k=>k.startsWith('protection')?'c'.repeat(64):'a'.repeat(64);",context);
+  return {context,events,values,messages,call:(expr)=>vm.runInContext(expr,context)};
+}
+test('remote Meet delay is retried durably without duplicating the reservation',()=>{
+  const f=bookingFixture();
+  const start=f.call("candidates_({kind:'remote'},Date.now(),Date.now()+7*86400000,Date.now())[0].start");
+  const request=`reserve('remote-fix',${start},{name:'QA',email:'qa@example.invalid',notes:'example'},'12345678-1234-1234-1234-123456789012')`;
+  assert.throws(()=>f.call(request),/Meet/);
+  assert.equal(f.events.size,1);
+  [...f.events.values()][0].hangoutLink='https://example.invalid/meet';
+  f.call('recoverBookings_()');
+  const result=f.call(request);
+  assert.equal(f.messages.length,1);assert.equal(f.events.size,1);
+  f.call('cancelVisit('+JSON.stringify(result.token)+')');
+  assert.equal(f.events.size,0);
+});
+test('failed customer-event move protects both slots until the same move completes',()=>{
+  const f=bookingFixture();
+  const slots=f.call("candidates_({kind:'local'},Date.now(),Date.now()+8*86400000,Date.now())");
+  const result=f.call(`reserve('0/2',${slots[0].start},{name:'QA',email:'qa@example.invalid',address:'test',phone:'test'},'12345678-1234-1234-1234-123456789012')`);
+  const move=`moveVisit(${JSON.stringify(result.token)},${slots.at(-1).start})`;
+  const patch=f.context.Calendar.Events.patch;
+  f.context.Calendar.Events.patch=()=>{throw Error('temporary failure')};
+  assert.throws(()=>f.call(move),/temporary/);
+  assert.equal(f.events.size,3);
+  f.context.Calendar.Events.patch=patch;f.call(move);
+  assert.equal(f.events.size,2);
+  f.call('cancelVisit('+JSON.stringify(result.token)+')');
+  assert.equal(f.events.size,0);
+});
