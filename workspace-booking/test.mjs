@@ -77,7 +77,7 @@ test('remote Meet delay is retried durably without duplicating the reservation',
   const f=bookingFixture();
   const start=f.call("candidates_({kind:'remote'},Date.now(),Date.now()+7*86400000,Date.now())[0].start");
   const request=`reserve('remote-fix',${start},{name:'QA',email:'qa@example.invalid',notes:'example'},'12345678-1234-1234-1234-123456789012')`;
-  assert.throws(()=>f.call(request),/Meet/);
+  const pending=f.call(request);assert.equal(f.call('bookingStatus('+JSON.stringify(pending.token)+')').status,'pending');
   assert.equal(f.events.size,1);
   [...f.events.values()][0].hangoutLink='https://example.invalid/meet';
   f.call('recoverBookings_()');
@@ -99,4 +99,14 @@ test('failed customer-event move protects both slots until the same move complet
   assert.equal(f.events.size,2);
   f.call('cancelVisit('+JSON.stringify(result.token)+')');
   assert.equal(f.events.size,0);
+});
+test('interrupted cancellation releases the remaining hold during recovery',()=>{
+  const f=bookingFixture();
+  const start=f.call("candidates_({kind:'local'},Date.now(),Date.now()+8*86400000,Date.now())[0].start");
+  const result=f.call(`reserve('0/2',${start},{name:'QA',email:'qa@example.invalid',address:'test',phone:'test'},'12345678-1234-1234-1234-123456789012')`);
+  const remove=f.context.Calendar.Events.remove;
+  f.context.Calendar.Events.remove=(calendar,id)=>{if(id.startsWith('c'))throw Error('timeout');remove(calendar,id)};
+  assert.throws(()=>f.call('cancelVisit('+JSON.stringify(result.token)+')'),/timeout/);
+  assert.equal(f.events.size,1);
+  f.context.Calendar.Events.remove=remove;f.call('recoverBookings_()');assert.equal(f.events.size,0);
 });

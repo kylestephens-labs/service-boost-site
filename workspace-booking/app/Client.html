@@ -105,11 +105,11 @@ function showCalendar() {
 }
 function showReceipt() {
   display('receipt');el('receipt-time').textContent=appointment(current.start);
-  el('outcome').textContent=current.active?'Appointment confirmed':'Appointment cancelled';
+  el('outcome').textContent=({pending:'Preparing your Google Meet appointment',confirmed:'Appointment confirmed',cancelling:'Cancelling your appointment',cancelled:'Appointment cancelled'})[current.status];
   el('delivery').textContent=current.active?'Keep this page link to manage your appointment.':'The time is available again.';
 
   if(!current.delivered) el('delivery').textContent='Your request is saved. Confirmation delivery is pending.';
-  el('cancel').hidden=el('move').hidden=!current.active;el('confirmCancel').hidden=true;
+  el('move').hidden=!current.active;el('cancel').hidden=!['confirmed','pending'].includes(current.status);el('confirmCancel').hidden=true;
 }
 function rpc(name,...args) {
   return new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[name](...args));
@@ -124,9 +124,9 @@ async function readMonth() {
 async function load() {
   if(token){
     const r=await rpc('bookingStatus',token);
-    el('key-note').hidden=!r.shared || r.status!=='confirmed';
+    el('key-note').hidden=!r.shared || r.status==='cancelled';
     if(r.shared)el('private-code').textContent=token.split('.')[1];
-    service=r.service;item=r.item;current={active:r.status==='confirmed',delivered:true,start:r.start/1000};
+    service=r.service;item=r.item;current={active:r.status==='confirmed',status:r.status,delivered:r.status==='confirmed'||r.status==='cancelled',start:r.start/1000};
   }
   month ??=new Date(dateKey(current?.start || Date.now()/1000).slice(0,7)+'-01T12:00:00Z');
   if(!current)await readMonth();

@@ -148,7 +148,7 @@ function reserve(id,start,input,key) {
       limitNewRequests_(cfg,d.email);
       const slot=openings_(cfg,item,start,start+1).find(s=>s.start===start);
       if(!slot)throw Error('That time is unavailable. Please choose another.');
-      r={id:eventId_(key),service:id,digest,start,end:slot.end,status:'pending',created:Date.now(),delivery:d};
+      r={id:eventId_(key),service:id,digest,start,end:slot.end,status:'pending',created:Date.now(),shared:guests.length>0,delivery:d};
       cfg.p.setProperty(prop,JSON.stringify(r));
     }
     if(r.status==='pending' && r.attempted && !findEvent_(cfg,r.id))throw Error('Checking the previous booking request. Please contact Kyle before trying again.');
@@ -158,7 +158,7 @@ function reserve(id,start,input,key) {
 }
 function finishReservation_(cfg,r,prop) {
     const {service:id,start,digest}=r,item=service_(id);
-    if(r.status==='cancelled')throw Error('This booking was cancelled.');
+    if(['cancelled','cancelling'].includes(r.status))throw Error('This booking was cancelled.');
     const token=r.id+'.'+signed_(cfg.secret,'manage:'+r.id);
     if(r.status==='confirmed')return {token,start:r.start};
     const d=r.delivery,guests=(d.guests||'').split(',').map(x=>x.trim()).filter(Boolean);
@@ -179,7 +179,7 @@ function finishReservation_(cfg,r,prop) {
       event=Calendar.Events.insert(eventData,cfg.calendar,{sendUpdates:'all',conferenceDataVersion:1});
     }
     if(event.status==='cancelled'||event.extendedProperties?.private?.requestDigest!==digest)throw Error('Booking needs review. Please contact Kyle.');
-    if(item.kind==='remote'&&!event.hangoutLink)throw Error('Google Meet is being prepared. Retry the same request.');
+    if(item.kind==='remote'&&!event.hangoutLink)return {token,start:r.start};
     r.status='confirmed';r.shared=guests.length>0;delete r.delivery;cfg.p.setProperty(prop,JSON.stringify(r));
     return {token,start:r.start};
 }
@@ -198,6 +198,7 @@ function cancelVisit(token){
   return locked_(()=>{
     const cfg=settings_(),{r,prop}=management_(cfg,token);
     if(r.status==='cancelled')return true;
+    r.status='cancelling';cfg.p.setProperty(prop,JSON.stringify(r));
     const event=findEvent_(cfg,r.id);
     if(event&&event.status!=='cancelled'){
       if(event.extendedProperties?.private?.requestDigest!==r.digest)throw Error('Please contact Kyle.');
@@ -207,13 +208,15 @@ function cancelVisit(token){
       clearHold_(cfg,r,holdId_(r,{}));
       if(r.move)clearHold_(cfg,r,r.move.holdId);
     }
-    r.status='cancelled';cfg.p.setProperty(prop,JSON.stringify(r));return true;
+    r.status='cancelled';delete r.delivery;cfg.p.setProperty(prop,JSON.stringify(r));return true;
   });
 }
-function moveVisit(token,start) {
+function moveVisit(token,start){return moveVisit_(token,start,null);}
+function moveVisit_(token,start,expectedHold) {
   if (!Number.isSafeInteger(start)) throw Error('Invalid appointment time.');
   return locked_(()=>{
     const cfg=settings_(),{r,prop}=management_(cfg,token);
+    if(expectedHold && (r.status!=='confirmed' || r.move?.holdId!==expectedHold))return;
     if(r.status!=='confirmed')throw Error('Please contact Kyle to change this appointment.');
     if(r.start===start && !r.move)return true;
     if(r.move && r.move.start!==start)throw Error('A previous change is still processing.');
@@ -248,8 +251,9 @@ function recoverBookings_() {
     const snapshot=JSON.parse(value);
     try {
       if(snapshot.move && snapshot.status==='confirmed'){
-        moveVisit(snapshot.id+'.'+signed_(cfg.secret,'manage:'+snapshot.id),snapshot.move.start);
+        moveVisit_(snapshot.id+'.'+signed_(cfg.secret,'manage:'+snapshot.id),snapshot.move.start,snapshot.move.holdId);
       }
+      if(snapshot.status==='cancelling')cancelVisit(snapshot.id+'.'+signed_(cfg.secret,'manage:'+snapshot.id));
       if(snapshot.status==='pending')locked_(()=>{
       const r=JSON.parse(cfg.p.getProperty(key)||'null');
       if(!r || r.status!=='pending')return;
