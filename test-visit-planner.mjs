@@ -64,7 +64,7 @@ test("legacy visit links retain their selection and enter one non-sending review
     assert.match(html, /Printer Setup &amp; Troubleshooting/);
     assert.match(html, /<strong>\$229<\/strong>/);
     assert.match(html, /Review preview: scheduling is disabled/);
-    assert.doesNotMatch(html, /<iframe|booking-widget|href="https:\/\/calendly|Step \d|Send visit request/);
+    assert.doesNotMatch(html, /<iframe|booking-widget|href="https:\/\/calendar\.google|Step \d|Send visit request/);
     if (route !== "book") assert.equal(run("location.hash"), "#book/0/1");
   }
   for (const route of ["#book/0/999", "#book/1/doorbell-installation", "#book/2/cabling", "#book/0/folder", "#book/-1/0", "#book/0/NaN"]) {
@@ -72,60 +72,23 @@ test("legacy visit links retain their selection and enter one non-sending review
   }
 });
 
-test("booking leaves all invitee answers blank and retains service tracking", () => {
+test("eligible visits offer distinct Google schedules with the selected service", () => {
   const {visit, run} = planner();
-  visit("#book/0/2");
-  const url = new URL(run('bookingURL("0/2")'));
-  assert.equal(url.origin, "https://calendly.com");
-  assert.equal(url.pathname, "/kyle-serviceboost/book-a-visit");
-  assert.equal(url.searchParams.get("utm_content"), "service-0-2");
-  assert.equal(url.searchParams.get("timezone"), "America/Los_Angeles");
-  for (let i = 1; i <= 10; i++) assert.equal(url.searchParams.has("a" + i), false);
-  assert.equal(url.searchParams.has("email"), false);
-  assert.equal(url.searchParams.has("name"), false);
-  const html = visit("#book/0/2");
-  assert.ok(html.indexOf("even if the issue remains unresolved") < html.indexOf("<details"));
-});
-
-test("delayed provider load cannot mount an obsolete service and failures keep a help path", async () => {
-  const {run, visit, main} = planner();
-  const mounts = [];
-  const scripts = [];
-  let host;
   run("window.SERVICE_BOOST_BOOKING_ENABLED = true");
-  run("document.createElement = () => ({remove(){}})");
-  run("document.head = {append: script => captureScript(script)}");
-  run("document.getElementById = () => currentHost()");
-  // Inject only the external boundary; use the real loading and rendering code.
-  run("window.Calendly = undefined");
-  const first = {isConnected:true, replaceChildren(){}, querySelector(){return null;}};
-  host = first;
-  // Functions supplied through the VM retain access to the test's boundary state.
-  run("globalThis.installHooks = (capture, current) => {globalThis.captureScript=capture;globalThis.currentHost=current}");
-  run("installHooks")((script) => scripts.push(script), () => host);
-  visit("#book/0/0");
-  first.isConnected = false;
-  host = {isConnected:true, replaceChildren(){}, querySelector(){return null;}};
-  visit("#book/0/1");
-  assert.equal(scripts.length, 1);
-  run("window.Calendly = {initInlineWidget: options => captureMount(options)}");
-  run("globalThis.installMount = callback => {globalThis.captureMount=callback}");
-  run("installMount")(options => mounts.push(options));
-  scripts[0].onload();
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(mounts.length, 1);
-  assert.equal(mounts[0].parentElement, host);
-  assert.equal(new URL(mounts[0].url).searchParams.get("utm_content"), "service-0-1");
-  assert.equal(new URL(mounts[0].url).searchParams.has("a3"), false);
-  assert.equal(mounts[0].prefill, undefined);
-  assert.match(main.innerHTML, /Open scheduling in a new tab/);
-
-  run("window.Calendly = undefined; calendlyScript = null");
-  visit("#book/3/0");
-  scripts[1].onerror();
-  await new Promise(resolve => setImmediate(resolve));
-  assert.match(host.innerHTML, /calendar could not load/);
-  assert.match(main.innerHTML, /Not sure\? Ask Kyle/);
+  const html = visit("#book/0/2");
+  const links = [...html.matchAll(/href="(https:[^"]+)"/g)].map(match => new URL(match[1].replaceAll("&amp;", "&")));
+  assert.equal(links.length, 2);
+  assert.notEqual(links[0].pathname, links[1].pathname);
+  for (const url of links) {
+    assert.equal(url.origin, "https://calendar.google.com");
+    assert.match(url.pathname, /^\/calendar\/appointments\/schedules\/AcZ/);
+    assert.equal(url.searchParams.get("utm_content"), "service-0-2");
+  }
+  assert.match(html, /Monday or Thursday evening/);
+  assert.match(html, /Not sure\? Ask Kyle/);
+  assert.ok(html.indexOf("even if the issue remains unresolved") < html.indexOf("<details"));
+  for (const route of ["#book/0/folder", "#book/2/cabling"])
+    assert.doesNotMatch(visit(route), /calendar\.google\.com/);
 });
 
 test("all packages display approved prices and only the computer lesson booking retains its duration", () => {
