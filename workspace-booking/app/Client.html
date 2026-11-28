@@ -1,0 +1,180 @@
+'use strict';
+const el = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+let service = params.get('service');
+let token = location.hash.slice(1);
+let slots = [], selected = 0, day = '', month, current, item;
+let operationKey = crypto.randomUUID();
+const zone = el('zone');
+const zones = new Set(['America/Los_Angeles', Intl.DateTimeFormat().resolvedOptions().timeZone,
+  ...(Intl.supportedValuesOf?.('timeZone') || ['America/New_York','America/Chicago','Europe/London','UTC'])]);
+const zoneNames = {
+  'America/Los_Angeles':'Pacific Time (US & Canada)', 'America/New_York':'Eastern Time (US & Canada)',
+  'America/Denver':'Mountain Time (US & Canada)', 'America/Chicago':'Central Time (US & Canada)',
+  'UTC':'Coordinated Universal Time'
+};
+for (const name of zones) zone.add(new Option(zoneNames[name] || name.replaceAll('_',' ').replace('/', ' / '),name));
+zone.value = 'America/Los_Angeles';
+const format = (stamp, options) => new Intl.DateTimeFormat('en-US',{timeZone:zone.value,...options}).format(stamp * 1000);
+function arrivalLabel(stamp) {
+  const weekday = new Intl.DateTimeFormat('en-US', {timeZone:'America/Los_Angeles',weekday:'short'}).format(stamp*1000);
+  const clock = {hour:'numeric', minute:'2-digit'};
+  if (item.kind === 'local' && ['Mon','Thu'].includes(weekday)) {
+    return format(stamp, clock) + '–' + format(stamp + 3*3600, clock) + ' arrival window';
+  }
+  return format(stamp, clock);
+}
+function appointment(stamp) {
+  return format(stamp,{weekday:'long',month:'long',day:'numeric',year:'numeric'}) + ' · ' + arrivalLabel(stamp) +
+    ' · ' + zone.selectedOptions[0].text;
+}
+function dateKey(stamp) {
+  const parts = new Intl.DateTimeFormat('en-US',{timeZone:zone.value,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(stamp*1000);
+  const val = type => parts.find(p => p.type===type).value;
+  return [val('year'),val('month'),val('day')].join('-');
+}
+function display(id) {
+  for (const section of ['calendar','intake','receipt']) el(section).hidden = section !== id;
+  el(id).querySelector('h2')?.focus({preventScroll:true});
+}
+function button(text, action) {
+  const b = document.createElement('button');
+  b.type='button'; b.textContent=text; b.onclick=action; return b;
+}
+function draw() {
+  const prefix = month.toISOString().slice(0,7);
+  const first = new Date(prefix+'-01T12:00:00Z');
+  const available = new Set(slots.map(dateKey));
+  el('month').textContent = first.toLocaleDateString('en-US',{month:'long',year:'numeric',timeZone:'UTC'});
+  el('prev').disabled = prefix<=dateKey(Date.now()/1000).slice(0,7);
+  el('next').disabled = prefix>=dateKey(Date.now()/1000+120*86400).slice(0,7);
+  const grid=el('days');grid.replaceChildren();
+  for (const label of ['Su','Mo','Tu','We','Th','Fr','Sa']) {
+    const span=document.createElement('span');span.textContent=label;grid.append(span);
+  }
+  for (let i=0;i<first.getUTCDay();i++) grid.append(document.createElement('span'));
+  const date=new Date(first);
+  while(date.getUTCMonth()===first.getUTCMonth()) {
+    const key=date.toISOString().slice(0,10), number=date.getUTCDate();
+    const node=available.has(key)?button(number,()=>{day=key;selected=0;draw();el('times-title').focus();}):document.createElement('span');
+    node.textContent=number;
+    if(node.tagName==='BUTTON') {
+      node.setAttribute('aria-label',date.toLocaleDateString('en-US',{dateStyle:'full',timeZone:'UTC'}));
+      node.setAttribute('aria-pressed',String(day===key));
+    }
+    grid.append(node);date.setUTCDate(number+1);
+  }
+  const times = el('times');
+  times.hidden = !day && slots.length > 0;
+  el('times-title').textContent = day
+    ? new Date(day+'T12:00:00Z').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',timeZone:'UTC'})
+    : 'No times available';
+  const rows = el('rows');
+  rows.replaceChildren();
+  for (const stamp of slots.filter(s=>dateKey(s)===day)) {
+    const row = document.createElement('div');
+    row.className = 'time-row';
+    const slot = button(arrivalLabel(stamp),()=>{
+      selected = stamp;
+      operationKey = crypto.randomUUID();
+      draw();
+      el('continue').focus();
+    });
+    slot.setAttribute('aria-pressed',String(stamp===selected));
+    row.append(slot);
+    if (stamp===selected) {
+      const next = button(token?'Confirm new time':'Next',()=>{
+        if (token) return submit('move');
+        el('chosen').textContent = appointment(selected);
+        display('intake');
+        el('intake').querySelector('h2').scrollIntoView({block:'nearest'});
+      });
+      next.id = 'continue';
+      next.className = 'primary';
+      next.setAttribute('aria-label',next.textContent+' · '+arrivalLabel(stamp));
+      row.append(next);
+    }
+    rows.append(row);
+  }
+}
+function showCalendar() {
+  const ref=current?.start || Date.now()/1000;
+  month ??=new Date(dateKey(ref).slice(0,7)+'-01T12:00:00Z');
+  selected=0;day='';display('calendar');draw();
+}
+function showReceipt() {
+  display('receipt');el('receipt-time').textContent=appointment(current.start);
+  el('outcome').textContent=current.active?'Appointment confirmed':'Appointment cancelled';
+  el('delivery').textContent=current.active?'Keep this page link to manage your appointment.':'The time is available again.';
+
+  if(!current.delivered) el('delivery').textContent='Your request is saved. Confirmation delivery is pending.';
+  el('cancel').hidden=el('move').hidden=!current.active;el('confirmCancel').hidden=true;
+}
+function rpc(name,...args) {
+  return new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[name](...args));
+}
+let generation=0;
+async function readMonth() {
+  const version=++generation;
+  const data=await rpc('availability',service,month.toISOString().slice(0,7));
+  if(version!==generation)return;
+  item=data.item;slots=data.slots.map(s=>s.start/1000);draw();
+}
+async function load() {
+  if(token){
+    const r=await rpc('bookingStatus',token);
+    service=r.service;current={active:r.status==='confirmed',delivered:true,start:r.start/1000};
+  }
+  month ??=new Date(dateKey(current?.start || Date.now()/1000).slice(0,7)+'-01T12:00:00Z');
+  await readMonth();
+  const remote=item.kind==='remote';
+  el('service').textContent=item.name;el('mode').textContent=remote?'Remote Tech Help · Google Meet':'In-home service';
+  el('price').textContent='$'+item.price+(remote?' · Up to 60 minutes':'')+' · Pay after '+(remote?'the session':'your visit');
+  el('terms').textContent=remote ? item.terms.split('Pay after the session. ').at(-1) : item.terms;
+  el('policy').textContent=remote
+    ? (item.id==='remote-fix'?'No charge if I can’t fix it or explain the issue and give you a clear next step.':'No charge if I can’t make the agreed improvement or give you a useful plan.')
+    : (/unresolved/i.test(item.terms)?'The visit fee applies even if the issue remains unresolved.':'');
+  el('policy').hidden=!el('policy').textContent;
+  el('required-mark').hidden=!remote;
+  el('limits').textContent=[item.included?.replaceAll('|',', '),item.exclusions,item.prep,item.cities].filter(Boolean).join(' ');
+  el('when').textContent=remote?'Choose a date and time':'Choose an arrival time';
+  el('question').textContent=remote?'What would you like help fixing or improving?':'Anything else Kyle should know? (optional)';
+  el('local').hidden=remote;el('guests').hidden=!remote;
+  for(const input of el('local').querySelectorAll('input')) input.required=!remote;
+  el('intake').elements.notes.required=remote;
+  if(current)showReceipt();else showCalendar();
+}
+let busy=false;
+async function submit(action) {
+  if(busy)return;busy=true;el('error').textContent='';
+  try {
+    if(action==='book'){
+      const result=await rpc('reserve',service,selected*1000,Object.fromEntries(new FormData(el('intake'))),operationKey);
+      token=result.token;google.script.history.replace(null,{service},token);
+    } else if(action==='move') await rpc('moveVisit',token,selected*1000);
+    else await rpc('cancelVisit',token);
+    operationKey=crypto.randomUUID();await load();
+  } catch(e){el('error').textContent=e.message;} finally{busy=false;}
+}
+for(const [id,step] of [['prev',-1],['next',1]])el(id).onclick=()=>{
+  month.setUTCMonth(month.getUTCMonth()+step);selected=0;day='';slots=[];draw();readMonth().catch(e=>el('error').textContent=e.message);
+};
+let previousZone=zone.value;
+zone.onchange=()=>{
+  const newZone=zone.value;
+  zone.value=previousZone;
+  const anchor=selected || slots.find(stamp=>dateKey(stamp)===day);
+  zone.value=newZone;
+  previousZone=newZone;
+  if(anchor){
+    day=dateKey(anchor);
+    month=new Date(day.slice(0,7)+'-01T12:00:00Z');
+  }
+  draw();
+};
+el('intake').onsubmit=e=>{e.preventDefault();submit('book');};
+el('change').onclick=()=>{display('calendar');draw();el('rows').querySelector('[aria-pressed=true]')?.focus();};
+el('move').onclick=showCalendar;
+el('cancel').onclick=()=>{el('confirmCancel').hidden=false;el('confirmCancel').focus();};
+el('confirmCancel').onclick=()=>submit('cancel');
+google.script.url.getLocation(loc=>{service=loc.parameter.service;token=loc.hash;load().catch(e=>{el('error').textContent=e.message;});});
