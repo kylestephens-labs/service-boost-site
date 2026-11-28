@@ -106,13 +106,20 @@ function draw() {
 function showCalendar() {
   selected=0;day='';display('calendar');draw();
 }
-function showReceipt() {
-  display('receipt');el('receipt-time').textContent=appointment(current.start);
+function showReceipt(requestCancel = false) {
+  const canCancel = ['confirmed','pending'].includes(current.status);
+  const confirming = requestCancel && canCancel;
+  el('receipt-time').textContent=appointment(current.start);
   el('outcome').textContent=({pending:'Preparing your Google Meet appointment',confirmed:'Appointment confirmed',cancelling:'Cancelling your appointment',cancelled:'Appointment cancelled'})[current.status];
   el('delivery').textContent=current.active?'Keep this page link to manage your appointment.':'The time is available again.';
 
   if(!current.delivered) el('delivery').textContent='Your request is saved. Confirmation delivery is pending.';
-  el('move').hidden=!current.active;el('cancel').hidden=!['confirmed','pending'].includes(current.status);el('confirmCancel').hidden=true;
+  if (confirming) el('outcome').textContent='Cancel this appointment?';
+  el('delivery').hidden=confirming;
+  el('move').hidden=confirming || !current.active;
+  el('cancel').hidden=confirming || !canCancel;
+  el('cancel-options').hidden=!confirming;
+  display('receipt');
 }
 async function rpc(name,...args) {
   if (window.SERVICE_BOOST_WORKSPACE_BOOKING) {
@@ -190,7 +197,7 @@ async function load() {
   el('local').hidden=remote;el('guests').hidden=!remote;
   for(const input of el('local').querySelectorAll('input')) input.required=!remote;
   el('intake').elements.notes.required=remote;
-  if(current)showReceipt();else showCalendar();
+  if(current)showReceipt(initialAction === 'cancel');else showCalendar();
 }
 let busy=false;
 async function submit(action) {
@@ -225,13 +232,17 @@ zone.onchange=()=>{
 el('intake').onsubmit=e=>{e.preventDefault();submit('book');};
 el('change').onclick=()=>{display('calendar');draw();el('rows').querySelector('[aria-pressed=true]')?.focus();};
 el('move').onclick=async()=>{try{await readMonth();showCalendar();}catch(e){el('error').textContent=e.message;}};
-el('cancel').onclick=()=>{el('confirmCancel').hidden=false;el('confirmCancel').focus();};
-el('confirmCancel').onclick=()=>submit('cancel');
+el('cancel').onclick=()=>showReceipt(true);
+el('keep').onclick=()=>{el('error').textContent='';showReceipt();el('cancel').focus();};
+el('confirmCancel').onclick=async()=>{
+  el('keep').disabled=el('confirmCancel').disabled=true;
+  try { await submit('cancel'); }
+  finally { el('keep').disabled=el('confirmCancel').disabled=false; }
+};
 async function openBooking() {
   try {
     await load();
     if(current?.active && initialAction==='move')await el('move').onclick();
-    if(current?.active && initialAction==='cancel')el('cancel').onclick();
     initialAction='';
   } catch(e){el('error').textContent=e.message;}
 }
